@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-    name: "Build Java"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,5 +18,7 @@ jobs:
         with:
           java-version: "17"
           distribution: "temurin"
+      - name: Give execute permission to gradlew
+        run: chmod +x gradlew
       - name: Build with Gradle Wrapper
         run: ./gradlew build
