@@ -1,8 +1,10 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 
@@ -18,34 +20,47 @@ public class Field {
     public static final Distance fieldWidth = Inches.of(317);
 
     // Reef
-    //cycled from A - K - I - G - E - C 
-    //            B - L - J - H - F - D 
+    //cycled clockwise A - K - I - G - E - C 
+    //                 B - L - J - H - F - D 
+    public static final Translation2d blueReefCenter = new Translation2d(176.2768, 158.4991);
 
-    public static final Pose2d blueReefA = new Pose2d();
-    public static final Pose2d blueReefB = new Pose2d();
-    public static final Pose2d blueReefC = new Pose2d();
-    public static final Pose2d blueReefD = new Pose2d();
-    public static final Pose2d blueReefE = new Pose2d();
-    public static final Pose2d blueReefF = new Pose2d();
-    public static final Pose2d blueReefG = new Pose2d();
-    public static final Pose2d blueReefH = new Pose2d();
-    public static final Pose2d blueReefI = new Pose2d();
-    public static final Pose2d blueReefJ = new Pose2d();
-    public static final Pose2d blueReefK = new Pose2d();
-    public static final Pose2d blueReefL = new Pose2d();
+    public static final Pose2d blueReefA = new Pose2d(new Translation2d(Inches.of(143.531), Inches.of(152.03)), new Rotation2d(Degrees.of(180)));
+    public static final Pose2d blueReefK = new Pose2d(blueReefA.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(60))), new Rotation2d(Degrees.of(120)));
+    public static final Pose2d blueReefI = new Pose2d(blueReefK.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(60))), new Rotation2d(Degrees.of(60)));
+    public static final Pose2d blueReefG = new Pose2d(blueReefI.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(60))), new Rotation2d(Degrees.of(0)));
+    public static final Pose2d blueReefE = new Pose2d(blueReefG.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(60))), new Rotation2d(Degrees.of(-60)));
+    public static final Pose2d blueReefC = new Pose2d(blueReefE.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(60))), new Rotation2d(Degrees.of(-120)));
+    
 
-    public static final Pose2d redReefA = new Pose2d();
-    public static final Pose2d redReefB = new Pose2d();
-    public static final Pose2d redReefC = new Pose2d();
-    public static final Pose2d redReefD = new Pose2d();
-    public static final Pose2d redReefE = new Pose2d();
-    public static final Pose2d redReefF = new Pose2d();
-    public static final Pose2d redReefG = new Pose2d();
-    public static final Pose2d redReefH = new Pose2d();
-    public static final Pose2d redReefI = new Pose2d();
-    public static final Pose2d redReefJ = new Pose2d();
-    public static final Pose2d redReefK = new Pose2d();
-    public static final Pose2d redReefL = new Pose2d();
+    public static final Pose2d blueReefB = new Pose2d(0, 0, new Rotation2d(Degrees.of(180)));
+    
+    
+    public static final Pose2d blueReefD = new Pose2d(0, 0, new Rotation2d(Degrees.of(-120)));
+    
+    
+    public static final Pose2d blueReefF = new Pose2d(0, 0, new Rotation2d(Degrees.of(-60)));
+    
+    
+    public static final Pose2d blueReefH = new Pose2d(0, 0, new Rotation2d(Degrees.of(0)));
+    
+    
+    public static final Pose2d blueReefJ = new Pose2d(0, 0, new Rotation2d(Degrees.of(60)));
+    
+    
+    public static final Pose2d blueReefL = new Pose2d(0, 0, new Rotation2d(Degrees.of(120)));
+
+    public static final Pose2d redReefA = new Pose2d(0, 0, new Rotation2d(Degrees.of(180)));
+    public static final Pose2d redReefB = new Pose2d(0, 0, new Rotation2d(Degrees.of(180)));
+    public static final Pose2d redReefC = new Pose2d(0, 0, new Rotation2d(Degrees.of(-120)));
+    public static final Pose2d redReefD = new Pose2d(0, 0, new Rotation2d(Degrees.of(-120)));
+    public static final Pose2d redReefE = new Pose2d(0, 0, new Rotation2d(Degrees.of(-60)));
+    public static final Pose2d redReefF = new Pose2d(0, 0, new Rotation2d(Degrees.of(-60)));
+    public static final Pose2d redReefG = new Pose2d(0, 0, new Rotation2d(Degrees.of(0)));
+    public static final Pose2d redReefH = new Pose2d(0, 0, new Rotation2d(Degrees.of(0)));
+    public static final Pose2d redReefI = new Pose2d(0, 0, new Rotation2d(Degrees.of(60)));
+    public static final Pose2d redReefJ = new Pose2d(0, 0, new Rotation2d(Degrees.of(60)));
+    public static final Pose2d redReefK = new Pose2d(0, 0, new Rotation2d(Degrees.of(120)));
+    public static final Pose2d redReefL = new Pose2d(0, 0, new Rotation2d(Degrees.of(120)));
 
     // Barge
     public static final Translation2d blueCageTop = new Translation2d(Inches.of(345.4375), Inches.of(285.875));

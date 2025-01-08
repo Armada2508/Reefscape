@@ -4,67 +4,33 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
 
+  private static Field2d reefTest = new Field2d();
 
   public Robot() {
-    
+    SmartDashboard.putData("Arena: ", reefTest);
+    reefTest.getObject("Branch K").setPose(Field.blueReefK);
+
+    reefTest.getObject("Branch A").setPose(Field.blueReefA);
+    reefTest.getObject("Branch I").setPose(Field.blueReefI);
+    reefTest.getObject("Branch G").setPose(Field.blueReefG);
+    reefTest.getObject("Branch E").setPose(Field.blueReefE);
+    reefTest.getObject("Branch C").setPose(Field.blueReefC);
+
+    reefTest.getObject("Origin").setPose(Field.origin);
+    reefTest.getObject("Blue Center").setPose(Field.blueReefCenter.getX(), Field.blueReefCenter.getY(), new Rotation2d(0));
+
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
   }
-
-  @Override
-  public void disabledInit() {}
-
-  @Override
-  public void disabledPeriodic() {}
-
-  @Override
-  public void disabledExit() {}
-
-  @Override
-  public void autonomousInit() {
-
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
-  }
-
-  @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void autonomousExit() {}
-
-  @Override
-  public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-  }
-
-  @Override
-  public void teleopPeriodic() {}
-
-  @Override
-  public void teleopExit() {}
-
-  @Override
-  public void testInit() {
-    CommandScheduler.getInstance().cancelAll();
-  }
-
-  @Override
-  public void testPeriodic() {}
-
-  @Override
-  public void testExit() {}
 }
