@@ -15,7 +15,7 @@ public class Robot extends TimedRobot {
   private static Field2d reefTest = new Field2d();
 
   public Robot() {
-    SmartDashboard.putData("Arena: ", reefTest);
+    SmartDashboard.putData("Arena: ", reefTest); // test
     reefTest.getObject("Branch K").setPose(Field.blueReefK);
 
     reefTest.getObject("Branch A").setPose(Field.blueReefA);
