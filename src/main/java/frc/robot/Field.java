@@ -32,17 +32,12 @@ public class Field {
     public static final Pose2d blueReefD = new Pose2d(blueReefF.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(-120)));
     
 
-    public static final Pose2d blueReefA = new Pose2d(Inches.of(-201.438), Inches.of(212.937), new Rotation2d(Degrees.of(180)));
-    
-    public static final Pose2d blueReefK = new Pose2d(blueReefA.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(-120)));
-    
-    public static final Pose2d blueReefI = new Pose2d(blueReefK.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(-60)));
-    
+    public static final Pose2d blueReefA = new Pose2d(Inches.of(143.531), Inches.of(164.95), new Rotation2d(Degrees.of(180)));
+    public static final Pose2d blueReefK = new Pose2d(blueReefA.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(120)));
+    public static final Pose2d blueReefI = new Pose2d(blueReefK.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(60)));
     public static final Pose2d blueReefG = new Pose2d(blueReefI.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(0)));
-    
-    public static final Pose2d blueReefE = new Pose2d(blueReefG.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(60)));
-    
-    public static final Pose2d blueReefC = new Pose2d(blueReefE.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(120)));
+    public static final Pose2d blueReefE = new Pose2d(blueReefG.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(-60)));
+    public static final Pose2d blueReefC = new Pose2d(blueReefE.getTranslation().rotateAround(blueReefCenter, new Rotation2d(Degrees.of(-60))), new Rotation2d(Degrees.of(-120)));
 
 
 
