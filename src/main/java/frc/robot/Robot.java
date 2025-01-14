@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -19,13 +18,12 @@ import frc.robot.subsystems.Swerve;
 
 public class Robot extends TimedRobot {
     
-    Swerve swerve = new Swerve();
-    CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
-    private static Field2d reefTest = new Field2d();
+    private final Swerve swerve = new Swerve();
+    private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
+    private Field2d reefTest = new Field2d();
     
     public Robot() {
         DriverStation.silenceJoystickConnectionWarning(true);
-        addPeriodic(() -> CommandScheduler.getInstance().run(), kDefaultPeriod);
         configureBindings();
         Command driveFieldOrientedAngularVelocity = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
@@ -33,7 +31,6 @@ public class Robot extends TimedRobot {
             () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)),
             false
         );
-
         swerve.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
         Pose2d robotPose = swerve.getPose();
@@ -49,7 +46,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-
     }
     
 }
