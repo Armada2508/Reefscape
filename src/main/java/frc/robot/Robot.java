@@ -4,44 +4,52 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ControllerK;
+import frc.robot.Constants.DriveK;
+import frc.robot.subsystems.Swerve;
 
 public class Robot extends TimedRobot {
     
+    Swerve swerve = new Swerve();
+    CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private static Field2d reefTest = new Field2d();
     
     public Robot() {
-        SmartDashboard.putData("Arena: ", reefTest);
+        DriverStation.silenceJoystickConnectionWarning(true);
+        addPeriodic(() -> CommandScheduler.getInstance().run(), kDefaultPeriod);
+        configureBindings();
+        Command driveFieldOrientedAngularVelocity = swerve.driveCommand(
+            () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
+            () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
+            () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)),
+            false
+        );
 
-        //cycled clockwise A - K - I - G - E - C 
-    //                     B - L - J - H - F - D 
+        swerve.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
-        reefTest.getObject("Branch B").setPose(Field.redReefB);
-        reefTest.getObject("Branch L").setPose(Field.redReefL);
-        reefTest.getObject("Branch J").setPose(Field.redReefJ);
-        // reefTest.getObject("Branch H").setPose(Field.blueReefH);
-        // reefTest.getObject("Branch F").setPose(Field.blueReefF);
-        // reefTest.getObject("Branch D").setPose(Field.blueReefD);
-
-        reefTest.getObject("Branch A").setPose(Field.redReefA);
-        reefTest.getObject("Branch K").setPose(Field.redReefK);
-        reefTest.getObject("Branch I").setPose(Field.redReefI);
-        // reefTest.getObject("Branch G").setPose(Field.blueReefE);
-        // reefTest.getObject("Branch E").setPose(Field.blueReefG);
-        // reefTest.getObject("Branch C").setPose(Field.blueReefC);
+        Pose2d robotPose = swerve.getPose();
+        reefTest.getObject("Robot Pose").setPose(robotPose);
         
-        reefTest.getObject("Origin").setPose(Field.origin);
-        reefTest.getObject("Blue Center").setPose(Field.blueReefCenter.getX(), Field.blueReefCenter.getY(), new Rotation2d(0));
-        
+    }
+
+    private void configureBindings() {
+        // Reset forward direction for field relative
+        xboxController.x().and(xboxController.b()).onTrue(swerve.runOnce(swerve::zeroGyro)); 
     }
     
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+
     }
     
 }
