@@ -74,7 +74,6 @@ public class Field {
     // Processor
     //^ processor location is on the edge of the arena carpet rather then the exact middle of the structure
     public static final Translation2d blueProcessor = new Translation2d(Inches.of(0), Inches.of(235.7255));
-
     public static final Translation2d redProcessor = new Translation2d(fieldWidth, fieldLength.minus(blueProcessor.getMeasureY()));
     
 }
