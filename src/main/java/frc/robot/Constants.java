@@ -17,19 +17,20 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Filesystem;
 
 public class Constants {
+
     public static class SwerveK {
-        public static final Distance wheelDiameter = Inches.of(3); //& VERIFY
-        public static final Distance driveBaseRadius = Meters.of(0.4579874); //& VERIFY
+        public static final Distance wheelDiameter = Inches.of(3); 
+        public static final Distance driveBaseRadius = Meters.of(0.4579874); //? Verify
 
-        public static final double steerGearRatio = 1; // Maybe remove?
-        public static final double driveGearRatio = 4.4; //& Recalculate with krakens
+        //? Either make this variable correct or remove it, right now it's being used in a calculation that needs it to be one
+        public static final double steerGearRatio = 1; 
+        public static final double driveGearRatio = 4.4;
 
-        public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(4.24); //& VERIFY
+        public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(4.24); //? Recalculate with krakens
 
         public static final PIDConstants translationConstants = new PIDConstants(1, 1, 1); //! TODO: Tune
         public static final PIDConstants rotationConstants = new PIDConstants(1, 1, 1); //! TODO: Tune
-        public static RobotConfig robotConfig; 
-        static {
+        public static RobotConfig robotConfig; static {
             try {
                 robotConfig = RobotConfig.fromGUISettings();
             } catch (IOException | ParseException e) {
@@ -51,4 +52,5 @@ public class Constants {
         public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1.25, 2);
     }
+    
 }
