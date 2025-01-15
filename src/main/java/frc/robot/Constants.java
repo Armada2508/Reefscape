@@ -15,6 +15,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.lib.util.DynamicSlewRateLimiter;
 
 public class Constants {
 
