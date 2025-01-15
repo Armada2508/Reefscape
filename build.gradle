@@ -72,11 +72,14 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation ':library'
 }
 
 test {
     useJUnitPlatform()
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
+    dependsOn gradle.includedBuilds*.task(":test")
 }
 
 // Simulation configuration (e.g. environment variables).
