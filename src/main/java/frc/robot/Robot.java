@@ -5,10 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -20,7 +18,6 @@ public class Robot extends TimedRobot {
     
     private final Swerve swerve = new Swerve();
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
-    private Field2d reefTest = new Field2d();
     
     public Robot() {
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -32,10 +29,6 @@ public class Robot extends TimedRobot {
             false
         );
         swerve.setDefaultCommand(driveFieldOrientedAngularVelocity);
-
-        Pose2d robotPose = swerve.getPose();
-        reefTest.getObject("Robot Pose").setPose(robotPose);
-        
     }
 
     private void configureBindings() {
