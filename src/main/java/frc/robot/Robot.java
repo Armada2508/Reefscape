@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.epilogue.Epilogue;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -14,6 +16,7 @@ import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.subsystems.Swerve;
 
+@Logged
 public class Robot extends TimedRobot {
     
     private final Swerve swerve = new Swerve();
@@ -21,6 +24,7 @@ public class Robot extends TimedRobot {
     
     public Robot() {
         DriverStation.silenceJoystickConnectionWarning(true);
+        Epilogue.bind(this);
         configureBindings();
         Command driveFieldOrientedAngularVelocity = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
@@ -39,6 +43,11 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void disabledInit() {
+        
     }
     
 }
