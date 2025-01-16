@@ -1,5 +1,6 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -12,6 +13,7 @@ import org.json.simple.parser.ParseException;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -52,6 +54,17 @@ public class Constants {
         public static final DynamicSlewRateLimiter translationalYLimiter = new DynamicSlewRateLimiter(1.25, 2); // Larger number = faster rate of change
         public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1.25, 2);
+    }
+
+    public static class AlgaeK {
+        public static final Angle algaePosition = Degrees.of(0);
+        public static final Angle stowPosition = Degrees.of(0);
+        public static final Angle zeroPosition = Degrees.of(0);
+
+        public static final double kP = 0;
+        public static final double kD = 0;
+        public static final double maxVelocity = 0;
+        public static final double maxAcceleration = 0;
     }
     
 }
