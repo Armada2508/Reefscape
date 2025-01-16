@@ -23,7 +23,7 @@ public class Algae extends SubsystemBase {
 
     public Algae() {
         SparkMaxConfig config = new SparkMaxConfig();
-        config.closedLoop // Need to tune all this
+        config.closedLoop // Need to tune all this, use conversion factors to account for gear ratio "1/20"
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(AlgaeK.kP, 0, AlgaeK.kD)
             .maxMotion
