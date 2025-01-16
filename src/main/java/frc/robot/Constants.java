@@ -1,9 +1,12 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +17,11 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
 
@@ -57,14 +63,20 @@ public class Constants {
     }
 
     public static class AlgaeK {
+        public static final int sparkMaxID = 0;
+        public static final int limitSwitchID = 0;
+        public static final double gearRatio = 50;
+        public static final Voltage zeroingVoltage = Volts.of(-1.5);
+
         public static final Angle algaePosition = Degrees.of(0);
         public static final Angle stowPosition = Degrees.of(0);
         public static final Angle zeroPosition = Degrees.of(0);
+        public static final Angle allowableError = Degrees.of(0);
 
         public static final double kP = 0;
         public static final double kD = 0;
-        public static final double maxVelocity = 0;
-        public static final double maxAcceleration = 0;
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
     }
     
 }

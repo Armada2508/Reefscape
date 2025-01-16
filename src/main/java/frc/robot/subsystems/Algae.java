@@ -1,7 +1,8 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -11,46 +12,68 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeK;
 
 public class Algae extends SubsystemBase {
 
-    private final SparkMax sparkMax = new SparkMax(0, MotorType.kBrushless);
+    private final SparkMax sparkMax = new SparkMax(AlgaeK.sparkMaxID, MotorType.kBrushless);
+    private final DigitalInput limitSwitch = new DigitalInput(AlgaeK.limitSwitchID);
 
     public Algae() {
         SparkMaxConfig config = new SparkMaxConfig();
-        config.closedLoop // Need to tune all this, use conversion factors to account for gear ratio "1/20"
+        config.encoder
+            .positionConversionFactor(1.0/AlgaeK.gearRatio)
+            .velocityConversionFactor(1.0/(AlgaeK.gearRatio*60.0)); // Divide by 60 to turn RPM into RPS
+        config.closedLoop // Need to tune all this
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(AlgaeK.kP, 0, AlgaeK.kD)
             .maxMotion
-            .maxVelocity(AlgaeK.maxVelocity)
-            .maxAcceleration(AlgaeK.maxAcceleration)
-            .allowedClosedLoopError(0);
+            .maxVelocity(AlgaeK.maxVelocity.in(RotationsPerSecond))
+            .maxAcceleration(AlgaeK.maxAcceleration.in(RotationsPerSecondPerSecond))
+            .allowedClosedLoopError(AlgaeK.allowableError.in(Rotations));
         sparkMax.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
     
     public Command setVoltage(Voltage volts) {
-        return runOnce(() -> sparkMax.setVoltage(volts));
+        return runOnce(() -> sparkMax.setVoltage(volts)).withName("Set Voltage Algae Arm");
     }
 
     public Command algaePosition() {
         return runOnce(() -> {
             sparkMax.getClosedLoopController().setReference(AlgaeK.algaePosition.in(Rotations), ControlType.kMAXMotionPositionControl);
-        });
+        })
+        .andThen(Commands.waitUntil(() -> getAngle().isNear(AlgaeK.algaePosition, AlgaeK.allowableError)))
+        .withName("Stow Algae Arm");
     }
 
     public Command stow() {
         return runOnce(() -> {
             sparkMax.getClosedLoopController().setReference(AlgaeK.stowPosition.in(Rotations), ControlType.kMAXMotionPositionControl);
-        });
+        })
+        .andThen(Commands.waitUntil(() -> getAngle().isNear(AlgaeK.stowPosition, AlgaeK.allowableError)))
+        .withName("Stow Algae Arm");
     }
 
     public Command zero() {
-        return setVoltage(Volts.of(-3)).andThen(new WaitUntilCommand(0));
+        return setVoltage(AlgaeK.zeroingVoltage)
+            .andThen(Commands.waitUntil(limitSwitch::get))
+            .andThen(() -> sparkMax.getEncoder().setPosition(AlgaeK.zeroPosition.in(Rotations)))
+            .finallyDo(this::stop)
+            .withName("Zero Algae Arm");
+    }
+
+    public void stop() {
+        sparkMax.stopMotor();
+    }
+
+    public Angle getAngle() {
+        return Rotations.of(sparkMax.getEncoder().getPosition());
     }
 
 }
