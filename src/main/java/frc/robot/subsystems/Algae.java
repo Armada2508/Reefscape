@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeK;
 
+@Logged
 public class Algae extends SubsystemBase {
 
     private final SparkMax sparkMax = new SparkMax(AlgaeK.sparkMaxID, MotorType.kBrushless);
@@ -30,7 +32,7 @@ public class Algae extends SubsystemBase {
         config.encoder
             .positionConversionFactor(1.0/AlgaeK.gearRatio)
             .velocityConversionFactor(1.0/(AlgaeK.gearRatio*60.0)); // Divide by 60 to turn RPM into RPS
-        config.closedLoop // Need to tune all this
+        config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(AlgaeK.kP, 0, AlgaeK.kD)
             .maxMotion

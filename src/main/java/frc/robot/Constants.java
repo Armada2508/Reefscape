@@ -62,7 +62,7 @@ public class Constants {
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1.25, 2);
     }
 
-    public static class AlgaeK {
+    public static class AlgaeK { // TODO: Tune everything here
         public static final int sparkMaxID = 0;
         public static final int limitSwitchID = 0;
         public static final double gearRatio = 50;
