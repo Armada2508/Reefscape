@@ -53,6 +53,14 @@ public class Field {
     public static final Pose2d redReefF = new Pose2d(fieldLength.minus(blueReefF.getMeasureX()), blueReefF.getMeasureY(), new Rotation2d(Degrees.of(-60)));
     public static final Pose2d redReefD = new Pose2d(fieldLength.minus(blueReefD.getMeasureX()), blueReefD.getMeasureY(), new Rotation2d(Degrees.of(-120)));
     
+    public static final Distance levelOneHeight = Inches.of(18);
+    public static final Distance levelTwoHeight = Inches.of(31.825);
+    public static final Distance levelThreeHeight = Inches.of(47.625);
+    public static final Distance levelFourHeight = Inches.of(72);
+
+    public static final Distance algaeLowHeight = levelTwoHeight.minus(Inches.of(6.25));
+    public static final Distance algaeHighHeight = levelThreeHeight.minus(Inches.of(6.25));
+    
     
 
     // Barge

@@ -57,6 +57,24 @@ public class Constants {
     public static class ElevatorK {
         public static final int elevatorID = 0; // ! make correct
         public static final double gearRatio = 16;
+
+        public static final Distance stowHeight = Inches.of(0); //! Find
+        
+        public enum Positions {
+            L1(Field.levelOneHeight), 
+            L2(Field.levelTwoHeight),
+            L3(Field.levelThreeHeight),
+            L4(Field.levelFourHeight),
+            ALGAE_LOW(Field.algaeLowHeight),
+            ALGAE_HIGH(Field.algaeHighHeight),
+            STOW(ElevatorK.stowHeight); //! Find
+    
+            public final Distance level;
+    
+            Positions(Distance position) {
+                this.level = position;
+            }
+        }
     }
     
 }
