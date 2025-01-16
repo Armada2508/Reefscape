@@ -53,5 +53,11 @@ public class Constants {
         public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1.25, 2);
     }
+
+    public static class IntakeK {
+        public static final int motorId = 0; //find
+        public static final int followId = 1; //find
+
+    }
     
 }
