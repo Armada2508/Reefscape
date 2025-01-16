@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Inches;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -58,5 +59,9 @@ public class Elevator extends SubsystemBase {
     public void setSpeed(Voltage speed) {
         VoltageOut request = new VoltageOut(speed);
         talon.setControl(request);
+    }
+
+    public void stop() {
+        talon.setControl(new NeutralOut());
     }
 }

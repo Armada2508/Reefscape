@@ -59,15 +59,17 @@ public class Constants {
         public static final double gearRatio = 16;
 
         public static final Distance stowHeight = Inches.of(0); //! Find
+        public static final Distance intakeHeight = Inches.of(0);
         
         public enum Positions {
-            L1(Field.levelOneHeight), 
+            L1(Field.levelOneHeight), //! Possible tune
             L2(Field.levelTwoHeight),
             L3(Field.levelThreeHeight),
             L4(Field.levelFourHeight),
             ALGAE_LOW(Field.algaeLowHeight),
             ALGAE_HIGH(Field.algaeHighHeight),
-            STOW(ElevatorK.stowHeight); //! Find
+            STOW(ElevatorK.stowHeight), //! Find
+            INTAKE(ElevatorK.intakeHeight); //! Find
     
             public final Distance level;
     

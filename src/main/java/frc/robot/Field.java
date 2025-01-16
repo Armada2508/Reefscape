@@ -61,8 +61,6 @@ public class Field {
     public static final Distance algaeLowHeight = levelTwoHeight.minus(Inches.of(6.25));
     public static final Distance algaeHighHeight = levelThreeHeight.minus(Inches.of(6.25));
     
-    
-
     // Barge
     public static final Translation2d blueCageTop = new Translation2d(Inches.of(345.4375), Inches.of(285.875));
     public static final Translation2d blueCageMid = new Translation2d(Inches.of(345.4375), Inches.of(242.875));
