@@ -53,5 +53,10 @@ public class Constants {
         public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1.25, 2);
     }
+
+    public static class ElevatorK {
+        public static final int elevatorID = 0; // ! make correct
+        public static final double gearRatio = 16;
+    }
     
 }
