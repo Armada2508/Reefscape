@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Swerve;
 
 @Logged
@@ -27,6 +29,7 @@ public class Robot extends TimedRobot {
     public Robot() {
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this);
+        TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero());
         configureBindings();
         Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
