@@ -4,15 +4,20 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,8 +28,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SwerveK;
 import swervelib.SwerveDrive;
+import swervelib.motors.TalonFXSwerve;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
@@ -34,6 +41,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     private final SwerveDrive swerveDrive;
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
+    private final SysIdRoutine sysIdRoutine; 
 
     public Swerve() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -45,9 +53,31 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             throw new RuntimeException("Swerve directory not found.");
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
+        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(0, 0, 0));
         rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees));
         rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
         setupPathPlanner();
+
+        sysIdRoutine = 
+            new SysIdRoutine(
+                new SysIdRoutine.Config(
+                    null,        // Use default ramp rate (1 V/s)
+                    Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
+                    null,        // Use default timeout (10 s)
+                                // Log state with Phoenix SignalLogger class
+                    (state) -> SignalLogger.writeString("state", state.toString())
+                ),
+                new SysIdRoutine.Mechanism(
+                    (volts) -> {
+                        for (var module : swerveDrive.getModules()) {
+                            var motor = (TalonFXSwerve) module.getDriveMotor();
+                            ((TalonFX) motor.getMotor()).setControl(new VoltageOut(volts));
+                        }
+                    },
+                    null,
+                    this
+                )
+            );
     }
 
     @Override
@@ -168,6 +198,15 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public void zeroGyro() {
         swerveDrive.zeroGyro();
+    }
+
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.quasistatic(direction);
+    }
+     
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.dynamic(direction);
     }
 
 }
