@@ -129,7 +129,7 @@ public class Swerve extends SubsystemBase {
      * @param isOpenLoop Whether it uses a closed loop velocity control or an open loop
      */
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
+        swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop, Translation2d.kZero);
     }
 
     /**
