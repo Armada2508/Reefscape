@@ -26,13 +26,13 @@ public class Robot extends TimedRobot {
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this);
         configureBindings();
-        Command driveFieldOrientedAngularVelocity = swerve.driveCommand(
+        Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
             () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)),
             true
-        );
-        swerve.setDefaultCommand(driveFieldOrientedAngularVelocity);
+        ).withName("Swerve Drive Field Oriented");
+        swerve.setDefaultCommand(driveFieldOriented);
     }
 
     private void configureBindings() {
