@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class Swerve extends SubsystemBase {
 
     public Swerve() {
         double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(SwerveK.steerGearRatio, 4096);
-        double driveConversionFactor = SwerveMath.calculateMetersPerRotation(SwerveK.driveGearRatio, SwerveK.wheelDiameter.in(Inches));
+        double driveConversionFactor = SwerveMath.calculateMetersPerRotation(SwerveK.driveGearRatio, SwerveK.wheelDiameter.in(Meters));
 
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
@@ -48,14 +48,12 @@ public class Swerve extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-        // Do nothing
-    }
+    public void periodic() {}
 
     /**
      * Configures PathPlanner
      */
-    public void setupPathPlanner() {
+    private void setupPathPlanner() {
         AutoBuilder.configure(
             this::getPose, 
             this::resetOdometry, 
@@ -105,7 +103,7 @@ public class Swerve extends SubsystemBase {
      * @param currentAngle Current angle
      * @param fieldRelative Whether or not swerve is controlled using field relative speeds
      */
-    public void turn(Angle targetAngle, Angle currentAngle, boolean fieldRelative) {
+    private void turn(Angle targetAngle, Angle currentAngle, boolean fieldRelative) {
         drive(getPose().getTranslation(), getTurningAngle(targetAngle, currentAngle).in(Degrees), fieldRelative, false);
     }
 
@@ -115,7 +113,7 @@ public class Swerve extends SubsystemBase {
      * @param currentHeading Current heading
      * @return Angle to turn to
      */
-    public Angle getTurningAngle(Angle desiredAngle, Angle currentHeading) {
+    private Angle getTurningAngle(Angle desiredAngle, Angle currentHeading) {
         double angle = (desiredAngle.minus(currentHeading).plus(Degrees.of(540))).in(Degrees);
         angle = (angle % 360) - 180;
         return Degrees.of(angle);
@@ -128,16 +126,16 @@ public class Swerve extends SubsystemBase {
      * @param fieldRelative Whether the robot is field relative (true) or robot relative (false)
      * @param isOpenLoop Whether it uses a closed loop velocity control or an open loop
      */
-    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+    private void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop, Translation2d.kZero);
     }
 
     /**
      * Resets the odometry to the given pose
-     * @param initialHolonomicPose Pose to reset the odemetry to
+     * @param pose Pose to reset the odemetry to
      */
-    public void resetOdometry(Pose2d initialHolonomicPose) {
-        swerveDrive.resetOdometry(initialHolonomicPose);
+    public void resetOdometry(Pose2d pose) {
+        swerveDrive.resetOdometry(pose);
     }
 
     /**
