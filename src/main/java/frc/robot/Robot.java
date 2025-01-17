@@ -6,14 +6,20 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.subsystems.Swerve;
@@ -27,7 +33,6 @@ public class Robot extends TimedRobot {
     public Robot() {
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this);
-        configureBindings();
         Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
@@ -35,6 +40,12 @@ public class Robot extends TimedRobot {
             true
         ).withName("Swerve Drive Field Oriented");
         swerve.setDefaultCommand(driveFieldOriented);
+        FollowPathCommand.warmupCommand().schedule();
+
+        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Leave STARTING LINE");
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+        RobotModeTriggers.autonomous().onTrue(autoChooser.getSelected());
+        configureBindings();
     }
 
     private void configureBindings() {

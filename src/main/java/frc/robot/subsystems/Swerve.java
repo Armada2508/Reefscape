@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveK;
@@ -63,14 +64,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             (speeds, feedforward) -> setChassisSpeeds(speeds), 
             new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants),
             SwerveK.robotConfig,
-            () -> {
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                } 
-                return false;
-            }
-            , this);
+            () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, 
+            this);
     }
 
     /**
