@@ -2,7 +2,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.io.File;
@@ -23,7 +22,7 @@ public class Constants {
 
     public static class SwerveK {
         public static final Distance wheelDiameter = Inches.of(3); 
-        public static final Distance driveBaseRadius = Meters.of(0.4579874); //? Verify
+        public static final Distance driveBaseRadius = Inches.of(12.75);
 
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
