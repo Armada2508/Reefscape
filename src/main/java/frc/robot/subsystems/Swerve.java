@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
@@ -10,11 +12,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,6 +32,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
 
     private final SwerveDrive swerveDrive;
+    private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
 
     public Swerve() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -39,6 +44,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             throw new RuntimeException("Swerve directory not found.");
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
+        rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees));
+        rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
         setupPathPlanner();
     }
 
@@ -77,41 +84,26 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public Command driveCommand(DoubleSupplier TranslationX, DoubleSupplier TranslationY, DoubleSupplier angularVelocity, boolean fieldRelative) {
         return runOnce(() -> drive(
                 new Translation2d(TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 
-                angularVelocity.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity(), 
+                RadiansPerSecond.of(angularVelocity.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity()), 
                 fieldRelative, true)).withName("Swerve Drive");
     }
 
     /**
      * Turns the robot to the desired angle
-     * @param targetAngle Desired angle
-     * @param currentAngle Current angle
-     * @param fieldRelative Whether or not swerve is controlled using field relative speeds
-     * @return An instant command that turns the robot
+     * @param target Desired angle
+     * @return A command that turns the robot until it's at the desired angle
      */
-    public Command turnCommand(Angle targetAngle, Angle currentAngle, boolean fieldRelative) {
-        return runOnce(() -> turn(targetAngle, currentAngle, fieldRelative)).withName("Swerve Turn");
-    }
-
-    /**
-     * Turns the robot to the desired angle
-     * @param targetAngle Desired angle
-     * @param currentAngle Current angle
-     * @param fieldRelative Whether or not swerve is controlled using field relative speeds
-     */
-    private void turn(Angle targetAngle, Angle currentAngle, boolean fieldRelative) {
-        drive(getPose().getTranslation(), getTurningAngle(targetAngle, currentAngle).in(Degrees), fieldRelative, false);
-    }
-
-    /**
-     * Gets the closest angle to turn to depending on the current heading of the robot
-     * @param desiredAngle Angle to turn to
-     * @param currentHeading Current heading
-     * @return Angle to turn to
-     */
-    private Angle getTurningAngle(Angle desiredAngle, Angle currentHeading) {
-        double angle = (desiredAngle.minus(currentHeading).plus(Degrees.of(540))).in(Degrees);
-        angle = (angle % 360) - 180;
-        return Degrees.of(angle);
+    public Command turnCommand(Angle target) {
+        return runOnce(() -> {
+            rotationPIDController.reset();
+            rotationPIDController.setSetpoint(target.in(Degrees));
+        })
+        .andThen(runEnd(() -> {
+            AngularVelocity velocity = DegreesPerSecond.of(rotationPIDController.calculate(getHeading().in(Degrees)));
+            drive(Translation2d.kZero, velocity, true, false);
+        }, this::stop))
+        .until(rotationPIDController::atSetpoint)
+        .withName("Swerve Turn");
     }
 
     /**
@@ -121,8 +113,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @param fieldRelative Whether the robot is field relative (true) or robot relative (false)
      * @param isOpenLoop Whether it uses a closed loop velocity control or an open loop
      */
-    private void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop, Translation2d.kZero);
+    private void drive(Translation2d translation, AngularVelocity rotation, boolean fieldRelative, boolean isOpenLoop) {
+        swerveDrive.drive(translation, rotation.in(RadiansPerSecond), fieldRelative, isOpenLoop, Translation2d.kZero);
+    }
+
+    public void stop() {
+        drive(Translation2d.kZero, RadiansPerSecond.zero(), true, false);
     }
 
     /**
@@ -158,11 +154,17 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     /**
-     * Returns the robot's heading as a Rotation2d
-     * @return Rotational component of the robots pose
+     * Returns the robot's heading as an Angle
+     * @return The heading of the robot
      */
-    public Rotation2d getHeading() {
-        return getPose().getRotation();
+    public Angle getHeading() {
+        return getPose().getRotation().getMeasure();
+    }
+
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
     }
 
     /**

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -37,7 +39,16 @@ public class Robot extends TimedRobot {
 
     private void configureBindings() {
         // Reset forward direction for field relative
-        xboxController.x().and(xboxController.b()).onTrue(swerve.runOnce(swerve::zeroGyro)); 
+        xboxController.x().and(xboxController.b()).onTrue(swerve.runOnce(swerve::zeroGyro));
+        // D-pad snap turning
+        xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
+        xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
+        xboxController.povLeft().onTrue(swerve.turnCommand(Degrees.of(90))); 
+        xboxController.povDownLeft().onTrue(swerve.turnCommand(Degrees.of(135))); 
+        xboxController.povDown().onTrue(swerve.turnCommand(Degrees.of(180))); 
+        xboxController.povDownRight().onTrue(swerve.turnCommand(Degrees.of(-135))); 
+        xboxController.povRight().onTrue(swerve.turnCommand(Degrees.of(-90))); 
+        xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
     }
     
     @Override
@@ -47,7 +58,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        
+        swerve.stop();
     }
     
 }
