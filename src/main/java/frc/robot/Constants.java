@@ -23,8 +23,7 @@ public class Constants {
         public static final Distance wheelDiameter = Inches.of(3); 
         public static final Distance driveBaseRadius = Meters.of(0.4579874); //? Verify
 
-        //? Either make this variable correct or remove it, right now it's being used in a calculation that needs it to be one
-        public static final double steerGearRatio = 1; 
+        public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(4.24); //? Recalculate with krakens
