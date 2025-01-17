@@ -32,6 +32,7 @@ public class Swerve extends SubsystemBase {
     private final SwerveDrive swerveDrive;
 
     public Swerve() {
+        // TODO I'm pretty sure we can just move this into the json files
         double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(SwerveK.steerGearRatio, 4096);
         double driveConversionFactor = SwerveMath.calculateMetersPerRotation(SwerveK.driveGearRatio, SwerveK.wheelDiameter.in(Meters));
 
