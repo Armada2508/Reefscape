@@ -2,12 +2,14 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
@@ -84,7 +86,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public Command driveCommand(DoubleSupplier TranslationX, DoubleSupplier TranslationY, DoubleSupplier angularVelocity, boolean fieldRelative) {
         return runOnce(() -> drive(
                 new Translation2d(TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 
-                RadiansPerSecond.of(angularVelocity.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity()), 
+                RadiansPerSecond.of(angularVelocity.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / SwerveK.driveBaseRadius.in(Meters))),
                 fieldRelative, true)).withName("Swerve Drive");
     }
 
@@ -165,6 +167,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         var cmd = getCurrentCommand();
         if (cmd == null) return "None";
         return cmd.getName();
+    }
+
+    public TalonFX frontRight() {
+        for (var module : swerveDrive.getModules()) {
+            var talon = (TalonFX) module.getDriveMotor().getMotor();
+            if (talon.getDeviceID() == 1) return talon;
+        }
+        return (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
     }
 
     /**
