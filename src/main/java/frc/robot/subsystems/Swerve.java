@@ -84,7 +84,7 @@ public class Swerve extends SubsystemBase {
         return runOnce(() -> drive(
                 new Translation2d(TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 
                 angularVelocity.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity(), 
-                fieldRelative, true));
+                fieldRelative, true)).withName("Swerve Drive");
     }
 
     /**
@@ -95,7 +95,7 @@ public class Swerve extends SubsystemBase {
      * @return An instant command that turns the robot
      */
     public Command turnCommand(Angle targetAngle, Angle currentAngle, boolean fieldRelative) {
-        return runOnce(() -> turn(targetAngle, currentAngle, fieldRelative));
+        return runOnce(() -> turn(targetAngle, currentAngle, fieldRelative)).withName("Swerve Turn");
     }
 
     /**
