@@ -28,7 +28,7 @@ public class Constants {
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
-        public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(4.24); //? Recalculate with krakens
+        public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(5.426);
 
         public static final PIDConstants translationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune
         public static final PIDConstants rotationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune
