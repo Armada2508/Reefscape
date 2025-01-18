@@ -4,17 +4,21 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.json.simple.parser.ParseException;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
@@ -59,19 +63,43 @@ public class Constants {
     }
 
     public static class ElevatorK {
+        // Motor ID's
         public static final int elevatorID = 0; // ! make correct
+        public static final int followID = 0; // ! make correct
+
         public static final double gearRatio = 16;
 
+        public static final Distance wheelDiameter = Inches.of(0); //! Find
+
+        // Motion Magic Values
+        public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0); //? do we want linear
+        public static final LinearVelocity velocity = MetersPerSecond.of(0); //? same question
+
+        // Elevator-relative heights
         public static final Distance stowHeight = Inches.of(0); //! Find
-        public static final Distance intakeHeight = Inches.of(0);
-        
+        public static final Distance intakeHeight = Inches.of(0); //! Find
+        public static final Distance allowableError = Inches.of(0); //! Find
+
+        // Height Offsets
+        public static final Distance reefOffset = Inches.of(0); //! Find
+        public static final Distance algaeOffset = Inches.of(0); //! Find
+
+        // PID Constants
+        public static final int kP = 0; //! Find
+        public static final int kD = 0; //! Find
+
+        // Configs
+        public static final FeedbackConfigs elevatorConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+        public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD);
+
+        // Set Height Positions
         public enum Positions {
-            L1(Field.levelOneHeight), //! Possible tune
-            L2(Field.levelTwoHeight),
-            L3(Field.levelThreeHeight),
-            L4(Field.levelFourHeight),
-            ALGAE_LOW(Field.algaeLowHeight),
-            ALGAE_HIGH(Field.algaeHighHeight),
+            L1(Field.levelOneHeight.plus(reefOffset)), //! Possible tune
+            L2(Field.levelTwoHeight.plus(reefOffset)),
+            L3(Field.levelThreeHeight.plus(reefOffset)),
+            L4(Field.levelFourHeight.plus(reefOffset)),
+            ALGAE_LOW(Field.algaeLowHeight.plus(reefOffset)),
+            ALGAE_HIGH(Field.algaeHighHeight.plus(reefOffset)),
             STOW(ElevatorK.stowHeight), //! Find
             INTAKE(ElevatorK.intakeHeight); //! Find
     
@@ -81,6 +109,5 @@ public class Constants {
                 this.level = position;
             }
         }
-    }
-    
+    }  
 }

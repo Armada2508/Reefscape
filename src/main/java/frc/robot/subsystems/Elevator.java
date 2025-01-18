@@ -1,40 +1,48 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorK;
 import frc.robot.lib.util.Encoder;
 import frc.robot.lib.util.Util;
 
 public class Elevator extends SubsystemBase {
-    TalonFX talon = new TalonFX(ElevatorK.elevatorID);
+    private final TalonFX talon = new TalonFX(ElevatorK.elevatorID);
+    private final TalonFX talonFollow = new TalonFX(ElevatorK.followID);
 
     public Elevator() {
-        configMotionMagic(0, 0, 0); //! Find?
+        configMotionMagic(ElevatorK.velocity, ElevatorK.acceleration); //! Find?
         configTalon();
     }
 
-    public void configTalon() {
+    private void configTalon() {
         Util.factoryReset(talon);
-        // brake mode? invert?
-
+        Util.brakeMode(talon, talonFollow);
+        talonFollow.setControl(new StrictFollower(talon.getDeviceID()));
+        talon.getConfigurator().apply(ElevatorK.elevatorConfig); //applies gear ratio, need to apply to follower?
+        talon.getConfigurator().apply(ElevatorK.pidConfig); // applies PID constants, still need to tunee
     }
 
-    public void configMotionMagic(double velocity, double acceleration, double jerk) {
+    private void configMotionMagic(LinearVelocity velocity, LinearAcceleration acceleration) {
         MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
-        motionMagicConfigs.MotionMagicAcceleration = acceleration / 360; //! Find
-        motionMagicConfigs.MotionMagicCruiseVelocity = velocity / 360; //! Find
-        motionMagicConfigs.MotionMagicJerk = jerk / 360; //! Find
+        motionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(MetersPerSecond); //! Find
+        motionMagicConfigs.MotionMagicAcceleration = acceleration.in(MetersPerSecondPerSecond); //! Find
         talon.getConfigurator().apply(motionMagicConfigs);
     }
 
@@ -43,20 +51,20 @@ public class Elevator extends SubsystemBase {
      * @param position position of the elavator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        // make this work depending on the enum above, switch case?
         MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations(position.level, ElevatorK.gearRatio, Inches.of(0))); //what wheel?
-        return runOnce(() -> talon.setControl(request));
+        return runOnce(() -> talon.setControl(request))
+        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))); // stop when we reach set position
     }
 
-    public Angle getPosition() {
-        return Encoder.toRotations(null, ElevatorK.gearRatio, Inches.of(0)); //What wheel?
+    public Distance getPosition() {
+        return Encoder.toDistance(talon.getPosition().getValue(), ElevatorK.gearRatio, ElevatorK.wheelDiameter);
     }
 
     /**
      * 
      * @param speed speed of the motor in volts
      */
-    public void setSpeed(Voltage speed) {
+    public void setVoltage(Voltage speed) {
         VoltageOut request = new VoltageOut(speed);
         talon.setControl(request);
     }
