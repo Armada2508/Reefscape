@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
@@ -88,10 +89,11 @@ public class Constants {
         // PID Constants
         public static final int kP = 0; //! Find
         public static final int kD = 0; //! Find
+        public static final int kG = 0; //! Find
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
-        public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD);
+        public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD).withKG(kG).withGravityType(GravityTypeValue.Elevator_Static);
 
         // Set Height Positions
         public enum Positions {
