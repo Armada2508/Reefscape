@@ -52,7 +52,7 @@ public class Elevator extends SubsystemBase {
      * @param position position of the elavator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations(position.level, 1, ElevatorK.sprocketDiameter)); //what wheel?
+        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations((position.level.div(ElevatorK.stageCount)), 1, ElevatorK.sprocketDiameter)); //what wheel?
         return runOnce(() -> talon.setControl(request))
         .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))); // stop when we reach set position
     }
@@ -62,7 +62,7 @@ public class Elevator extends SubsystemBase {
      * @return Height of the elevator as a Distance
      */
     public Distance getPosition() {
-        return Encoder.toDistance(talon.getPosition().getValue(), 1, ElevatorK.sprocketDiameter);
+        return Encoder.toDistance(talon.getPosition().getValue().times(ElevatorK.stageCount), 1, ElevatorK.sprocketDiameter);
     }
 
     /**
