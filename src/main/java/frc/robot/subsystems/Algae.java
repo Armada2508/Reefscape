@@ -43,7 +43,7 @@ public class Algae extends SubsystemBase {
     }
     
     public Command setVoltage(Voltage volts) {
-        return runOnce(() -> sparkMax.setVoltage(volts)).withName("Set Voltage Algae Arm");
+        return runOnce(() -> sparkMax.setVoltage(volts)).withName("Set Voltage");
     }
 
     public Command algaePosition() {
@@ -51,7 +51,7 @@ public class Algae extends SubsystemBase {
             sparkMax.getClosedLoopController().setReference(AlgaeK.algaePosition.in(Rotations), ControlType.kMAXMotionPositionControl);
         })
         .andThen(Commands.waitUntil(() -> getAngle().isNear(AlgaeK.algaePosition, AlgaeK.allowableError)))
-        .withName("Stow Algae Arm");
+        .withName("Clear Algae Position");
     }
 
     public Command stow() {
@@ -59,7 +59,7 @@ public class Algae extends SubsystemBase {
             sparkMax.getClosedLoopController().setReference(AlgaeK.stowPosition.in(Rotations), ControlType.kMAXMotionPositionControl);
         })
         .andThen(Commands.waitUntil(() -> getAngle().isNear(AlgaeK.stowPosition, AlgaeK.allowableError)))
-        .withName("Stow Algae Arm");
+        .withName("Stow");
     }
 
     public Command zero() {
@@ -67,7 +67,7 @@ public class Algae extends SubsystemBase {
             .andThen(Commands.waitUntil(limitSwitch::get))
             .andThen(() -> sparkMax.getEncoder().setPosition(AlgaeK.zeroPosition.in(Rotations)))
             .finallyDo(this::stop)
-            .withName("Zero Algae Arm");
+            .withName("Zero");
     }
 
     public void stop() {
