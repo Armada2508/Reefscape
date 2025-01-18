@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -14,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Swerve;
 
@@ -27,19 +31,29 @@ public class Robot extends TimedRobot {
     public Robot() {
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this);
+        TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero());
         configureBindings();
-        Command driveFieldOrientedAngularVelocity = swerve.driveCommand(
+        Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
             () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)),
             true
-        );
-        swerve.setDefaultCommand(driveFieldOrientedAngularVelocity);
+        ).withName("Swerve Drive Field Oriented");
+        swerve.setDefaultCommand(driveFieldOriented);
     }
 
     private void configureBindings() {
         // Reset forward direction for field relative
-        xboxController.x().and(xboxController.b()).onTrue(swerve.runOnce(swerve::zeroGyro)); 
+        xboxController.x().and(xboxController.b()).onTrue(swerve.runOnce(swerve::zeroGyro));
+        // D-pad snap turning
+        xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
+        xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
+        xboxController.povLeft().onTrue(swerve.turnCommand(Degrees.of(90))); 
+        xboxController.povDownLeft().onTrue(swerve.turnCommand(Degrees.of(135))); 
+        xboxController.povDown().onTrue(swerve.turnCommand(Degrees.of(180))); 
+        xboxController.povDownRight().onTrue(swerve.turnCommand(Degrees.of(-135))); 
+        xboxController.povRight().onTrue(swerve.turnCommand(Degrees.of(-90))); 
+        xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
     }
     
     @Override
@@ -49,6 +63,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
+        swerve.stop();
         algae.stop();
     }
     

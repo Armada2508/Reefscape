@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -29,16 +28,15 @@ public class Constants {
 
     public static class SwerveK {
         public static final Distance wheelDiameter = Inches.of(3); 
-        public static final Distance driveBaseRadius = Meters.of(0.4579874); //? Verify
+        public static final Distance driveBaseRadius = Inches.of(12.75);
 
-        //? Either make this variable correct or remove it, right now it's being used in a calculation that needs it to be one
-        public static final double steerGearRatio = 1; 
+        public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
-        public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(4.24); //? Recalculate with krakens
+        public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(5.426);
 
-        public static final PIDConstants translationConstants = new PIDConstants(1, 1, 1); //! TODO: Tune
-        public static final PIDConstants rotationConstants = new PIDConstants(1, 1, 1); //! TODO: Tune
+        public static final PIDConstants translationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune
+        public static final PIDConstants rotationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune
         public static RobotConfig robotConfig; static {
             try {
                 robotConfig = RobotConfig.fromGUISettings();
@@ -46,6 +44,9 @@ public class Constants {
                 e.printStackTrace();
             }
         }
+
+        public static final PIDConstants angularPID = new PIDConstants(5, 0, 0.5); // kP = degrees/second per degree
+        public static final Angle angularDeadband = Degrees.of(2);
 
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }
