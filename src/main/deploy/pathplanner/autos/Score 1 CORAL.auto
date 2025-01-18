@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "STARTING LINE to EDGE"
+            "pathName": "STARTING LINE to REEF I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score coral"
           }
         }
       ]
