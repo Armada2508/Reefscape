@@ -54,7 +54,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             throw new RuntimeException("Swerve directory not found.");
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
-        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(0, 0, 0));
+        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(0.10431, 2.0967, 0.055428));
         rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees));
         rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
         setupPathPlanner();
