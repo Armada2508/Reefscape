@@ -29,8 +29,8 @@ public class Constants {
 
         public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(5.426);
 
-        public static final PIDConstants translationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune // 5?
-        public static final PIDConstants rotationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune // 5?
+        public static final PIDConstants translationConstants = new PIDConstants(5, 0, 0);
+        public static final PIDConstants rotationConstants = new PIDConstants(5, 0, 0);
         public static RobotConfig robotConfig; static {
             try {
                 robotConfig = RobotConfig.fromGUISettings();
