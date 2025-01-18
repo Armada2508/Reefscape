@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 
@@ -27,7 +27,7 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talonFollow = new TalonFX(ElevatorK.followID);
 
     public Elevator() {
-        configMotionMagic(ElevatorK.velocity, ElevatorK.acceleration); //! Find?
+        configMotionMagic(ElevatorK.velocity, ElevatorK.acceleration);
         configTalon();
     }
 
@@ -35,40 +35,48 @@ public class Elevator extends SubsystemBase {
         Util.factoryReset(talon);
         Util.brakeMode(talon, talonFollow);
         talonFollow.setControl(new StrictFollower(talon.getDeviceID()));
-        talon.getConfigurator().apply(ElevatorK.elevatorConfig); //applies gear ratio, need to apply to follower?
+        talon.getConfigurator().apply(ElevatorK.gearRatioConfig);
         talon.getConfigurator().apply(ElevatorK.pidConfig); // applies PID constants, still need to tunee
     }
 
     private void configMotionMagic(LinearVelocity velocity, LinearAcceleration acceleration) {
         MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
-        motionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(MetersPerSecond); //! Find
-        motionMagicConfigs.MotionMagicAcceleration = acceleration.in(MetersPerSecondPerSecond); //! Find
+        motionMagicConfigs.MotionMagicCruiseVelocity = (velocity.in(MetersPerSecond) / ElevatorK.stageCount) / (Math.PI * ElevatorK.sprocketDiameter.in(Meters));
+        motionMagicConfigs.MotionMagicAcceleration = (acceleration.in(MetersPerSecondPerSecond) / ElevatorK.stageCount) / (Math.PI * ElevatorK.sprocketDiameter.in(Meters)); //! Find
         talon.getConfigurator().apply(motionMagicConfigs);
     }
+    // find out if motion magic is dependent on the gear box or the motor
 
     /**
      * Sets the position of the elevator to a distance of height using the enum Positions within this classes constants file.
      * @param position position of the elavator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations(position.level, ElevatorK.gearRatio, Inches.of(0))); //what wheel?
+        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations(position.level, 1, ElevatorK.sprocketDiameter)); //what wheel?
         return runOnce(() -> talon.setControl(request))
         .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))); // stop when we reach set position
     }
 
+    /**
+     * Gets the current height of the elevator
+     * @return Height of the elevator as a Distance
+     */
     public Distance getPosition() {
-        return Encoder.toDistance(talon.getPosition().getValue(), ElevatorK.gearRatio, ElevatorK.wheelDiameter);
+        return Encoder.toDistance(talon.getPosition().getValue(), 1, ElevatorK.sprocketDiameter);
     }
 
     /**
-     * 
+     * Sets the volts of the motors
      * @param speed speed of the motor in volts
      */
-    public void setVoltage(Voltage speed) {
-        VoltageOut request = new VoltageOut(speed);
+    public void setVoltage(Voltage volts) {
+        VoltageOut request = new VoltageOut(volts);
         talon.setControl(request);
     }
 
+    /**
+     * Stops both motors
+     */
     public void stop() {
         talon.setControl(new NeutralOut());
     }

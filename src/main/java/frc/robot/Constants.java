@@ -68,7 +68,9 @@ public class Constants {
 
         public static final double gearRatio = 16;
 
-        public static final Distance wheelDiameter = Inches.of(0); //! Find
+        public static final Distance sprocketDiameter = Inches.of(0); //! Find
+
+        public static final int stageCount = 3;
 
         // Motion Magic Values
         public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0); //? do we want linear
@@ -88,7 +90,7 @@ public class Constants {
         public static final int kD = 0; //! Find
 
         // Configs
-        public static final FeedbackConfigs elevatorConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD);
 
         // Set Height Positions
@@ -97,8 +99,8 @@ public class Constants {
             L2(Field.levelTwoHeight.plus(reefOffset)),
             L3(Field.levelThreeHeight.plus(reefOffset)),
             L4(Field.levelFourHeight.plus(reefOffset)),
-            ALGAE_LOW(Field.algaeLowHeight.plus(reefOffset)),
-            ALGAE_HIGH(Field.algaeHighHeight.plus(reefOffset)),
+            ALGAE_LOW(Field.algaeLowHeight.plus(algaeOffset)),
+            ALGAE_HIGH(Field.algaeHighHeight.plus(algaeOffset)),
             STOW(ElevatorK.stowHeight), //! Find
             INTAKE(ElevatorK.intakeHeight); //! Find
     
