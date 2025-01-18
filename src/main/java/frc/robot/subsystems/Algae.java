@@ -29,8 +29,9 @@ public class Algae extends SubsystemBase {
 
     public Algae() {
         SparkMaxConfig config = new SparkMaxConfig();
+        // These conversion factors cause all values to be in reference to the mechanism instead of the motor
         config.encoder
-            .positionConversionFactor(1.0/AlgaeK.gearRatio)
+            .positionConversionFactor(1.0/AlgaeK.gearRatio) // Converts rotations of the motor into rotations of the mechanism
             .velocityConversionFactor(1.0/(AlgaeK.gearRatio*60.0)); // Divide by 60 to turn RPM into RPS
         config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -42,10 +43,19 @@ public class Algae extends SubsystemBase {
         sparkMax.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
     
+    /**
+     * Sets the voltage of the arm motor
+     * @param volts Voltage to set the arm motor to
+     * @return A command that finishes immediately and sets the voltage of the arm
+     */
     public Command setVoltage(Voltage volts) {
         return runOnce(() -> sparkMax.setVoltage(volts)).withName("Set Voltage");
     }
 
+    /**
+     * Commands the arm into the position to knock the algae off and waits until it's within the allowable error
+     * @return A command to put the arm in clear algae position
+     */
     public Command algaePosition() {
         return runOnce(() -> {
             sparkMax.getClosedLoopController().setReference(AlgaeK.algaePosition.in(Rotations), ControlType.kMAXMotionPositionControl);
@@ -54,6 +64,10 @@ public class Algae extends SubsystemBase {
         .withName("Clear Algae Position");
     }
 
+    /**
+     * Commands the arm into stow position and waits until it's within the allowable error
+     * @return A command to put the arm in stow position
+     */
     public Command stow() {
         return runOnce(() -> {
             sparkMax.getClosedLoopController().setReference(AlgaeK.stowPosition.in(Rotations), ControlType.kMAXMotionPositionControl);
@@ -62,6 +76,10 @@ public class Algae extends SubsystemBase {
         .withName("Stow");
     }
 
+    /**
+     * Runs the arm backwards until it hits the limit switch and zeroes the encoder
+     * @return A command to zero the arm
+     */
     public Command zero() {
         return setVoltage(AlgaeK.zeroingVoltage)
             .andThen(Commands.waitUntil(limitSwitch::get))
@@ -70,10 +88,17 @@ public class Algae extends SubsystemBase {
             .withName("Zero");
     }
 
+    /**
+     * Stops the arm from moving
+     */
     public void stop() {
         sparkMax.stopMotor();
     }
 
+    /**
+     * Returns the angle of the arm
+     * @return angle of the arm
+     */
     public Angle getAngle() {
         return Rotations.of(sparkMax.getEncoder().getPosition());
     }
