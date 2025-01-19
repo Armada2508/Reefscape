@@ -23,38 +23,38 @@ import frc.robot.lib.util.Encoder;
 import frc.robot.lib.util.Util;
 
 public class Elevator extends SubsystemBase {
+
     private final TalonFX talon = new TalonFX(ElevatorK.elevatorID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.followID);
 
     public Elevator() {
+        configTalons();
         configMotionMagic(ElevatorK.velocity, ElevatorK.acceleration);
-        configTalon();
     }
 
-    private void configTalon() {
-        Util.factoryReset(talon);
+    private void configTalons() {
+        Util.factoryReset(talon, talonFollow);
         Util.brakeMode(talon, talonFollow);
         talonFollow.setControl(new StrictFollower(talon.getDeviceID()));
         talon.getConfigurator().apply(ElevatorK.gearRatioConfig);
-        talon.getConfigurator().apply(ElevatorK.pidConfig); // applies PID constants, still need to tunee
+        talon.getConfigurator().apply(ElevatorK.pidConfig);
     }
 
     private void configMotionMagic(LinearVelocity velocity, LinearAcceleration acceleration) {
         MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motionMagicConfigs.MotionMagicCruiseVelocity = (velocity.in(MetersPerSecond) / ElevatorK.stageCount) / (Math.PI * ElevatorK.sprocketDiameter.in(Meters));
-        motionMagicConfigs.MotionMagicAcceleration = (acceleration.in(MetersPerSecondPerSecond) / ElevatorK.stageCount) / (Math.PI * ElevatorK.sprocketDiameter.in(Meters)); //! Find
+        motionMagicConfigs.MotionMagicAcceleration = (acceleration.in(MetersPerSecondPerSecond) / ElevatorK.stageCount) / (Math.PI * ElevatorK.sprocketDiameter.in(Meters));
         talon.getConfigurator().apply(motionMagicConfigs);
     }
-    // find out if motion magic is dependent on the gear box or the motor
 
     /**
      * Sets the position of the elevator to a distance of height using the enum Positions within this classes constants file.
      * @param position position of the elavator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations((position.level.div(ElevatorK.stageCount)), 1, ElevatorK.sprocketDiameter)); //what wheel?
+        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations(position.level.div(ElevatorK.stageCount), 1, ElevatorK.sprocketDiameter));
         return runOnce(() -> talon.setControl(request))
-        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))); // stop when we reach set position
+        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))); // end command when we reach set position
     }
 
     /**

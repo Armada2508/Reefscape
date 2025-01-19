@@ -64,8 +64,8 @@ public class Constants {
 
     public static class ElevatorK {
         // Motor ID's
-        public static final int elevatorID = 0; // ! make correct
-        public static final int followID = 0; // ! make correct
+        public static final int elevatorID = 0; //! Find
+        public static final int followID = 0; //! Find
 
         public static final double gearRatio = 16;
 
@@ -74,8 +74,8 @@ public class Constants {
         public static final int stageCount = 3;
 
         // Motion Magic Values
-        public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0); //? do we want linear
-        public static final LinearVelocity velocity = MetersPerSecond.of(0); //? same question
+        public static final LinearVelocity velocity = MetersPerSecond.of(0);
+        public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0);
 
         // Elevator-relative heights
         public static final Distance stowHeight = Inches.of(0); //! Find
@@ -87,9 +87,9 @@ public class Constants {
         public static final Distance algaeOffset = Inches.of(0); //! Find
 
         // PID Constants
-        public static final int kP = 0; //! Find
-        public static final int kD = 0; //! Find
-        public static final int kG = 0; //! Find
+        public static final double kP = 0; //! Find
+        public static final double kD = 0; //! Find
+        public static final double kG = 0; //! Find
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
@@ -108,7 +108,7 @@ public class Constants {
     
             public final Distance level;
     
-            Positions(Distance position) {
+            private Positions(Distance position) {
                 this.level = position;
             }
         }
