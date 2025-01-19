@@ -18,14 +18,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.lib.logging.TalonFXLogger;
-import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Swerve;
 
 @Logged
 public class Robot extends TimedRobot {
     
     private final Swerve swerve = new Swerve();
-    private final Algae algae = new Algae();
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     
     public Robot() {
@@ -64,7 +62,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         swerve.stop();
-        algae.stop();
     }
     
 }
