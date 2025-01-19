@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
@@ -31,8 +32,14 @@ public class Algae extends SubsystemBase {
         SparkMaxConfig config = new SparkMaxConfig();
         // These conversion factors cause all values to be in reference to the mechanism instead of the motor
         config.encoder
-            .positionConversionFactor(1.0/AlgaeK.gearRatio) // Converts rotations of the motor into rotations of the mechanism
-            .velocityConversionFactor(1.0/(AlgaeK.gearRatio*60.0)); // Divide by 60 to turn RPM into RPS
+            .positionConversionFactor(1.0 / AlgaeK.gearRatio) // Converts rotations of the motor into rotations of the mechanism
+            .velocityConversionFactor(1.0 / (AlgaeK.gearRatio * 60.0)); // Divide by 60 to turn RPM into RPS
+        config.idleMode(IdleMode.kBrake);
+        config.softLimit //? The docs are unclear whether these limits are affected by the conversion factors
+            .forwardSoftLimit(AlgaeK.maxPosition.in(Rotations))
+            .forwardSoftLimitEnabled(true)
+            .reverseSoftLimit(AlgaeK.zeroPosition.in(Rotations))
+            .reverseSoftLimitEnabled(true);
         config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(AlgaeK.kP, 0, AlgaeK.kD)

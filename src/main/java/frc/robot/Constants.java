@@ -126,10 +126,11 @@ public class Constants {
         public static final double gearRatio = 50;
         public static final Voltage zeroingVoltage = Volts.of(-1.5);
 
+        public static final Angle maxPosition = Degrees.of(120);
         public static final Angle algaePosition = Degrees.of(0);
         public static final Angle stowPosition = Degrees.of(0);
         public static final Angle zeroPosition = Degrees.of(0);
-        public static final Angle allowableError = Degrees.of(0);
+        public static final Angle allowableError = Degrees.of(1);
 
         public static final double kP = 0;
         public static final double kD = 0;
