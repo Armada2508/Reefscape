@@ -44,7 +44,7 @@ public class Constants {
             }
         }
 
-        public static final PIDConstants angularPID = new PIDConstants(5, 0, 0.5); // kP = degrees/second per degree
+        public static final PIDConstants angularPID = new PIDConstants(5, 0, 0.2); // kP = degrees/second per degree
         public static final Angle angularDeadband = Degrees.of(2);
 
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");

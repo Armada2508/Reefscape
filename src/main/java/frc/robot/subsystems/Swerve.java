@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
@@ -105,6 +106,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             drive(Translation2d.kZero, velocity, true, false);
         }, this::stop))
         .until(rotationPIDController::atSetpoint)
+        .withTimeout(Seconds.of(2))
         .withName("Swerve Turn");
     }
 
@@ -116,7 +118,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @param isOpenLoop Whether it uses a closed loop velocity control or an open loop
      */
     private void drive(Translation2d translation, AngularVelocity rotation, boolean fieldRelative, boolean isOpenLoop) {
-        swerveDrive.drive(translation, rotation.in(RadiansPerSecond), fieldRelative, isOpenLoop, Translation2d.kZero);
+        swerveDrive.drive(translation, rotation.in(RadiansPerSecond), fieldRelative, isOpenLoop);
     }
 
     public void stop() {
