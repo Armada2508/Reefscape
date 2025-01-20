@@ -23,6 +23,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveK;
@@ -47,9 +48,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             throw new RuntimeException("Swerve directory not found.");
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
-        rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees));
+        rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees), SwerveK.angularVelocityDeadband.in(DegreesPerSecond));
         rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
         setupPathPlanner();
+        SmartDashboard.putData(rotationPIDController);
     }
 
     @Override
@@ -100,8 +102,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return runOnce(() -> {
             rotationPIDController.reset();
             rotationPIDController.setSetpoint(target.in(Degrees));
+            SmartDashboard.putNumber("Reference", target.in(Degrees));
         })
         .andThen(runEnd(() -> {
+            SmartDashboard.putNumber("Current", getHeading().in(Degrees));
             AngularVelocity velocity = DegreesPerSecond.of(rotationPIDController.calculate(getHeading().in(Degrees)));
             drive(Translation2d.kZero, velocity, true, false);
         }, this::stop))
