@@ -12,6 +12,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -23,6 +24,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -171,18 +173,40 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     /**
      * Set the speed of the robot with closed loop velocity control
-     * @param chassisSpeeds to set speed with
+     * @param chassisSpeeds to set speed with (robot relative)
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
         swerveDrive.setChassisSpeeds(chassisSpeeds);
     }
 
     /**
-     * Returns the robot's heading as an Angle
+     * Returns the robot's heading as an Angle wrapped between -180 and 180
      * @return The heading of the robot
      */
     public Angle getHeading() {
         return getPose().getRotation().getMeasure();
+    }
+
+    /**
+     * Returns the gyro's yaw, not wrapped
+     * @return The yaw of the gyro
+     */
+    public Angle getYaw() {
+        return ((Pigeon2) swerveDrive.getGyro().getIMU()).getYaw().getValue();
+    }
+
+    /**
+     * Returns the positions of each drive wheel in radians, front left -> front right -> back left -> back right.
+     * @return
+     */
+    public double[] getWheelPositions() {
+        var modulePositions = swerveDrive.getModulePositions();
+        double[] wheelPositions = new double[modulePositions.length];
+        for (int i = 0; i < modulePositions.length; i++) {
+            double diameter = Units.inchesToMeters(swerveDrive.swerveDriveConfiguration.physicalCharacteristics.conversionFactor.drive.diameter);
+            wheelPositions[i] = Units.rotationsToRadians(modulePositions[i].distanceMeters / (diameter * Math.PI));
+        }
+        return wheelPositions;
     }
 
     public String getCurrentCommandName() {

@@ -22,7 +22,7 @@ public class Constants {
 
     public static class SwerveK {
         public static final Distance wheelDiameter = Inches.of(3); 
-        public static final Distance driveBaseRadius = Inches.of(12.75);
+        public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
 
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
