@@ -171,12 +171,20 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return cmd.getName();
     }
 
+    public TalonFX frontLeft() {
+        return (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
+    }
+
     public TalonFX frontRight() {
-        for (var module : swerveDrive.getModules()) {
-            var talon = (TalonFX) module.getDriveMotor().getMotor();
-            if (talon.getDeviceID() == 1) return talon;
-        }
         return (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
+    }
+
+    public TalonFX backLeft() {
+        return (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
+    }
+
+    public TalonFX backRight() {
+        return (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
     }
 
     /**
