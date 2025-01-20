@@ -54,31 +54,29 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             throw new RuntimeException("Swerve directory not found.");
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
-        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(0.10431, 2.0967, 0.055428));
+        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(SwerveK.kS, SwerveK.kV, SwerveK.kA));
         rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees));
         rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
+        sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,        // Use default ramp rate (1 V/s)
+                Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
+                null,        // Use default timeout (10 s)
+                            // Log state with Phoenix SignalLogger class
+                (state) -> SignalLogger.writeString("state", state.toString())
+            ),
+            new SysIdRoutine.Mechanism(
+                (volts) -> {
+                    for (var module : swerveDrive.getModules()) {
+                        var motor = (TalonFXSwerve) module.getDriveMotor();
+                        ((TalonFX) motor.getMotor()).setControl(new VoltageOut(volts));
+                    }
+                },
+                null,
+                this
+            )
+        );
         setupPathPlanner();
-
-        sysIdRoutine = 
-            new SysIdRoutine(
-                new SysIdRoutine.Config(
-                    null,        // Use default ramp rate (1 V/s)
-                    Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
-                    null,        // Use default timeout (10 s)
-                                // Log state with Phoenix SignalLogger class
-                    (state) -> SignalLogger.writeString("state", state.toString())
-                ),
-                new SysIdRoutine.Mechanism(
-                    (volts) -> {
-                        for (var module : swerveDrive.getModules()) {
-                            var motor = (TalonFXSwerve) module.getDriveMotor();
-                            ((TalonFX) motor.getMotor()).setControl(new VoltageOut(volts));
-                        }
-                    },
-                    null,
-                    this
-                )
-            );
     }
 
     @Override
@@ -208,7 +206,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public void zeroGyro() {
         swerveDrive.zeroGyro();
     }
-
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return sysIdRoutine.quasistatic(direction);
