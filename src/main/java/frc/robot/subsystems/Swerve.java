@@ -40,10 +40,15 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
+@SuppressWarnings("unused")
 @Logged
 public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
 
     private final SwerveDrive swerveDrive;
+    private final TalonFX frontLeft;
+    private final TalonFX frontRight;
+    private final TalonFX backLeft;
+    private final TalonFX backRight;
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
     private final SysIdRoutine sysIdRoutine; 
 
@@ -58,6 +63,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
         swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(SwerveK.kS, SwerveK.kV, SwerveK.kA));
+        frontLeft = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
+        frontRight = (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
+        backLeft = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
+        backRight = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
         rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees));
         rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
         sysIdRoutine = new SysIdRoutine(
@@ -215,22 +224,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         var cmd = getCurrentCommand();
         if (cmd == null) return "None";
         return cmd.getName();
-    }
-
-    public TalonFX frontLeft() {
-        return (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
-    }
-
-    public TalonFX frontRight() {
-        return (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
-    }
-
-    public TalonFX backLeft() {
-        return (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
-    }
-
-    public TalonFX backRight() {
-        return (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
     }
 
     /**
