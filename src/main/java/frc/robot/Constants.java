@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
 
@@ -115,9 +117,14 @@ public class Constants {
     }  
 
     public static class IntakeK {
-        public static final int motorId = 0; //find
-        public static final int followId = 1; //find
+        // Motor ID
+        public static final int motorLeftId = 0; //! find
+        public static final int motorRightId = 1; //! find
 
+        public static final Voltage levelOneVolts = Volts.of(4);
+        public static final Voltage coralIntakeVolts = Volts.of(8);
+        public static final Voltage levelTwoThreeVolts = Volts.of(5);
+        public static final Voltage levelFourVolts = Volts.of(5);
     }
     
 }

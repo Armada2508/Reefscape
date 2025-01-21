@@ -4,7 +4,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.units.measure.Voltage;
@@ -14,46 +13,61 @@ import frc.robot.Constants.IntakeK;
 
 public class Intake extends SubsystemBase {
     
-    SparkMax motorLeader = new SparkMax(IntakeK.motorId, MotorType.kBrushless);
-    SparkMax motorFollower = new SparkMax(IntakeK.motorId, MotorType.kBrushless);
+    private final SparkMax motorLeft = new SparkMax(IntakeK.motorLeftId, MotorType.kBrushless);
+    private final SparkMax motorRight = new SparkMax(IntakeK.motorRightId, MotorType.kBrushless);
 
     public Intake() {
         configSparkMax();
     }
 
     public void configSparkMax() {
-        SparkMaxConfig motorLeaderConfig = new SparkMaxConfig();
-        SparkMaxConfig motorFollowerConfig = new SparkMaxConfig();  // MAKE THIS NOT FOLLOW
+        SparkMaxConfig motorLeftConfig = new SparkMaxConfig();
+        SparkMaxConfig motorRightConfig = new SparkMaxConfig();
 
-        motorFollowerConfig.follow(motorLeader); //! Update / Finish
-        motorLeaderConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder); //! Update / Finish
-
-        motorLeader.configure(motorLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        motorFollower.configure(motorFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motorLeft.configure(motorLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motorRight.configure(motorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public Command coralIntake(Voltage volts) {
-        return runOnce(() -> motorLeader.setVoltage(volts));
+    public Command coralIntake() {
+        return runOnce(() -> {
+            motorLeft.setVoltage(IntakeK.coralIntakeVolts);
+            motorRight.setVoltage(IntakeK.coralIntakeVolts);
+        });
+        
     }
 
-    public Command scoreLevelOne(Voltage volts) {
-        return runOnce(() -> motorLeader.setVoltage(volts)); //MAKE THIS TAKE IN NEGATIVE VOLTS
+    public Command scoreLevelOne() {
+        return runOnce(() -> {
+            motorLeft.setVoltage(IntakeK.levelOneVolts); //MAKE THIS TAKE IN NEGATIVE VOLTS
+            motorRight.setVoltage(IntakeK.levelOneVolts.unaryMinus()); //opposite of motorLeft
+        });
     }
 
-    public void scoreLevelTwoThree() {
+    public Command scoreLevelTwoThree() {
+        return runOnce(() -> {
+            motorLeft.setVoltage(IntakeK.levelTwoThreeVolts);
+            motorRight.setVoltage(IntakeK.levelTwoThreeVolts);
+        });
 
     }
 
-    public void scoreLevelFour() {
-
+    public Command scoreLevelFour() {
+        return runOnce (() -> {
+            motorLeft.setVoltage(IntakeK.levelFourVolts);
+            motorRight.setVoltage(IntakeK.levelFourVolts);
+        });
     }
 
-    public void setSpeed() {
-
+    public Command setVoltage(Voltage volts) {
+        return runOnce (() -> {
+            motorLeft.setVoltage(volts);
+            motorRight.setVoltage(volts);
+        });
     }
 
     public void stop() {
-
+        motorLeft.stopMotor();
+        motorRight.stopMotor();
     }
 
 }
