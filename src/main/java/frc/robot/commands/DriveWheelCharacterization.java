@@ -5,8 +5,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,13 +17,11 @@ import frc.robot.subsystems.Swerve;
 public class DriveWheelCharacterization extends Command {
     
     private final Swerve swerve;
-    private final BooleanSupplier cancelCondition;
     private double[] initialWheelPositions;
     private Angle initialYaw;
     
-    public DriveWheelCharacterization(Swerve swerve, BooleanSupplier cancelCondition) {
+    public DriveWheelCharacterization(Swerve swerve) {
         this.swerve = swerve;
-        this.cancelCondition = cancelCondition;
         addRequirements(this.swerve);
     }
 
@@ -38,11 +34,6 @@ public class DriveWheelCharacterization extends Command {
     @Override
     public void execute() {
         swerve.setChassisSpeeds(new ChassisSpeeds(MetersPerSecond.zero(), MetersPerSecond.zero(), DegreesPerSecond.of(45)));
-    }
-
-    @Override
-    public boolean isFinished() {
-        return cancelCondition.getAsBoolean();
     }
 
     @Override

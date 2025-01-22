@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
         // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.leftTrigger().onTrue(new DriveWheelCharacterization(swerve, xboxController.leftBumper()));
+        // xboxController.leftTrigger().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
     
     @Override

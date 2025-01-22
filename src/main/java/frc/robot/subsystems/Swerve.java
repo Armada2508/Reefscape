@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SwerveK;
+import frc.robot.commands.DriveWheelCharacterization;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
 import swervelib.parser.SwerveParser;
@@ -241,6 +242,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return sysIdRoutine.dynamic(direction);
+    }
+
+    public Command characterizeDriveWheelDiameter() {
+        return new DriveWheelCharacterization(this);
     }
 
 }
