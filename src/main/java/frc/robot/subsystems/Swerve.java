@@ -30,6 +30,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -69,7 +70,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         frontRight = (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
         backLeft = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
         backRight = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
-        rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees));
+        rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees), SwerveK.angularVelocityDeadband.in(DegreesPerSecond));
         rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
         sysIdRoutine = new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -91,6 +92,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             )
         );
         setupPathPlanner();
+        SmartDashboard.putData(rotationPIDController);
     }
 
     @Override
@@ -135,8 +137,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return runOnce(() -> {
             rotationPIDController.reset();
             rotationPIDController.setSetpoint(target.in(Degrees));
+            SmartDashboard.putNumber("Reference", target.in(Degrees));
         })
         .andThen(runEnd(() -> {
+            SmartDashboard.putNumber("Current", getHeading().in(Degrees));
             AngularVelocity velocity = DegreesPerSecond.of(rotationPIDController.calculate(getHeading().in(Degrees)));
             drive(Translation2d.kZero, velocity, true, false);
         }, this::stop))
