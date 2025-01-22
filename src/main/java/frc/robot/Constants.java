@@ -19,7 +19,6 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
-import com.revrobotics.spark.config.SoftLimitConfig;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -30,6 +29,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
+import frc.robot.lib.util.Encoder;
 
 public class Constants {
 
@@ -82,17 +82,18 @@ public class Constants {
         public static final int elevatorID = 0;
         public static final int followID = 0;
 
-        public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(ElevatorK.maxHeight.in(Inches))
-        .withReverseSoftLimitThreshold(ElevatorK.minHeight.in(Inches));
-
         public static final double gearRatio = 16;
 
         public static final Distance sprocketDiameter = Inches.of(0); //! Find
 
         public static final int stageCount = 3;
+
+        public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withReverseSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
+        .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
+
 
         // Motion Magic Values
         public static final LinearVelocity velocity = MetersPerSecond.of(0);
