@@ -15,9 +15,11 @@ import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
+import com.revrobotics.spark.config.SoftLimitConfig;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -70,9 +72,15 @@ public class Constants {
     }
 
     public static class ElevatorK {
-        // Motor ID's
-        public static final int elevatorID = 0; //! Find
-        public static final int followID = 0; //! Find
+        //! Motor ID's, Find these values
+        public static final int elevatorID = 0;
+        public static final int followID = 0;
+
+        public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withReverseSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(ElevatorK.maxHeight.in(Inches))
+        .withReverseSoftLimitThreshold(ElevatorK.minHeight.in(Inches));
 
         public static final double gearRatio = 16;
 
@@ -84,34 +92,36 @@ public class Constants {
         public static final LinearVelocity velocity = MetersPerSecond.of(0);
         public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0);
 
-        // Elevator-relative heights
-        public static final Distance stowHeight = Inches.of(0); //! Find
-        public static final Distance intakeHeight = Inches.of(0); //! Find
-        public static final Distance allowableError = Inches.of(0); //! Find
+        //! Elevator-relative heights, Find all these values
+        public static final Distance stowHeight = Inches.of(0);
+        public static final Distance intakeHeight = Inches.of(0);
+        public static final Distance allowableError = Inches.of(0);
+        public static final Distance minHeight = Inches.of(0); //! Should be 0
+        public static final Distance maxHeight = Inches.of(0);
 
-        // Height Offsets
-        public static final Distance reefOffset = Inches.of(0); //! Find
-        public static final Distance algaeOffset = Inches.of(0); //! Find
+        //! Height Offsets, Find both
+        public static final Distance reefOffset = Inches.of(0); 
+        public static final Distance algaeOffset = Inches.of(0);
 
-        // PID Constants
-        public static final double kP = 0; //! Find
-        public static final double kD = 0; //! Find
-        public static final double kG = 0; //! Find
+        //! PID Constants, Tune all
+        public static final double kP = 0; 
+        public static final double kD = 0; 
+        public static final double kG = 0; 
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD).withKG(kG).withGravityType(GravityTypeValue.Elevator_Static);
 
-        // Set Height Positions
+        //? Set Height Positions, Possible Tune of these
         public enum Positions {
-            L1(Field.levelOneHeight.plus(reefOffset)), //! Possible tune
+            L1(Field.levelOneHeight.plus(reefOffset)),
             L2(Field.levelTwoHeight.plus(reefOffset)),
             L3(Field.levelThreeHeight.plus(reefOffset)),
             L4(Field.levelFourHeight.plus(reefOffset)),
             ALGAE_LOW(Field.algaeLowHeight.plus(algaeOffset)),
             ALGAE_HIGH(Field.algaeHighHeight.plus(algaeOffset)),
-            STOW(ElevatorK.stowHeight), //! Find
-            INTAKE(ElevatorK.intakeHeight); //! Find
+            STOW(ElevatorK.stowHeight),
+            INTAKE(ElevatorK.intakeHeight);
     
             public final Distance level;
     
