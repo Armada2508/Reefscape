@@ -9,6 +9,9 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -27,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveK;
+import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -37,13 +41,14 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
 
     private final SwerveDrive swerveDrive;
+    private final Supplier<VisionResults> visionSource;
     private final TalonFX frontLeft;
     private final TalonFX frontRight;
     private final TalonFX backLeft;
     private final TalonFX backRight;
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
 
-    public Swerve() {
+    public Swerve(Supplier<VisionResults> visionSource) {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
         try {
@@ -53,6 +58,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             throw new RuntimeException("Swerve directory not found.");
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
+        this.visionSource = visionSource;
         frontLeft = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
         frontRight = (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
         backLeft = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
@@ -64,7 +70,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        for (var result : visionSource.get().results()) {
+            EstimatedRobotPose pose = result.getFirst();
+            swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
+        }
+    }
 
     /**
      * Configures PathPlanner
