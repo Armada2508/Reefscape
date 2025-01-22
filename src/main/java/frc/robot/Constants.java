@@ -149,4 +149,14 @@ public class Constants {
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
     }
     
+
+    public static class ClimbK {
+        //Motors
+        public static final int rMotorID = 4;
+        public static final int frMotorID = 5;
+
+        //Positions/Angles
+        public static final Angle startingAngle = Degrees.of(0);
+        public static final Angle turnLimit = Degrees.of(90);
+    }
 }
