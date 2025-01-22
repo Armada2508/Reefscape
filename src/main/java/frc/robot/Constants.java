@@ -26,7 +26,7 @@ import frc.robot.lib.util.DynamicSlewRateLimiter;
 public class Constants {
 
     public static class SwerveK {
-        public static final Distance wheelDiameter = Inches.of(3); 
+        public static final Distance wheelDiameter = Inches.of(2.7); 
         public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
 
         public static final double steerGearRatio = 41.25; 
