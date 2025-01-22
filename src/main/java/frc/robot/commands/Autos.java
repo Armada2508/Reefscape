@@ -18,6 +18,7 @@ public class Autos {
 
     public static SendableChooser<Command> initPathPlanner(Swerve swerve) {
         FollowPathCommand.warmupCommand().schedule();
+        // These are left here for reference for when we have our subsystems to coordinate in Auto
         NamedCommands.registerCommand("score coral", Commands.print("Scoring CORAL!").andThen(Commands.waitSeconds(2)));
         NamedCommands.registerCommand("intake coral", Commands.print("Intaking CORAL!").andThen(Commands.waitSeconds(2)));
         new EventTrigger("raise elevator").onTrue(Commands.print("Raising Elevator!"));
