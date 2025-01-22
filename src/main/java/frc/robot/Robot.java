@@ -7,24 +7,18 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.events.EventTrigger;
-
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.commands.Autos;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Swerve;
 
@@ -46,16 +40,8 @@ public class Robot extends TimedRobot {
             true
         ).withName("Swerve Drive Field Oriented");
         swerve.setDefaultCommand(driveFieldOriented);
-        FollowPathCommand.warmupCommand().schedule();
-
-        // var trigger = new EventTrigger("score coral").onTrue(Commands.print("Scoring CORAL!").andThen(Commands.waitSeconds(3)));
-        // var trigger2 = new EventTrigger("intake coral").onTrue(Commands.print("Intaking CORAL!").andThen(Commands.waitSeconds(2)));
-        NamedCommands.registerCommand("score coral", Commands.print("Scoring CORAL!").andThen(Commands.waitSeconds(2)));
-        NamedCommands.registerCommand("intake coral", Commands.print("Intaking CORAL!").andThen(Commands.waitSeconds(2)));
-        new EventTrigger("raise elevator").onTrue(Commands.print("Raising Elevator!"));
-        autoChooser = AutoBuilder.buildAutoChooser("Score 2 CORAL");
-        SmartDashboard.putData("Auto Chooser", autoChooser);
         configureBindings();
+        autoChooser = Autos.initPathPlanner(swerve);
     }
 
     private void configureBindings() {

@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SwerveK;
 import frc.robot.subsystems.Swerve;
 
+/**
+ * Taken from https://github.com/Mechanical-Advantage/RobotCode2024/blob/main/src/main/java/org/littletonrobotics/frc2024/commands/WheelRadiusCharacterization.java
+ */
 public class DriveWheelCharacterization extends Command {
     
     private final Swerve swerve;
