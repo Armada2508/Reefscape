@@ -49,8 +49,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX frontRight;
     private final TalonFX backLeft;
     private final TalonFX backRight;
-    private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
     private final SysIdRoutine sysIdRoutine; 
+    private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
+    private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
 
     public Swerve() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -103,7 +104,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             this::resetOdometry, 
             this::getRobotVelocity, 
             (speeds, feedforward) -> setChassisSpeeds(speeds), 
-            new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants),
+            pathPlannerController,
             SwerveK.robotConfig,
             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, 
             this);
