@@ -34,16 +34,22 @@ import frc.robot.lib.util.DynamicSlewRateLimiter;
 public class Constants {
 
     public static class SwerveK {
-        public static final Distance wheelDiameter = Inches.of(3); 
-        public static final Distance driveBaseRadius = Inches.of(12.75);
+        public static final Distance wheelDiameter = Inches.of(2.7); 
+        public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
 
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(5.426);
 
-        public static final PIDConstants translationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune
-        public static final PIDConstants rotationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune
+        // Drive Feedforward
+        public static final double kS = 0.10431;
+        public static final double kV = 2.0967;
+        public static final double kA = 0.055428;
+
+        // PathPlanner
+        public static final PIDConstants translationConstants = new PIDConstants(5, 0, 0);
+        public static final PIDConstants rotationConstants = new PIDConstants(5, 0, 0);
         public static RobotConfig robotConfig; static {
             try {
                 robotConfig = RobotConfig.fromGUISettings();
