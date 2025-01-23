@@ -28,21 +28,29 @@ import frc.robot.Field;
 public class Vision extends SubsystemBase {
 
     private final PhotonCamera frontCamera = new PhotonCamera(VisionK.frontCameraName);
-    private final PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape), PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToCamera);
+    private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
+    private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape), PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.frontRobotToCamera);
+    private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape), PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.backRobotToCamera);
 
     public VisionResults getVisionResults() {
         List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
-        var results = frontCamera.getAllUnreadResults();
+        visionResults.addAll(processResults(frontCamera.getAllUnreadResults(), frontPoseEstimator));
+        visionResults.addAll(processResults(backCamera.getAllUnreadResults(), backPoseEstimator));
+        return new VisionResults(visionResults);
+    }
+
+    private List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> processResults(List<PhotonPipelineResult> results, PhotonPoseEstimator poseEstimator) {
+        List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
         for (var result : results) {
             poseEstimator.update(result).ifPresent((pose) -> {
                 if (isValidPose(pose)) {
-                    var stdDevs = getStdDevs(result, pose);
+                    var stdDevs = getStdDevs(result, pose, poseEstimator);
                     SmartDashboard.putNumberArray("Standard Deviations", stdDevs.getData());
                     visionResults.add(Pair.of(pose, stdDevs));
                 }
             });
         }
-        return new VisionResults(visionResults);
+        return visionResults;
     }
 
     private boolean isValidPose(EstimatedRobotPose pose) {
@@ -55,7 +63,7 @@ public class Vision extends SubsystemBase {
             && pose3d.getMeasureZ().lte(VisionK.maxPoseZ);
     }
 
-    private Matrix<N3, N1> getStdDevs(PhotonPipelineResult result, EstimatedRobotPose pose) {
+    private Matrix<N3, N1> getStdDevs(PhotonPipelineResult result, EstimatedRobotPose pose, PhotonPoseEstimator poseEstimator) {
         int numTags = 0;
         double avgDistMeters = 0; 
         for (var target : result.getTargets()) {
