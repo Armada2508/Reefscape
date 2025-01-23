@@ -16,10 +16,10 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
@@ -36,7 +36,9 @@ public class Vision extends SubsystemBase {
         for (var result : results) {
             poseEstimator.update(result).ifPresent((pose) -> {
                 if (isValidPose(pose)) {
-                    visionResults.add(Pair.of(pose, getStdDevs(result, pose)));
+                    var stdDevs = getStdDevs(result, pose);
+                    SmartDashboard.putNumberArray("Standard Deviations", stdDevs.getData());
+                    visionResults.add(Pair.of(pose, stdDevs));
                 }
             });
         }
@@ -53,9 +55,23 @@ public class Vision extends SubsystemBase {
             && pose3d.getMeasureZ().lte(VisionK.maxPoseZ);
     }
 
-    // TODO: Implement this function
     private Matrix<N3, N1> getStdDevs(PhotonPipelineResult result, EstimatedRobotPose pose) {
-        return VecBuilder.fill(0, 0, 0);
+        int numTags = 0;
+        double avgDistMeters = 0; 
+        for (var target : result.getTargets()) {
+            var tagPose = poseEstimator.getFieldTags().getTagPose(target.getFiducialId());
+            if (tagPose.isEmpty()) continue;
+            numTags++;
+            avgDistMeters += tagPose.get().toPose2d().getTranslation().getDistance(pose.estimatedPose.getTranslation().toTranslation2d());
+        }
+        avgDistMeters /= numTags;
+        SmartDashboard.putNumber("Average Distance to Tag (in.)", Units.metersToInches(avgDistMeters)); // Robot Frame
+        double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
+        if (numTags == 0) return VisionK.untrustedStdDevs;
+        if (numTags == 1) {
+            return VisionK.singleTagStdDevs.times(stdevScalar);
+        }
+        return VisionK.multiTagStdDevs.times(stdevScalar);
     }
 
     public boolean isCameraConnected() {

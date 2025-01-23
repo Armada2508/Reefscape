@@ -26,6 +26,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -167,7 +168,10 @@ public class Constants {
         public static final Transform3d robotToCamera = new Transform3d(Inches.of(0), Inches.of(0), Inches.of(0), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);
-        // Vision Standard Deviations
+        public static final Distance baseLineAverageTagDistance = Inches.of(80);
+        // Vision Standard Deviations (Meters, Meters, Radians)
+        public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(6), Units.feetToMeters(6), Units.degreesToRadians(360));
+        public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(45));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
     
