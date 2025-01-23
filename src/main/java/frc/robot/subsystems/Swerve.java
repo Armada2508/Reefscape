@@ -71,6 +71,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     @Override
     public void periodic() {
+        // TODO: Need to set position of robot to first vision measurement on startup
+        // swerveDrive.resetOdometry(pose);
         for (var result : visionSource.get().results()) {
             EstimatedRobotPose pose = result.getFirst();
             swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
