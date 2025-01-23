@@ -35,6 +35,7 @@ public class Algae extends SubsystemBase {
             .positionConversionFactor(1.0 / AlgaeK.gearRatio) // Converts rotations of the motor into rotations of the mechanism
             .velocityConversionFactor(1.0 / (AlgaeK.gearRatio * 60.0)); // Divide by 60 to turn RPM into RPS
         config.idleMode(IdleMode.kBrake);
+        config.smartCurrentLimit(AlgaeK.currentLimit);
         config.softLimit // It's a little unclear if these limits are affected by the conversion factor but it seems like they're not
             .forwardSoftLimit(AlgaeK.maxPosition.in(Rotations) * AlgaeK.gearRatio)
             .forwardSoftLimitEnabled(true)
