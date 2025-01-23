@@ -38,8 +38,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SwerveK;
-import frc.robot.subsystems.Vision.VisionResults;
 import frc.robot.commands.DriveWheelCharacterization;
+import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
 import swervelib.parser.SwerveParser;
@@ -59,6 +59,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final SysIdRoutine sysIdRoutine; 
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
+    private boolean initializedOdometryFromVision = false;
 
     public Swerve(Supplier<VisionResults> visionSource) {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -103,10 +104,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     @Override
     public void periodic() {
-        // TODO: Need to set position of robot to first vision measurement on startup
-        // swerveDrive.resetOdometry(pose);
         for (var result : visionSource.get().results()) {
             EstimatedRobotPose pose = result.getFirst();
+            if (!initializedOdometryFromVision) {
+                resetOdometry(pose.estimatedPose.toPose2d());
+                initializedOdometryFromVision = true;
+                continue;
+            }
             swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
         }
     }
