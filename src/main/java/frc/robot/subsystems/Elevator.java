@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -22,6 +23,7 @@ import frc.robot.Constants.ElevatorK;
 import frc.robot.lib.util.Encoder;
 import frc.robot.lib.util.Util;
 
+@Logged
 public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.elevatorID);

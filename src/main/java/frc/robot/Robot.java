@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.commands.Autos;
+import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Swerve;
 
@@ -31,8 +33,11 @@ public class Robot extends TimedRobot {
     
     public Robot() {
         DriverStation.silenceJoystickConnectionWarning(true);
-        Epilogue.bind(this);
-        TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero());
+        Epilogue.bind(this); // Should be configured for Network Tables or DataLog
+        LogUtil.logDriverStation(this); // Network Tables
+        LogUtil.logCommandInterrupts(DataLogManager.getLog()); // Network Tables & DataLog
+        DriverStation.startDataLog(DataLogManager.getLog()); // DataLog
+        TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
