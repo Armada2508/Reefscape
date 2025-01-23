@@ -143,6 +143,7 @@ public class Constants {
         public static final int limitSwitchID = 0;
         public static final double gearRatio = 50;
         public static final Voltage zeroingVoltage = Volts.of(-1.5);
+        public static final int currentLimit = 20;
 
         public static final Angle maxPosition = Degrees.of(120);
         public static final Angle algaePosition = Degrees.of(0);
