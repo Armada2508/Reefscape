@@ -117,12 +117,16 @@ public class Constants {
     }  
 
     public static class IntakeK {
-        // Motor ID
+        // IDs
         public static final int motorLeftId = 0; //! find
         public static final int motorRightId = 1; //! find
+        public static final int timeOfFlightId = 2; //! find
+
+        public static final Distance coralDetectionRange = Inches.of(0);  //! find
+
+        public static final Voltage coralIntakeVolts = Volts.of(8);
 
         public static final Voltage levelOneVolts = Volts.of(4);
-        public static final Voltage coralIntakeVolts = Volts.of(8);
         public static final Voltage levelTwoThreeVolts = Volts.of(5);
         public static final Voltage levelFourVolts = Volts.of(5);
     }
