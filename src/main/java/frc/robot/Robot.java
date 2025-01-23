@@ -12,11 +12,13 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.commands.Autos;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -27,12 +29,12 @@ public class Robot extends TimedRobot {
     private final Vision vision = new Vision();
     private final Swerve swerve = new Swerve(vision::getVisionResults);
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
+    private final SendableChooser<Command> autoChooser;
     
     public Robot() {
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this);
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero());
-        configureBindings();
         Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
@@ -40,11 +42,13 @@ public class Robot extends TimedRobot {
             true
         ).withName("Swerve Drive Field Oriented");
         swerve.setDefaultCommand(driveFieldOriented);
+        configureBindings();
+        autoChooser = Autos.initPathPlanner(swerve);
     }
 
     private void configureBindings() {
         // Reset forward direction for field relative
-        xboxController.x().and(xboxController.b()).onTrue(swerve.runOnce(swerve::zeroGyro));
+        xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
         // D-pad snap turning
         xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
         xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
@@ -54,11 +58,26 @@ public class Robot extends TimedRobot {
         xboxController.povDownRight().onTrue(swerve.turnCommand(Degrees.of(-135))); 
         xboxController.povRight().onTrue(swerve.turnCommand(Degrees.of(-90))); 
         xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
+
+        // SysID
+        // xboxController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+        // xboxController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+        // xboxController.y().whileTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // xboxController.a().whileTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.leftTrigger().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
     
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void autonomousInit() {
+        autoChooser.getSelected().schedule();
     }
 
     @Override

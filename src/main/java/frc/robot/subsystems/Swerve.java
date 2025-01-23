@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
@@ -13,25 +14,34 @@ import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 
+import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SwerveK;
 import frc.robot.subsystems.Vision.VisionResults;
+import frc.robot.commands.DriveWheelCharacterization;
 import swervelib.SwerveDrive;
+import swervelib.motors.TalonFXSwerve;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
@@ -46,7 +56,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX frontRight;
     private final TalonFX backLeft;
     private final TalonFX backRight;
+    private final SysIdRoutine sysIdRoutine; 
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
+    private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
 
     public Swerve(Supplier<VisionResults> visionSource) {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -59,12 +71,32 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
         this.visionSource = visionSource;
+        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(SwerveK.kS, SwerveK.kV, SwerveK.kA));
         frontLeft = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
         frontRight = (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
         backLeft = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
         backRight = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
         rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees), SwerveK.angularVelocityDeadband.in(DegreesPerSecond));
         rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
+        sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,        // Use default ramp rate (1 V/s)
+                Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
+                null,        // Use default timeout (10 s)
+                            // Log state with Phoenix SignalLogger class
+                (state) -> SignalLogger.writeString("state", state.toString())
+            ),
+            new SysIdRoutine.Mechanism(
+                (volts) -> {
+                    for (var module : swerveDrive.getModules()) {
+                        var motor = (TalonFXSwerve) module.getDriveMotor();
+                        ((TalonFX) motor.getMotor()).setControl(new VoltageOut(volts));
+                    }
+                },
+                null,
+                this
+            )
+        );
         setupPathPlanner();
         SmartDashboard.putData(rotationPIDController);
     }
@@ -88,16 +120,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             this::resetOdometry, 
             this::getRobotVelocity, 
             (speeds, feedforward) -> setChassisSpeeds(speeds), 
-            new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants),
+            pathPlannerController,
             SwerveK.robotConfig,
-            () -> {
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                } 
-                return false;
-            }
-            , this);
+            () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, 
+            this);
     }
 
     /**
@@ -177,18 +203,40 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     /**
      * Set the speed of the robot with closed loop velocity control
-     * @param chassisSpeeds to set speed with
+     * @param chassisSpeeds to set speed with (robot relative)
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
         swerveDrive.setChassisSpeeds(chassisSpeeds);
     }
 
     /**
-     * Returns the robot's heading as an Angle
+     * Returns the robot's heading as an Angle wrapped between -180 and 180
      * @return The heading of the robot
      */
     public Angle getHeading() {
         return getPose().getRotation().getMeasure();
+    }
+
+    /**
+     * Returns the gyro's yaw, not wrapped
+     * @return The yaw of the gyro
+     */
+    public Angle getYaw() {
+        return ((Pigeon2) swerveDrive.getGyro().getIMU()).getYaw().getValue();
+    }
+
+    /**
+     * Returns the positions of each drive wheel in radians, front left -> front right -> back left -> back right.
+     * @return
+     */
+    public double[] getWheelPositions() {
+        var modulePositions = swerveDrive.getModulePositions();
+        double[] wheelPositions = new double[modulePositions.length];
+        for (int i = 0; i < modulePositions.length; i++) {
+            double diameter = Units.inchesToMeters(swerveDrive.swerveDriveConfiguration.physicalCharacteristics.conversionFactor.drive.diameter);
+            wheelPositions[i] = Units.rotationsToRadians(modulePositions[i].distanceMeters / (diameter * Math.PI));
+        }
+        return wheelPositions;
     }
 
     public String getCurrentCommandName() {
@@ -203,6 +251,18 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public void zeroGyro() {
         swerveDrive.zeroGyro();
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.quasistatic(direction);
+    }
+     
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.dynamic(direction);
+    }
+
+    public Command characterizeDriveWheelDiameter() {
+        return new DriveWheelCharacterization(this);
     }
 
 }
