@@ -162,11 +162,11 @@ public class Constants {
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
     }
 
-    public static class VisionK { // TODO: Find transform and tune min + max Z and standard deviations
+    public static class VisionK { // TODO: Find transform and standard deviations
         public static final String frontCameraName = "Arducam";
         public static final Transform3d robotToCamera = new Transform3d(Inches.of(0), Inches.of(0), Inches.of(0), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
-        public static final Distance maxPoseZ = Inches.of(24);
-        public static final Distance minPoseZ = Inches.of(-12);
+        public static final Distance maxPoseZ = Inches.of(12);
+        public static final Distance minPoseZ = Inches.of(-6);
         // Vision Standard Deviations
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
