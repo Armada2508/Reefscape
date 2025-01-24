@@ -15,6 +15,11 @@ sourceSets {
             srcDirs 'library/src/main/java/'
         }
     }
+    test {
+        java {
+            srcDirs 'library/src/test/java'
+        }
+    }
 }
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
