@@ -27,11 +27,16 @@ import frc.robot.Field;
 @Logged
 public class Vision extends SubsystemBase {
 
+    private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     private final PhotonCamera frontCamera = new PhotonCamera(VisionK.frontCameraName);
     private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
-    private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape), PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
-    private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape), PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToBackCamera);
+    private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
+    private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToBackCamera);
 
+    /**
+     * Returns a wrapper object containing a list of estimated robot poses and their standard deviations stored as a Pair to be added into 
+     * a robot's odometry with PoseEstimator#addVisionMeasurement.
+     */
     public VisionResults getVisionResults() {
         List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
         visionResults.addAll(processResults(frontCamera.getAllUnreadResults(), frontPoseEstimator));
@@ -39,6 +44,9 @@ public class Vision extends SubsystemBase {
         return new VisionResults(visionResults);
     }
 
+    /**
+     * Processes a list of photonvison results into a list of estimated poses and their respective standard deviations
+     */
     private List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> processResults(List<PhotonPipelineResult> results, PhotonPoseEstimator poseEstimator) {
         List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
         for (var result : results) {
@@ -53,6 +61,9 @@ public class Vision extends SubsystemBase {
         return visionResults;
     }
 
+    /**
+     * Checks whether a pose is within the bounds of the field and the acceptable Z (height) error
+     */
     private boolean isValidPose(EstimatedRobotPose pose) {
         var pose3d = pose.estimatedPose;
         return pose3d.getMeasureX().gte(Meters.zero()) 
@@ -63,6 +74,9 @@ public class Vision extends SubsystemBase {
             && pose3d.getMeasureZ().lte(VisionK.maxPoseZ);
     }
 
+    /**
+     * Returns the standard deviations for a given photonvision result and estimated pose
+     */
     private Matrix<N3, N1> getStdDevs(PhotonPipelineResult result, EstimatedRobotPose pose, PhotonPoseEstimator poseEstimator) {
         int numTags = 0;
         double avgDistMeters = 0; 
@@ -82,35 +96,85 @@ public class Vision extends SubsystemBase {
         return VisionK.multiTagStdDevs.times(stdevScalar);
     }
 
-    public boolean isCameraConnected() {
+    /**
+     * Returns whether the front camera is connected
+     */
+    public boolean isCameraConnectedFront() {
         return frontCamera.isConnected();
     } 
 
-    public boolean canSeeTag() {
-        if (!isCameraConnected()) return false;
+    /**
+     * Returns whether the back camera is connected
+     */
+    public boolean isCameraConnectedBack() {
+        return backCamera.isConnected();
+    } 
+
+    /**
+     * Returns whether the front camera can see an april tag
+     */
+    public boolean canSeeTagFront() {
+        if (!isCameraConnectedFront()) return false;
         return frontCamera.getLatestResult().hasTargets();    
     }
 
-    public int bestTagID() {
-        if (!canSeeTag()) return -1;
+    /**
+     * Returns whether the back camera can see an april tag
+     */
+    public boolean canSeeTagBack() {
+        if (!isCameraConnectedBack()) return false;
+        return backCamera.getLatestResult().hasTargets();    
+    }
+
+    /**
+     * Returns the ID of the best april tag seen by the front camera
+     */
+    public int bestTagIDFront() {
+        if (!canSeeTagFront()) return -1;
         return frontCamera.getLatestResult().getBestTarget().getFiducialId();
     }
 
-    public int numTagsSeen() {
-        if (!canSeeTag()) return 0;
+    /**
+     * Returns the ID of the best april tag seen by the back camera
+     */
+    public int bestTagIDBack() {
+        if (!canSeeTagBack()) return -1;
+        return backCamera.getLatestResult().getBestTarget().getFiducialId();
+    }
+
+    /**
+     * Returns the number of april tags seen by the front camera
+     */
+    public int numTagsSeenFront() {
+        if (!canSeeTagFront()) return 0;
         return frontCamera.getLatestResult().getTargets().size();
     }
 
     /**
-     * Returns the normal distance to the best tag in inches
-     * @return
+     * Returns the number of april tags seen by the back camera
      */
-    public double distanceToBestTag() {
-        if (!canSeeTag()) return -1;
+    public int numTagsSeenBack() {
+        if (!canSeeTagBack()) return 0;
+        return backCamera.getLatestResult().getTargets().size();
+    }
+
+    /**
+     * Returns the normal distance to the best tag in inches from the front camera
+     */
+    public double distanceToBestTagFront() {
+        if (!canSeeTagFront()) return -1;
         return Units.metersToInches(frontCamera.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
     }
 
-    // This is your poor man's type alias
+    /**
+     * Returns the normal distance to the best tag in inches from the back camera
+     */
+    public double distanceToBestTagBack() {
+        if (!canSeeTagBack()) return -1;
+        return Units.metersToInches(backCamera.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
+    }
+
+    // This is your poor man's type alias, allows me to shorten the type and reference it by using VisionResults instead of List<Pair<EstimatedRobotPose, Matrix<N3, N1>>>
     public record VisionResults(List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> results){}
 
 }

@@ -172,6 +172,7 @@ public class Constants {
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);
+        // Used in scaling the standard deviations by average distance to april tags
         public static final Distance baseLineAverageTagDistance = Inches.of(80);
         // Vision Standard Deviations (Meters, Meters, Radians)
         public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(6), Units.feetToMeters(6), Units.degreesToRadians(360));
