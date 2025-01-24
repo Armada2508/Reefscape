@@ -124,6 +124,8 @@ public class Constants {
 
         public static final Distance coralDetectionRange = Inches.of(0);  //! find
 
+        public static final int currentLimit = 20; // In amps
+
         public static final Voltage coralIntakeVolts = Volts.of(8);
 
         public static final Voltage levelOneVolts = Volts.of(4);
