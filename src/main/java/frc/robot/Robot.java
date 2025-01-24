@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -38,6 +39,7 @@ public class Robot extends TimedRobot {
         LogUtil.logCommandInterrupts(DataLogManager.getLog()); // Network Tables & DataLog
         DriverStation.startDataLog(DataLogManager.getLog()); // DataLog
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
+        logGitConstants();
         Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
@@ -47,6 +49,19 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(driveFieldOriented);
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve);
+    }
+
+    private void logGitConstants() {
+        SmartDashboard.putString("Git/Project Name", GitConstants.MAVEN_NAME);
+        SmartDashboard.putString("Git/Build Date", GitConstants.BUILD_DATE);
+        SmartDashboard.putString("Git/Git SHA", GitConstants.GIT_SHA);
+        SmartDashboard.putString("Git/Git Date", GitConstants.GIT_DATE);
+        SmartDashboard.putString("Git/Git Branch", GitConstants.GIT_BRANCH);
+        switch (GitConstants.DIRTY) {
+          case 0 -> SmartDashboard.putString("Git/Git Dirty", "All changes committed");
+          case 1 -> SmartDashboard.putString("Git/Git Dirty", "Uncommitted changes");
+          default -> SmartDashboard.putString("Git/Git Dirty", "Unknown");
+        }
     }
 
     private void configureBindings() {
