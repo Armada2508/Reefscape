@@ -26,7 +26,6 @@ import frc.robot.Constants.DriveK;
 import frc.robot.commands.Autos;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
-import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Swerve;
 
 @Logged
@@ -35,7 +34,6 @@ public class Robot extends TimedRobot {
     private final Swerve swerve = new Swerve();
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private final SendableChooser<Command> autoChooser;
-    Algae a = new Algae();
     
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
