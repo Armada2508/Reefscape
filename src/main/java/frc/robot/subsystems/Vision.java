@@ -19,6 +19,8 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
@@ -32,6 +34,7 @@ public class Vision extends SubsystemBase {
     private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
     private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
     private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToBackCamera);
+    private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("vision");
 
     /**
      * Returns a wrapper object containing a list of estimated robot poses and their standard deviations stored as a Pair to be added into 
@@ -39,8 +42,12 @@ public class Vision extends SubsystemBase {
      */
     public VisionResults getVisionResults() {
         List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
-        visionResults.addAll(processResults(frontCamera.getAllUnreadResults(), frontPoseEstimator));
-        visionResults.addAll(processResults(backCamera.getAllUnreadResults(), backPoseEstimator));
+        if (isCameraConnectedFront()) {
+            visionResults.addAll(processResults(frontCamera.getAllUnreadResults(), frontPoseEstimator));
+        }
+        if (isCameraConnectedBack()) {
+            visionResults.addAll(processResults(backCamera.getAllUnreadResults(), backPoseEstimator));
+        }
         return new VisionResults(visionResults);
     }
 
@@ -53,7 +60,7 @@ public class Vision extends SubsystemBase {
             poseEstimator.update(result).ifPresent((pose) -> {
                 if (isValidPose(pose)) {
                     var stdDevs = getStdDevs(result, pose, poseEstimator);
-                    SmartDashboard.putNumberArray("Standard Deviations", stdDevs.getData());
+                    table.getEntry("Standard Deviations").setDoubleArray(stdDevs.getData());
                     visionResults.add(Pair.of(pose, stdDevs));
                 }
             });
@@ -87,8 +94,10 @@ public class Vision extends SubsystemBase {
             avgDistMeters += tagPose.get().toPose2d().getTranslation().getDistance(pose.estimatedPose.getTranslation().toTranslation2d());
         }
         avgDistMeters /= numTags;
-        SmartDashboard.putNumber("Average Distance to Tag (in.)", Units.metersToInches(avgDistMeters)); // Robot Frame
         double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
+        SmartDashboard.putNumber("Vision/STDDEV: numTags", numTags);
+        SmartDashboard.putNumber("Vision/STDDEV: Average Distance to Tag (in.)", Units.metersToInches(avgDistMeters)); // Robot Frame
+        SmartDashboard.putNumber("Vision/STDDEV: stdevScalar", stdevScalar);
         if (numTags == 0) return VisionK.untrustedStdDevs;
         if (numTags == 1) {
             return VisionK.singleTagStdDevs.times(stdevScalar);
