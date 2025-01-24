@@ -9,12 +9,6 @@
           "data": {
             "pathName": "BUMP"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "bump"
-          }
         }
       ]
     }

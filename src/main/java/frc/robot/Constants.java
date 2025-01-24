@@ -146,7 +146,7 @@ public class Constants {
     }  
 
     public static class AlgaeK { // TODO: Tune everything here
-        public static final int sparkMaxID = 0;
+        public static final int sparkMaxID = 1;
         public static final int limitSwitchID = 0;
         public static final double gearRatio = 50;
         public static final Voltage zeroingVoltage = Volts.of(-1.5);

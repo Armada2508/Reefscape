@@ -15,6 +15,11 @@ sourceSets {
             srcDirs 'library/src/main/java/'
         }
     }
+    test {
+        java {
+            srcDirs 'library/src/test/java'
+        }
+    }
 }
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
@@ -36,7 +41,7 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                    // Enable VisualVM connection
+                    // Enable VisualVM connection, you have to disable the web server using the team number setter for this to work
                     // jvmArgs.add("-Dcom.sun.management.jmxremote=true")
                     // jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
                     // jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
