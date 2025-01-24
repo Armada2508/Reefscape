@@ -7,9 +7,12 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
+import org.littletonrobotics.urcl.URCL;
+
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -23,6 +26,7 @@ import frc.robot.Constants.DriveK;
 import frc.robot.commands.Autos;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
+import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Swerve;
 
 @Logged
@@ -31,13 +35,16 @@ public class Robot extends TimedRobot {
     private final Swerve swerve = new Swerve();
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private final SendableChooser<Command> autoChooser;
+    Algae a = new Algae();
     
     public Robot() {
+        DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this); // Should be configured for Network Tables or DataLog
+        URCL.start(); // Can be passed dataLog to only log to DataLog
         LogUtil.logDriverStation(this); // Network Tables
-        LogUtil.logCommandInterrupts(DataLogManager.getLog()); // Network Tables & DataLog
-        DriverStation.startDataLog(DataLogManager.getLog()); // DataLog
+        LogUtil.logCommandInterrupts(dataLog); // Network Tables & DataLog
+        DriverStation.startDataLog(dataLog); // DataLog
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
         Command driveFieldOriented = swerve.driveCommand(
