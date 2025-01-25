@@ -26,11 +26,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -54,6 +55,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final SysIdRoutine sysIdRoutine; 
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
+    private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
 
     public Swerve() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -92,7 +94,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             )
         );
         setupPathPlanner();
-        SmartDashboard.putData(rotationPIDController);
     }
 
     @Override
@@ -137,10 +138,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return runOnce(() -> {
             rotationPIDController.reset();
             rotationPIDController.setSetpoint(target.in(Degrees));
-            SmartDashboard.putNumber("Reference", target.in(Degrees));
+            table.getEntry("Reference").setDouble(target.in(Degrees));
         })
         .andThen(runEnd(() -> {
-            SmartDashboard.putNumber("Current", getHeading().in(Degrees));
+            table.getEntry("Current").setDouble(getHeading().in(Degrees));
             AngularVelocity velocity = DegreesPerSecond.of(rotationPIDController.calculate(getHeading().in(Degrees)));
             drive(Translation2d.kZero, velocity, true, false);
         }, this::stop))
