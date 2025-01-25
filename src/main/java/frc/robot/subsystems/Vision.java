@@ -21,7 +21,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
@@ -95,9 +94,9 @@ public class Vision extends SubsystemBase {
         }
         avgDistMeters /= numTags;
         double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
-        SmartDashboard.putNumber("Vision/STDDEV: numTags", numTags);
-        SmartDashboard.putNumber("Vision/STDDEV: Average Distance to Tag (in.)", Units.metersToInches(avgDistMeters)); // Robot Frame
-        SmartDashboard.putNumber("Vision/STDDEV: stdevScalar", stdevScalar);
+        table.getEntry("StdDevs: numTags").setInteger(numTags);
+        table.getEntry("StdDevs: Average Distance to Tag (in.)").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
+        table.getEntry("StdDevs: stdevScalar").setDouble(stdevScalar);
         if (numTags == 0) return VisionK.untrustedStdDevs;
         if (numTags == 1) {
             return VisionK.singleTagStdDevs.times(stdevScalar);
