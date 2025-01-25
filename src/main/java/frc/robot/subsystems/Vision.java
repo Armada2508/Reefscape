@@ -16,11 +16,13 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
@@ -34,6 +36,7 @@ public class Vision extends SubsystemBase {
     private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
     private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToBackCamera);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("vision");
+    private final StructPublisher<Pose3d> pub = table.getStructTopic("StdDevs: estimatedPose", Pose3d.struct).publish();
 
     /**
      * Returns a wrapper object containing a list of estimated robot poses and their standard deviations stored as a Pair to be added into 
@@ -94,6 +97,7 @@ public class Vision extends SubsystemBase {
         }
         avgDistMeters /= numTags;
         double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
+        pub.accept(pose.estimatedPose);
         table.getEntry("StdDevs: numTags").setInteger(numTags);
         table.getEntry("StdDevs: Average Distance to Tag (in.)").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
         table.getEntry("StdDevs: stdevScalar").setDouble(stdevScalar);
