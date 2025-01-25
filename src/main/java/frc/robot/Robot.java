@@ -12,12 +12,12 @@ import org.littletonrobotics.urcl.URCL;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -59,15 +59,16 @@ public class Robot extends TimedRobot {
     }
 
     private void logGitConstants() {
-        SmartDashboard.putString("Git/Project Name", GitConstants.MAVEN_NAME);
-        SmartDashboard.putString("Git/Build Date", GitConstants.BUILD_DATE);
-        SmartDashboard.putString("Git/Git SHA", GitConstants.GIT_SHA);
-        SmartDashboard.putString("Git/Git Date", GitConstants.GIT_DATE);
-        SmartDashboard.putString("Git/Git Branch", GitConstants.GIT_BRANCH);
+        var table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Git");
+        table.getEntry("Project Name").setString(GitConstants.MAVEN_NAME);
+        table.getEntry("Build Date").setString(GitConstants.BUILD_DATE);
+        table.getEntry("Git SHA").setString(GitConstants.GIT_SHA);
+        table.getEntry("Git Date").setString(GitConstants.GIT_DATE);
+        table.getEntry("Git Branch").setString(GitConstants.GIT_BRANCH);
         switch (GitConstants.DIRTY) {
-          case 0 -> SmartDashboard.putString("Git/Git Dirty", "All changes committed");
-          case 1 -> SmartDashboard.putString("Git/Git Dirty", "Uncommitted changes");
-          default -> SmartDashboard.putString("Git/Git Dirty", "Unknown");
+          case 0 -> table.getEntry("Git Dirty").setString("All changes committed");
+          case 1 -> table.getEntry("Git Dirty").setString("Uncommitted changes");
+          default -> table.getEntry("Git Dirty").setString("Unknown");
         }
     }
 
