@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Millimeters;
 
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -34,13 +35,19 @@ public class Intake extends SubsystemBase {
 
         motorLeftConfig.smartCurrentLimit(IntakeK.currentLimit);
         motorRightConfig.smartCurrentLimit(IntakeK.currentLimit);
+        motorRightConfig.inverted(true);
 
         motorLeft.configure(motorLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motorRight.configure(motorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
+    /**
+     * True when ToF sensor is tripped
+     * @return When milimeters are equal to the coralDetectionRange, 
+     */
     public boolean isSensorTripped() {
-        return Util.inRange(Inches.of(timeOfFlight.getRange()).in(Inches), IntakeK.coralDetectionRange.in(Inches)) && timeOfFlight.isRangeValid();
+        Millimeters.of(1).lte(IntakeK.coralDetectionRange);
+        return Util.inRange(timeOfFlight.getRange(), IntakeK.coralDetectionRange.in(Inches)) && timeOfFlight.isRangeValid();
     }
 
     /**
@@ -54,12 +61,12 @@ public class Intake extends SubsystemBase {
     /**
      * Sets voltage to motors
      * @param volts Voltage to give motors
-     * @return Command to set voltage
+     * @return Command to set voltage, motorRight runs opposite of motorLeft
      */
     public Command setVoltage(Voltage volts) {
         return runOnce (() -> {
             motorLeft.setVoltage(volts);
-            motorRight.setVoltage(volts);  //! Find a way to make motorRight run opposite of left when scoring
+            motorRight.setVoltage(volts);
         });
     }
 
@@ -89,10 +96,15 @@ public class Intake extends SubsystemBase {
 
     /**
      * Sets voltage for motors scoring level one
-     * @return Command to set voltage and stop when ToF is tripped
+     * @return Command to set voltage with both motors in same direction and stop when ToF is tripped
      */
     public Command scoreLevelOne() {
-        return score(IntakeK.levelOneVolts);
+        return runOnce(() -> {
+            motorLeft.setVoltage(IntakeK.levelOneVolts);
+            motorRight.setVoltage(IntakeK.levelOneVolts.unaryMinus());
+        })
+        .andThen(Commands.waitUntil(this::isSensorTripped))
+        .andThen(this::stop);
     }
 
     /**
