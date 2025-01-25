@@ -135,7 +135,7 @@ public class Vision extends SubsystemBase {
     }
 
     /**
-     * Returns the ID of the best april tag seen by the front camera
+     * Returns the ID of the best april tag seen by the front camera or -1 if no tag is seen
      */
     public int bestTagIDFront() {
         if (!canSeeTagFront()) return -1;
@@ -143,7 +143,7 @@ public class Vision extends SubsystemBase {
     }
 
     /**
-     * Returns the ID of the best april tag seen by the back camera
+     * Returns the ID of the best april tag seen by the back camera  or -1 if no tag is seen
      */
     public int bestTagIDBack() {
         if (!canSeeTagBack()) return -1;
@@ -167,7 +167,7 @@ public class Vision extends SubsystemBase {
     }
 
     /**
-     * Returns the normal distance to the best tag in inches from the front camera
+     * Returns the normal distance to the best tag in inches from the front camera (Camera Frame) or -1 if no tag is seen
      */
     public double distanceToBestTagFront() {
         if (!canSeeTagFront()) return -1;
@@ -175,7 +175,7 @@ public class Vision extends SubsystemBase {
     }
 
     /**
-     * Returns the normal distance to the best tag in inches from the back camera
+     * Returns the normal distance to the best tag in inches from the back camera (Camera Frame) or -1 if no tag is seen
      */
     public double distanceToBestTagBack() {
         if (!canSeeTagBack()) return -1;
