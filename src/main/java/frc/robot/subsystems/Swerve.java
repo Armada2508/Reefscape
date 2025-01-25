@@ -9,6 +9,9 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -19,7 +22,13 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.controllers.PathFollowingController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
@@ -33,6 +42,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -165,6 +175,49 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         .until(rotationPIDController::atSetpoint)
         .withTimeout(Seconds.of(2))
         .withName("Swerve Turn");
+    }
+
+    /**
+     * Constructs a command to take the robot from current position to an end position
+     * @param x x component of the final position
+     * @param y y component of the final position
+     * @param rotation Rotations of the final position
+     * @return Command to drive along the constructed path
+     */
+    public Command driveToPoseCommand(Distance x, Distance y, Rotation2d rotation) {
+        return driveToPoseCommand(new Pose2d(x, y, rotation));
+    }
+    /**
+     * Constructs a command to take the robot from current position to an end position
+     * @param endPose Final pose to end the robot at
+     * @return Command to drive along the constructed path
+     */
+    public Command driveToPoseCommand(Pose2d endPose) {
+        PathPlannerPath path = new PathPlannerPath(
+            PathPlannerPath.waypointsFromPoses(getPose(), endPose), 
+            new PathConstraints(SwerveK.maxRobotSpeed, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
+            null, 
+            new GoalEndState(MetersPerSecond.of(0), endPose.getRotation()));
+
+        return new FollowPathCommand(
+            path, 
+            () -> getPose(), 
+            () -> getRobotVelocity(), 
+            (speeds, feedforward) -> setChassisSpeeds(speeds),
+            pathPlannerController, 
+            SwerveK.robotConfig,
+            () -> false, 
+            this 
+            );
+    }
+
+    /**
+     * Creates a command to drive the robot to infront of the cage
+     * @param cagePose Position of the cage
+     * @return driveToPose command to drive to the cage
+     */
+    public Command alignToCage(Pose2d cagePose) { //? Move this into a new class besides swerve?
+        return driveToPoseCommand(cagePose.getMeasureX().minus(SwerveK.cageOffset), cagePose.getMeasureY(), cagePose.getRotation());
     }
 
     /**

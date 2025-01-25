@@ -47,7 +47,12 @@ public class Constants {
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
+        public static final Distance cageOffset = Inches.of(10); //! Tune, Move into Field?
+
         public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(5.426);
+        public static final LinearAcceleration maxRobotAcceleration = MetersPerSecondPerSecond.of(0); //! Find
+        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(0); //! Find
+        public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(0); //! Find
 
         // Drive Feedforward
         public static final double kS = 0.10431;
