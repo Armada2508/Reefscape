@@ -9,6 +9,9 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.urcl.URCL;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -103,7 +106,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        autoChooser.getSelected().schedule();
+        PathPlannerAuto auto = (PathPlannerAuto) autoChooser.getSelected();
+        if (!swerve.initializedOdometryFromVision()) {
+            AutoBuilder.resetOdom(auto.getStartingPose());
+        }
+        auto.schedule();
     }
 
     @Override

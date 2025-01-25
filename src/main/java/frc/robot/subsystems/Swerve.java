@@ -250,6 +250,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return cmd.getName();
     }
 
+    public boolean initializedOdometryFromVision() {
+        return initializedOdometryFromVision;
+    }
+
     /**
      * Resets the gyro and odometry to the current position but the current direction is now seen as 0.
      * Useful for resetting the forward direction for field relative driving
