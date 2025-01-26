@@ -32,10 +32,11 @@ import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 
-@Logged
 public class Robot extends TimedRobot {
     
+    @Logged(name = "Vision")
     private final Vision vision = new Vision();
+    @Logged(name = "Swerve")
     private final Swerve swerve = new Swerve(vision::getVisionResults);
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private final SendableChooser<Command> autoChooser;

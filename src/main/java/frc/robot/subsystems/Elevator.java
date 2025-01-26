@@ -83,4 +83,12 @@ public class Elevator extends SubsystemBase {
     public void stop() {
         talon.setControl(new NeutralOut());
     }
+
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
+    }
+    
 }

@@ -130,5 +130,12 @@ public class Intake extends SubsystemBase {
     public boolean isTOFRangeValid() {
         return timeOfFlight.isRangeValid();
     }
-
+    
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
+    }
+    
 }

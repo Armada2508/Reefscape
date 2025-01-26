@@ -22,10 +22,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeK;
 
-@Logged
 public class Algae extends SubsystemBase {
 
     private final SparkMax sparkMax = new SparkMax(AlgaeK.sparkMaxID, MotorType.kBrushless);
+    @Logged(name = "Limit Switch")
     private final DigitalInput limitSwitch = new DigitalInput(AlgaeK.limitSwitchID);
 
     public Algae() {
@@ -107,8 +107,16 @@ public class Algae extends SubsystemBase {
      * Returns the angle of the arm
      * @return angle of the arm
      */
+    @Logged(name = "Arm Angle")
     public Angle getAngle() {
         return Rotations.of(sparkMax.getEncoder().getPosition());
+    }
+
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
     }
 
 }

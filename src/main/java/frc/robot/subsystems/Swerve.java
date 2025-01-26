@@ -244,6 +244,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return wheelPositions;
     }
 
+    @Logged(name = "Current Command")
     public String getCurrentCommandName() {
         var cmd = getCurrentCommand();
         if (cmd == null) return "None";

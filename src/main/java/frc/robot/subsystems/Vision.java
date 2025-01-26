@@ -35,7 +35,7 @@ public class Vision extends SubsystemBase {
     private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
     private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
     private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToBackCamera);
-    private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("vision");
+    private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Vision");
     private final StructPublisher<Pose3d> pub = table.getStructTopic("StdDevs: estimatedPose", Pose3d.struct).publish();
 
     /**
