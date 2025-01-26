@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Millimeters;
 
 import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -26,6 +27,7 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         configSparkMax();
+        timeOfFlight.setRangingMode(RangingMode.Short, 50);
     }
 
     public void configSparkMax() {
@@ -45,7 +47,7 @@ public class Intake extends SubsystemBase {
      * @return When milimeters are equal to the coralDetectionRange the sensor is tripped
      */
     public boolean isSensorTripped() {
-        return Util.inRange(timeOfFlight.getRange(), IntakeK.coralDetectionRange.in(Millimeters)) && timeOfFlight.isRangeValid();
+        return Util.inRange(timeOfFlight.getRange(), IntakeK.coralDetectionRange.in(Millimeters));
     }
 
     /**
@@ -120,4 +122,13 @@ public class Intake extends SubsystemBase {
     public Command scoreLevelFour() {
         return score(IntakeK.levelFourVolts);
     }
+
+    public double getTOFRange() {
+        return timeOfFlight.getRange();
+    }
+
+    public boolean isTOFRangeValid() {
+        return timeOfFlight.isRangeValid();
+    }
+
 }

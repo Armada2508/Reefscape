@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
@@ -153,7 +152,7 @@ public class Constants {
         public static final int timeOfFlightId = 0; //! find
 
         // 
-        public static final Distance coralDetectionRange = Millimeters.of(0);  //! find
+        public static final Distance coralDetectionRange = Inches.of(4);  //! find
 
         // Amp limit for motors
         public static final int currentLimit = 20; // In amps
