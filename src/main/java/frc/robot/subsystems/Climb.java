@@ -40,11 +40,20 @@ public class Climb extends SubsystemBase {
         
         armMotorFollow.setControl(new StrictFollower(ClimbK.rMotorID));
     }
-    //Set Voltage
-    public void setVoltage(Voltage volts) {
-        VoltageOut request = new VoltageOut(volts);
-        armMotor.setControl(request);
+    //MotionMagic
+    private void MotionMagicConfig() {
+        //Set the Configs
+        MotionMagicConfigs MotionMagicConfigs = new MotionMagicConfigs();
+        MotionMagicConfigs.MotionMagicCruiseVelocity = 0; //Find
+        MotionMagicConfigs.MotionMagicAcceleration = 0; //Find
+        
+
     }
+    //Set Voltage
+    // public void setVoltage(Voltage volts) {
+    //     VoltageOut request = new VoltageOut(volts);
+    //     armMotor.setControl(request);
+    
     //Climb
     public void deepclimb() {
         
@@ -52,7 +61,7 @@ public class Climb extends SubsystemBase {
         //Simply need to rotate arms until they need to stop.
         //Not sure if there will be a sensor that will be there or if it'll have to be a set degrees.
         configureTalons();
-        setVoltage(ClimbK.voltage);
+        // setVoltage(ClimbK.voltage);
         
 
 

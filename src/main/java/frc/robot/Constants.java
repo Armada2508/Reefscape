@@ -158,7 +158,11 @@ public class Constants {
         //Positions/Angles
         public static final Angle startingAngle = Degrees.of(0);
         public static final Angle turnLimit = Degrees.of(90);
-        public static final Voltage voltage = Volts.of(2); //Find
+        // public static final Voltage voltage = Volts.of(2); //Find
+
+        //Motion Magic
+        public static final LinearVelocity velocity = MetersPerSecond.of(0);
+        public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0);
     }
 }
 
