@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
 
-@Logged // TODO: The logged methods can throw null pointer exceptions because getLatestResult can change in between calls
+// TODO: The logged methods can throw null pointer exceptions because getLatestResult can change in between calls
 public class Vision extends SubsystemBase {
 
     private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
@@ -111,6 +111,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns whether the front camera is connected
      */
+    @Logged(name = "Front Camera Connected")
     public boolean isCameraConnectedFront() {
         return frontCamera.isConnected();
     } 
@@ -118,6 +119,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns whether the back camera is connected
      */
+    @Logged(name = "Back Camera Connected")
     public boolean isCameraConnectedBack() {
         return backCamera.isConnected();
     } 
@@ -125,6 +127,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns whether the front camera can see an april tag
      */
+    @Logged(name = "Front Camera Sees Tag")
     public boolean canSeeTagFront() {
         if (!isCameraConnectedFront()) return false;
         return frontCamera.getLatestResult().hasTargets();    
@@ -133,6 +136,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns whether the back camera can see an april tag
      */
+    @Logged(name = "Back Camera Sees Tag")
     public boolean canSeeTagBack() {
         if (!isCameraConnectedBack()) return false;
         return backCamera.getLatestResult().hasTargets();    
@@ -141,6 +145,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the ID of the best april tag seen by the front camera or -1 if no tag is seen
      */
+    @Logged(name = "Front Camera Best Tag ID")
     public int bestTagIDFront() {
         if (!canSeeTagFront()) return -1;
         return frontCamera.getLatestResult().getBestTarget().getFiducialId();
@@ -149,6 +154,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the ID of the best april tag seen by the back camera  or -1 if no tag is seen
      */
+    @Logged(name = "Back Camera Best Tag ID")
     public int bestTagIDBack() {
         if (!canSeeTagBack()) return -1;
         return backCamera.getLatestResult().getBestTarget().getFiducialId();
@@ -157,6 +163,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the number of april tags seen by the front camera
      */
+    @Logged(name = "Front Camera Number Tags Seen")
     public int numTagsSeenFront() {
         if (!canSeeTagFront()) return 0;
         return frontCamera.getLatestResult().getTargets().size();
@@ -165,6 +172,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the number of april tags seen by the back camera
      */
+    @Logged(name = "Back Camera Number Tags Seen")
     public int numTagsSeenBack() {
         if (!canSeeTagBack()) return 0;
         return backCamera.getLatestResult().getTargets().size();
@@ -173,6 +181,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the normal distance to the best tag in inches from the front camera (Camera Frame) or -1 if no tag is seen
      */
+    @Logged(name = "Front Camera Normal Distance to Best Tag")
     public double distanceToBestTagFront() {
         if (!canSeeTagFront()) return -1;
         return Units.metersToInches(frontCamera.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
@@ -181,6 +190,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the normal distance to the best tag in inches from the back camera (Camera Frame) or -1 if no tag is seen
      */
+    @Logged(name = "Back Camera Normal Distance to Best Tag")
     public double distanceToBestTagBack() {
         if (!canSeeTagBack()) return -1;
         return Units.metersToInches(backCamera.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getNorm());

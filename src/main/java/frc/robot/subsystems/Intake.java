@@ -18,11 +18,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
 import frc.robot.lib.util.Util;
 
-@Logged
 public class Intake extends SubsystemBase {
     
     private final SparkMax motorLeft = new SparkMax(IntakeK.motorLeftId, MotorType.kBrushless);
     private final SparkMax motorRight = new SparkMax(IntakeK.motorRightId, MotorType.kBrushless);
+    @Logged(name = "Time of Flight")
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(IntakeK.timeOfFlightId);
 
     public Intake() {
@@ -46,6 +46,7 @@ public class Intake extends SubsystemBase {
      * True when ToF sensor is tripped
      * @return When milimeters are equal to the coralDetectionRange the sensor is tripped
      */
+    @Logged(name = "Sensor Tripped")
     public boolean isSensorTripped() {
         return Util.inRange(timeOfFlight.getRange(), IntakeK.coralDetectionRange.in(Millimeters));
     }
@@ -123,10 +124,7 @@ public class Intake extends SubsystemBase {
         return score(IntakeK.levelFourVolts);
     }
 
-    public double getTOFRange() {
-        return timeOfFlight.getRange();
-    }
-
+    @Logged(name = "TOF Range Valid")
     public boolean isTOFRangeValid() {
         return timeOfFlight.isRangeValid();
     }
