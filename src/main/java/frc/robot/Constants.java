@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
@@ -145,6 +146,27 @@ public class Constants {
         }
     }  
 
+    public static class IntakeK {
+        // IDs
+        public static final int motorLeftId = 0; //! find
+        public static final int motorRightId = 1; //! find
+        public static final int timeOfFlightId = 0; //! find
+
+        // 
+        public static final Distance coralDetectionRange = Millimeters.of(0);  //! find
+
+        // Amp limit for motors
+        public static final int currentLimit = 20; // In amps
+
+        // Voltage during intake
+        public static final Voltage coralIntakeVolts = Volts.of(8);
+
+        // Voltage while scoring
+        public static final Voltage levelOneVolts = Volts.of(4);
+        public static final Voltage levelTwoThreeVolts = Volts.of(5);
+        public static final Voltage levelFourVolts = Volts.of(5);
+    }
+
     public static class AlgaeK { // TODO: Tune everything here
         public static final int sparkMaxID = 1;
         public static final int limitSwitchID = 0;
@@ -179,5 +201,4 @@ public class Constants {
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(45));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
-    
 }
