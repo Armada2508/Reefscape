@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -22,6 +23,7 @@ import frc.robot.Constants.ElevatorK;
 import frc.robot.lib.util.Encoder;
 import frc.robot.lib.util.Util;
 
+@Logged
 public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.elevatorID);
@@ -36,6 +38,7 @@ public class Elevator extends SubsystemBase {
         Util.factoryReset(talon, talonFollow);
         Util.brakeMode(talon, talonFollow);
         talonFollow.setControl(new StrictFollower(talon.getDeviceID()));
+        talon.getConfigurator().apply(ElevatorK.softwareLimitConfig);
         talon.getConfigurator().apply(ElevatorK.gearRatioConfig);
         talon.getConfigurator().apply(ElevatorK.pidConfig);
     }
@@ -52,7 +55,7 @@ public class Elevator extends SubsystemBase {
      * @param position position of the elavator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations(position.level.div(ElevatorK.stageCount), 1, ElevatorK.sprocketDiameter));
+        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(position.level.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
         return runOnce(() -> talon.setControl(request))
         .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))); // end command when we reach set position
     }
@@ -62,7 +65,7 @@ public class Elevator extends SubsystemBase {
      * @return Height of the elevator as a Distance
      */
     public Distance getPosition() {
-        return Encoder.toDistance(talon.getPosition().getValue().times(ElevatorK.stageCount), 1, ElevatorK.sprocketDiameter);
+        return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
     }
 
     /**
