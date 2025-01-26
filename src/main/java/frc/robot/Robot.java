@@ -9,6 +9,9 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.urcl.URCL;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -27,11 +30,13 @@ import frc.robot.commands.Autos;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Vision;
 
 @Logged
 public class Robot extends TimedRobot {
     
-    private final Swerve swerve = new Swerve();
+    private final Vision vision = new Vision();
+    private final Swerve swerve = new Swerve(vision::getVisionResults);
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private final SendableChooser<Command> autoChooser;
     
@@ -101,7 +106,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        autoChooser.getSelected().schedule();
+        PathPlannerAuto auto = (PathPlannerAuto) autoChooser.getSelected();
+        if (!swerve.initializedOdometryFromVision()) {
+            AutoBuilder.resetOdom(auto.getStartingPose());
+        }
+        auto.schedule();
     }
 
     @Override
