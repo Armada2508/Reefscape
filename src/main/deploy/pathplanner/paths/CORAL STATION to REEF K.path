@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7603597536495665,
-        "y": 7.160148665440918
+        "x": 1.8527351961086227,
+        "y": 6.786890082767375
       },
       "isLocked": false,
       "linkedName": "Coral Station Blue"
     },
     {
       "anchor": {
-        "x": 3.844,
-        "y": 5.529
+        "x": 3.973766447368421,
+        "y": 5.256578947368421
       },
       "prevControl": {
-        "x": 2.2874842755314573,
-        "y": 5.460642344060546
+        "x": 3.117798907868014,
+        "y": 6.392805101002015
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,8 +40,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

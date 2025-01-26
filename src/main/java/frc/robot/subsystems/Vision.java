@@ -99,7 +99,7 @@ public class Vision extends SubsystemBase {
         double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
         pub.accept(pose.estimatedPose);
         table.getEntry("StdDevs: numTags").setInteger(numTags);
-        table.getEntry("StdDevs: Average Distance to Tag (in.)").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
+        table.getEntry("StdDevs: Average Distance to Tag (in.) RF").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
         table.getEntry("StdDevs: stdevScalar").setDouble(stdevScalar);
         if (numTags == 0) return VisionK.untrustedStdDevs;
         if (numTags == 1) {
