@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-
 import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -166,6 +165,7 @@ public class Constants {
         public static final Voltage levelOneVolts = Volts.of(4);
         public static final Voltage levelTwoThreeVolts = Volts.of(5);
         public static final Voltage levelFourVolts = Volts.of(5);
+    }
 
     public static class AlgaeK { // TODO: Tune everything here
         public static final int sparkMaxID = 1;
