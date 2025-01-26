@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 
 public class Field {
-    //TODO double check all values in at some point, good chance something could be wrong here, rookie task?
+    // TODO: double check all values in at some point, good chance something could be wrong here, rookie task?
     //^  X is left and right from origin, Y is top to bottom
 
     // Blue bottom corner is the origin

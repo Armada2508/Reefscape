@@ -89,7 +89,7 @@ public class Algae extends SubsystemBase {
      * @return A command to zero the arm
      */
     public Command zero() {
-        return setVoltage(AlgaeK.zeroingVoltage)
+        return setVoltage(AlgaeK.zeroingVoltage.unaryMinus())
             .andThen(Commands.waitUntil(limitSwitch::get))
             .andThen(() -> sparkMax.getEncoder().setPosition(AlgaeK.zeroPosition.in(Rotations)))
             .finallyDo(this::stop)

@@ -65,6 +65,7 @@ public class Constants {
             }
         }
 
+        // Turn PID
         public static final PIDConstants angularPID = new PIDConstants(5, 0, 0.4); // kP = degrees/second per degree
         public static final Angle angularDeadband = Degrees.of(2);
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
@@ -96,10 +97,10 @@ public class Constants {
         public static final int stageCount = 3;
 
         public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
-        .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
+            .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
 
         // Motion Magic Values
@@ -145,17 +146,16 @@ public class Constants {
         }
     }  
 
-    public static class IntakeK {
+    public static class IntakeK { // TODO: Confirm motor ids and detection range
         // IDs
-        public static final int motorLeftId = 0; //! find
-        public static final int motorRightId = 1; //! find
-        public static final int timeOfFlightId = 0; //! find
+        public static final int motorLeftId = 2; 
+        public static final int motorRightId = 3; 
+        public static final int timeOfFlightId = 0; 
 
-        // 
-        public static final Distance coralDetectionRange = Inches.of(4);  //! find
+        public static final Distance coralDetectionRange = Inches.of(4);
 
-        // Amp limit for motors
-        public static final int currentLimit = 20; // In amps
+        // Current limit for motors in amps
+        public static final int currentLimit = 20;
 
         // Voltage during intake
         public static final Voltage coralIntakeVolts = Volts.of(8);
@@ -169,8 +169,8 @@ public class Constants {
     public static class AlgaeK { // TODO: Tune everything here
         public static final int sparkMaxID = 1;
         public static final int limitSwitchID = 0;
-        public static final double gearRatio = 50;
-        public static final Voltage zeroingVoltage = Volts.of(-1.5);
+        public static final double gearRatio = 64;
+        public static final Voltage zeroingVoltage = Volts.of(1.5);
         public static final int currentLimit = 20;
 
         public static final Angle maxPosition = Degrees.of(120);
