@@ -48,6 +48,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Field;
 import frc.robot.Constants.SwerveK;
 import frc.robot.commands.DriveWheelCharacterization;
 import frc.robot.subsystems.Vision.VisionResults;
@@ -214,10 +215,26 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     /**
      * Creates a command to drive the robot to infront of the cage
      * @param cagePose Position of the cage
-     * @return driveToPose command to drive to the cage
+     * @return driveToPoseCommand to drive to the cage
      */
-    public Command alignToCage(Pose2d cagePose) { //? Move this into a new class besides swerve?
+    public Command alignToCage(Pose2d cagePose) {
         return driveToPoseCommand(cagePose.getMeasureX().minus(SwerveK.cageOffset), cagePose.getMeasureY(), cagePose.getRotation());
+    }
+
+    /**
+     * Creates a command to drive the robot to the nearest reef from its current position
+     * @return driveToPoseCommand to drive to the nearest reef
+     */
+    public Command alignToReef() {
+        return driveToPoseCommand(getPose().nearest(Field.reefList));
+    }
+
+    /**
+     * Creates a command to drive the robot to the nearest coral station to it
+     * @return driveToPoseCommand to drive to the nearest station
+     */
+    public Command alignToCoralStation() {
+        return driveToPoseCommand(getPose().nearest(Field.coralStationList));
     }
 
     /**

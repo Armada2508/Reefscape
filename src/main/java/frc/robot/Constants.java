@@ -48,6 +48,7 @@ public class Constants {
         public static final double driveGearRatio = 4.4;
 
         public static final Distance cageOffset = Inches.of(10); //! Tune, Move into Field?
+        public static final Distance reefOffset = Inches.of(6.5);
 
         public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(5.426);
         public static final LinearAcceleration maxRobotAcceleration = MetersPerSecondPerSecond.of(0); //! Find
