@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Millimeters;
 
 import com.playingwithfusion.TimeOfFlight;
@@ -43,11 +42,10 @@ public class Intake extends SubsystemBase {
 
     /**
      * True when ToF sensor is tripped
-     * @return When milimeters are equal to the coralDetectionRange, 
+     * @return When milimeters are equal to the coralDetectionRange the sensor is tripped
      */
     public boolean isSensorTripped() {
-        Millimeters.of(1).lte(IntakeK.coralDetectionRange);
-        return Util.inRange(timeOfFlight.getRange(), IntakeK.coralDetectionRange.in(Inches)) && timeOfFlight.isRangeValid();
+        return Util.inRange(timeOfFlight.getRange(), IntakeK.coralDetectionRange.in(Millimeters)) && timeOfFlight.isRangeValid();
     }
 
     /**
@@ -91,7 +89,7 @@ public class Intake extends SubsystemBase {
             motorRight.setVoltage(IntakeK.coralIntakeVolts);
         })
         .andThen(Commands.waitUntil(this::isSensorTripped))
-        .andThen(this::stop);
+        .finallyDo(this::stop);
     }
 
     /**
@@ -103,8 +101,8 @@ public class Intake extends SubsystemBase {
             motorLeft.setVoltage(IntakeK.levelOneVolts);
             motorRight.setVoltage(IntakeK.levelOneVolts.unaryMinus());
         })
-        .andThen(Commands.waitUntil(this::isSensorTripped))
-        .andThen(this::stop);
+        .andThen(Commands.waitUntil(() -> !isSensorTripped()))
+        .finallyDo(this::stop);
     }
 
     /**
