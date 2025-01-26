@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
 
-@Logged
+@Logged // TODO: The logged methods can throw null pointer exceptions because getLatestResult can change in between calls
 public class Vision extends SubsystemBase {
 
     private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);

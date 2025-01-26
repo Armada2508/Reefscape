@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         configSparkMax();
-        timeOfFlight.setRangingMode(RangingMode.Short, 50);
+        timeOfFlight.setRangingMode(RangingMode.Short, 24);
     }
 
     public void configSparkMax() {
