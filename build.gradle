@@ -48,6 +48,9 @@ deploy {
                     // jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
                     // jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
                     // jvmArgs.add("-Djava.rmi.server.hostname=10.25.8.2") // 172.22.11.2 if connected by USB
+                    // Heap dump
+                    jvmArgs.add("-XX:+HeapDumpOnOutOfMemoryError")
+                    jvmArgs.add("-XX:HeapDumpPath=/u/")
                 }
 
                 // Static files artifact
