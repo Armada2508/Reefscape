@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
@@ -34,6 +35,8 @@ public class Intake extends SubsystemBase {
         SparkMaxConfig motorLeftConfig = new SparkMaxConfig();
         SparkMaxConfig motorRightConfig = new SparkMaxConfig();
 
+        motorLeftConfig.idleMode(IdleMode.kCoast);
+        motorRightConfig.idleMode(IdleMode.kCoast);
         motorLeftConfig.smartCurrentLimit(IntakeK.currentLimit);
         motorRightConfig.smartCurrentLimit(IntakeK.currentLimit);
         motorRightConfig.inverted(true);
@@ -68,7 +71,8 @@ public class Intake extends SubsystemBase {
         return runOnce (() -> {
             motorLeft.setVoltage(volts);
             motorRight.setVoltage(volts);
-        });
+        })
+        .withName("Set Voltage Command");
     }
 
     /**
@@ -79,7 +83,8 @@ public class Intake extends SubsystemBase {
     public Command score(Voltage volts) {
         return setVoltage(volts)
         .andThen(Commands.waitUntil(() -> !isSensorTripped()))
-        .finallyDo(this::stop);
+        .finallyDo(this::stop)
+        .withName("Score Command");
     }
 
     /**
@@ -92,7 +97,8 @@ public class Intake extends SubsystemBase {
             motorRight.setVoltage(IntakeK.coralIntakeVolts);
         })
         .andThen(Commands.waitUntil(this::isSensorTripped))
-        .finallyDo(this::stop);
+        .finallyDo(this::stop)
+        .withName("Coral Intake Command");
     }
 
     /**
@@ -105,7 +111,8 @@ public class Intake extends SubsystemBase {
             motorRight.setVoltage(IntakeK.levelOneVolts.unaryMinus());
         })
         .andThen(Commands.waitUntil(() -> !isSensorTripped()))
-        .finallyDo(this::stop);
+        .finallyDo(this::stop)
+        .withName("Score Level One Command");
     }
 
     /**
@@ -113,7 +120,8 @@ public class Intake extends SubsystemBase {
      * @return Command to set voltage and stop when ToF is tripped
      */
     public Command scoreLevelTwoThree() {
-        return score(IntakeK.levelTwoThreeVolts);
+        return score(IntakeK.levelTwoThreeVolts)
+        .withName("Score Levels Two and Three Command");
     }
 
     /**
@@ -121,7 +129,8 @@ public class Intake extends SubsystemBase {
      * @return Command to set voltage and stop when ToF is tripped
      */
     public Command scoreLevelFour() {
-        return score(IntakeK.levelFourVolts);
+        return score(IntakeK.levelFourVolts)
+        .withName("Score Level Four Command");
     }
 
     @Logged(name = "TOF Range Valid")
