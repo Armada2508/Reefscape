@@ -39,6 +39,8 @@ public class Intake extends SubsystemBase {
         motorRightConfig.idleMode(IdleMode.kCoast);
         motorLeftConfig.smartCurrentLimit(IntakeK.currentLimit);
         motorRightConfig.smartCurrentLimit(IntakeK.currentLimit);
+        motorLeftConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
+        motorRightConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
         motorRightConfig.inverted(true);
 
         motorLeft.configure(motorLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
