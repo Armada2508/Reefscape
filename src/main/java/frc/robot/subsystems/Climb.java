@@ -29,11 +29,8 @@ public class Climb extends SubsystemBase {
     //^Takes the number from Constant's ClimbK class and uses it as the motor ID^
     //Configure motors
     private void configureTalons() {
-        MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
-        //^Creates a new MotorOutputConfigs object^
-        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
-        armMotorFollow.getConfigurator().apply(motorOutputConfigs);
-        //^Applies the motorOutputConfigs's settings to the armMotor's configurator^
+        
+        
         
         Util.factoryReset(armMotor, armMotorFollow);
         Util.brakeMode(armMotor, armMotorFollow);
@@ -46,7 +43,7 @@ public class Climb extends SubsystemBase {
         MotionMagicConfigs MotionMagicConfigs = new MotionMagicConfigs();
         MotionMagicConfigs.MotionMagicCruiseVelocity = 0; //Find
         MotionMagicConfigs.MotionMagicAcceleration = 0; //Find
-        
+        armMotor.getConfigurator().apply(MotionMagicConfigs);
 
     }
     //Set Voltage
@@ -62,7 +59,7 @@ public class Climb extends SubsystemBase {
         //Not sure if there will be a sensor that will be there or if it'll have to be a set degrees.
         configureTalons();
         // setVoltage(ClimbK.voltage);
-        
+        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmDown);
 
 
 

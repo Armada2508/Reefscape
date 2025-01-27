@@ -163,6 +163,9 @@ public class Constants {
         //Motion Magic
         public static final LinearVelocity velocity = MetersPerSecond.of(0);
         public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0);
+            
+        public static final Angle climbArmUp = Degrees.of(0);
+        public static final Angle climbArmDown = Degrees.of(90);
     }
 }
 
