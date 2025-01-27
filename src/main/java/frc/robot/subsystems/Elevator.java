@@ -57,7 +57,8 @@ public class Elevator extends SubsystemBase {
     public Command setPosition(ElevatorK.Positions position) {
         MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(position.level.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
         return runOnce(() -> talon.setControl(request))
-        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))); // end command when we reach set position
+        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))) // end command when we reach set position
+        .withName("Set Position"); 
     }
 
     /**
@@ -72,9 +73,8 @@ public class Elevator extends SubsystemBase {
      * Sets the volts of the motors
      * @param speed speed of the motor in volts
      */
-    public void setVoltage(Voltage volts) {
-        VoltageOut request = new VoltageOut(volts);
-        talon.setControl(request);
+    public Command setVoltage(Voltage volts) {
+        return runOnce(() -> talon.setControl(new VoltageOut(volts))).withName("Set Voltage");
     }
 
     /**
