@@ -1,7 +1,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.ArrayList;
 import java.util.List;

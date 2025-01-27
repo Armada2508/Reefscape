@@ -19,6 +19,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -117,6 +118,10 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         swerve.stop();
+    }
+
+    public static boolean onBlueAlliance() {
+        return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
     }
     
 }

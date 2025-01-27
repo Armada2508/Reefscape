@@ -59,6 +59,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Field;
+import frc.robot.Robot;
 import frc.robot.Constants.SwerveK;
 import frc.robot.commands.DriveWheelCharacterization;
 import frc.robot.subsystems.Vision.VisionResults;
@@ -223,15 +224,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     /**
-     * Creates a command to drive the robot to infront of the cage
-     * @param cagePose Position of the cage
-     * @return driveToPoseCommand to drive to the cage
-     */
-    public Command alignToCage(Pose2d cagePose) {
-        return driveToPoseCommand(cagePose.getMeasureX().minus(SwerveK.cageOffset), cagePose.getMeasureY(), cagePose.getRotation());
-    }
-
-    /**
      * Creates a command to drive the robot to the nearest reef from its current position
      * @return driveToPoseCommand to drive to the nearest reef
      */
@@ -245,6 +237,39 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToCoralStation() {
         return driveToPoseCommand(getPose().nearest(Field.coralStationList));
+    }
+
+    /**
+     * Creates a command to drive to the top cage of your side
+     * @return driveToPoseCommand to drive to the top cage
+     */
+    public Command alignToTopCage() {
+        if (Robot.onBlueAlliance()) {
+            return driveToPoseCommand(Field.blueCageTop.getMeasureX().minus(SwerveK.cageOffset), Field.blueCageTop.getMeasureY(), Rotation2d.fromDegrees(0)); //! Verify rotations
+        }
+        return driveToPoseCommand(Field.redCageTop.getMeasureX().minus(SwerveK.cageOffset), Field.redCageTop.getMeasureY(), Rotation2d.fromDegrees(0));
+    }
+
+    /**
+     * Creates a command to drive to the mid cage of your side
+     * @return driveToPoseCommand to drive to the mid cage
+     */
+    public Command alignToMidCage() {
+        if (Robot.onBlueAlliance()) {
+            return driveToPoseCommand(Field.blueCageMid.getMeasureX().minus(SwerveK.cageOffset), Field.blueCageMid.getMeasureY(), Rotation2d.fromDegrees(0)); //! Verify rotations
+        }
+        return driveToPoseCommand(Field.redCageMid.getMeasureX().minus(SwerveK.cageOffset), Field.redCageMid.getMeasureY(), Rotation2d.fromDegrees(0));
+    }
+
+    /**
+     * Creates a command to drive to the low cage of your side
+     * @return driveToPoseCommand to drive to the low cage
+     */
+    public Command alignToLowCage() {
+        if (Robot.onBlueAlliance()) {
+            return driveToPoseCommand(Field.blueCageLow.getMeasureX().minus(SwerveK.cageOffset), Field.blueCageLow.getMeasureY(), Rotation2d.fromDegrees(0)); //! Verify rotations
+        }
+        return driveToPoseCommand(Field.redCageLow.getMeasureX().minus(SwerveK.cageOffset), Field.redCageLow.getMeasureY(), Rotation2d.fromDegrees(0));
     }
 
     /**
