@@ -123,9 +123,9 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         SmartDashboard.putData("Field", alignmentTest);
-        alignmentTest.getObject("Blue Cage Top").setPose(Field.getAsPose(Field.blueCageTop));
-        alignmentTest.getObject("Blue Cage Mid").setPose(Field.getAsPose(Field.blueCageMid));
-        alignmentTest.getObject("Blue Cage Low").setPose(Field.getAsPose(Field.blueCageLow));
+        alignmentTest.getObject("Blue Cage Top").setPose(Field.blueCageTop);
+        alignmentTest.getObject("Blue Cage Mid").setPose(Field.blueCageMid);
+        alignmentTest.getObject("Blue Cage Low").setPose(Field.blueCageLow);
         alignmentTest.getObject("Blue Station Top").setPose(Field.blueStationTop); 
         alignmentTest.getObject("Blue Station Low").setPose(Field.blueStationLow); 
         alignmentTest.getObject("red Station Top").setPose(Field.redStationTop); 

@@ -77,7 +77,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             e.printStackTrace();
             throw new RuntimeException("Swerve directory not found.");
         }
-        swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotVelocity.in(MetersPerSecond));
+        swerveDrive = parser.createSwerveDrive(SwerveK.maxPossibleRobotSpeed.in(MetersPerSecond));
         this.visionSource = visionSource;
         swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(SwerveK.kS, SwerveK.kV, SwerveK.kA));
         frontLeft = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
@@ -230,8 +230,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the top cage
      */
     public Command alignToTopCage() {
-        if (Robot.onBlueAlliance()) return driveToPoseCommand(Field.blueCageTop.getMeasureX().minus(Field.cageOffset), Field.blueCageTop.getMeasureY(), Rotation2d.fromDegrees(180)); //! Verify rotations
-        return driveToPoseCommand(Field.redCageTop.getMeasureX().minus(Field.cageOffset), Field.redCageTop.getMeasureY(), Rotation2d.fromDegrees(0));
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(Field.blueCageTop); 
+        return driveToPoseCommand(Field.redCageTop);
     }
 
     /**
@@ -239,10 +239,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the mid cage
      */
     public Command alignToMidCage() {
-        if (Robot.onBlueAlliance()) {
-            return driveToPoseCommand(Field.blueCageMid.getMeasureX().minus(Field.cageOffset), Field.blueCageMid.getMeasureY(), Rotation2d.fromDegrees(180)); //! Verify rotations
-        }
-        return driveToPoseCommand(Field.redCageMid.getMeasureX().minus(Field.cageOffset), Field.redCageMid.getMeasureY(), Rotation2d.fromDegrees(0));
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(Field.blueCageMid); 
+        return driveToPoseCommand(Field.redCageMid);
     }
 
     /**
@@ -250,10 +248,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the low cage
      */
     public Command alignToLowCage() {
-        if (Robot.onBlueAlliance()) {
-            return driveToPoseCommand(Field.blueCageLow.getMeasureX().minus(Field.cageOffset), Field.blueCageLow.getMeasureY(), Rotation2d.fromDegrees(180)); //! Verify rotations
-        }
-        return driveToPoseCommand(Field.redCageLow.getMeasureX().minus(Field.cageOffset), Field.redCageLow.getMeasureY(), Rotation2d.fromDegrees(0));
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(Field.blueCageLow);
+        return driveToPoseCommand(Field.redCageLow);
     }
 
     /**
