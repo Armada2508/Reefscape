@@ -161,9 +161,9 @@ public class Constants {
         // public static final Voltage voltage = Volts.of(2); //Find
 
         //Motion Magic
-        public static final LinearVelocity velocity = MetersPerSecond.of(0);
-        public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0);
-            
+        public static final AngularVelocity velocity = DegreesPerSecond.of(0);
+        public static final AngularAcceleration acceleration = DegreesPerSecondPerSecond.of(0); 
+
         public static final Angle climbArmUp = Degrees.of(0);
         public static final Angle climbArmDown = Degrees.of(90);
     }
