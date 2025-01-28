@@ -26,8 +26,8 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import frc.robot.lib.util.Util;
 public class Climb extends SubsystemBase {
     
-    TalonFX armMotor = new TalonFX(ClimbK.rMotorID);
-    TalonFX armMotorFollow = new TalonFX(ClimbK.frMotorID);
+    TalonFX armMotor = new TalonFX(ClimbK.armMotorID);
+    TalonFX armMotorFollow = new TalonFX(ClimbK.fArmMotorID);
 
    
     //^Takes the number from Constant's ClimbK class and uses it as the motor ID^
@@ -42,7 +42,7 @@ public class Climb extends SubsystemBase {
         Util.factoryReset(armMotor, armMotorFollow);
         Util.brakeMode(armMotor, armMotorFollow);
         armMotor.getConfigurator().apply(ClimbK.softLimitConfigs);
-        armMotorFollow.setControl(new StrictFollower(ClimbK.rMotorID));
+        armMotorFollow.setControl(new StrictFollower(ClimbK.armMotorID));
     }
     
     //MotionMagic
@@ -61,20 +61,14 @@ public class Climb extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(request));
     }
 
-    
-
-
-
-
     public Command deepclimb() {
         // MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmDown);
         return setVoltage(ClimbK.voltagePos);
         //Simply sets the voltage to positive to go forward
-        
     }
     //Release
     public Command Release() {
-        return setVoltage(ClimbK.voltageNeg);
+        return setVoltage(ClimbK.voltagePos.unaryMinus());
     }
     //Stop
     

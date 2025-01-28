@@ -152,14 +152,12 @@ public class Constants {
 
     public static class ClimbK {
         //Motors
-        public static final int rMotorID = 4;
-        public static final int frMotorID = 5;
+        public static final int armMotorID = 4;
+        public static final int fArmMotorID = 5;
 
-        //Positions/Angles
-        public static final Angle startingAngle = Degrees.of(0);
-        public static final Angle turnLimit = Degrees.of(90);
+        //Positions/Angles/Voltage
         public static final Voltage voltagePos = Volts.of(2); //Find
-        public static final Voltage voltageNeg = Volts.of(-2); //Find
+        
         
         public static final Angle maxForwardAngle = Degrees.of(0); //Find
         public static final Angle maxReverseAngle = Degrees.of(0); //Find
