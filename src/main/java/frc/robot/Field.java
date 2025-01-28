@@ -2,7 +2,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -60,83 +59,10 @@ public class Field {
      * @param offset true for left offset, false for right offset
      * @return Pose2d of the determined reef position
      */
-    public static Pose2d tagToReef(int tagId, boolean leftOffset) { //? Change offset to something more readable?
-        //^ Might be useless but might still be useful at some point so I think we should keep this here
-        switch (tagId) {
-            // Blue Reef
-            case 17:
-                if (leftOffset) return blueReefC;
-                return blueReefD;
-            case 18:
-                if (leftOffset) return blueReefA;
-                return blueReefB;                
-            case 19:
-                if (leftOffset) return blueReefK;
-                return blueReefL; 
-            case 20:
-                if (leftOffset) return blueReefI;
-                return blueReefJ; 
-            case 21:
-                if (leftOffset) return blueReefG;
-                return blueReefH; 
-            case 22:
-                if (leftOffset) return blueReefE;
-                return blueReefF; 
 
-            // Red Reef
-            //! Verify these are correct, I was lazy ;-;
-            case 6:
-                if (leftOffset) return redReefE;
-                return redReefF;
-            case 7:
-                if (leftOffset) return redReefG;
-                return redReefH;                
-            case 8:
-                if (leftOffset) return redReefI;
-                return redReefJ; 
-            case 9:
-                if (leftOffset) return redReefK;
-                return redReefL; 
-            case 10:
-                if (leftOffset) return redReefA;
-                return redReefB; 
-            case 11:
-                if (leftOffset) return redReefC;
-                return redReefD; 
-            
-            default: // Invalid Tag ID
-                return new Pose2d(); //! idk how to throw the invalid error for this
-        }
-    }
+    public static final List<Pose2d> blueReefList = List.of(blueReefA, blueReefB, blueReefC, blueReefD, blueReefE, blueReefF, blueReefG, blueReefH, blueReefI, blueReefJ, blueReefK, blueReefL);
+    public static final List<Pose2d> redReefList = List.of(redReefA, redReefB, redReefC, redReefD, redReefE, redReefF, redReefG, redReefH, redReefI, redReefJ, redReefK, redReefL);
 
-    public static final List<Pose2d> reefList = new ArrayList<Pose2d>();
-    static { //! Verify this is what we want to do
-        reefList.add(blueReefA);
-        reefList.add(blueReefB);
-        reefList.add(blueReefC);
-        reefList.add(blueReefD);
-        reefList.add(blueReefE);
-        reefList.add(blueReefF);
-        reefList.add(blueReefG);
-        reefList.add(blueReefH);
-        reefList.add(blueReefI);
-        reefList.add(blueReefJ);
-        reefList.add(blueReefK);
-        reefList.add(blueReefL);
-
-        reefList.add(redReefA);
-        reefList.add(redReefB);
-        reefList.add(redReefC);
-        reefList.add(redReefD);
-        reefList.add(redReefE);
-        reefList.add(redReefF);
-        reefList.add(redReefG);
-        reefList.add(redReefH);
-        reefList.add(redReefI);
-        reefList.add(redReefJ);
-        reefList.add(redReefK);
-        reefList.add(redReefL);
-    }
     // Reef Coral
     public static final Distance levelOneHeight = Inches.of(18);
     public static final Distance levelTwoHeight = Inches.of(31.875);
@@ -156,6 +82,9 @@ public class Field {
     public static final Translation2d redCageMid = new Translation2d(Inches.of(345.4375), fieldWidth.minus(blueCageMid.getMeasureY()));
     public static final Translation2d redCageLow = new Translation2d(Inches.of(345.4375), fieldWidth.minus(blueCageLow.getMeasureY()));
 
+    public static final Distance cageOffset = Inches.of(10);
+    public static final Distance reefOffset = Inches.of(6.5);
+
     // Coral Station
     public static final Pose2d blueStationLow = new Pose2d(Inches.of(31.127), Inches.of(21.796), Rotation2d.fromDegrees(55));
     public static final Pose2d blueStationTop = new Pose2d(blueStationLow.getMeasureX(), fieldWidth.minus(blueStationLow.getMeasureY()), Rotation2d.fromDegrees(305));
@@ -163,13 +92,8 @@ public class Field {
     public static final Pose2d redStationLow = new Pose2d(fieldLength.minus(blueStationLow.getMeasureX()), blueStationLow.getMeasureY(), Rotation2d.fromDegrees(blueStationTop.getRotation().getDegrees() - 180));
     public static final Pose2d redStationTop = new Pose2d(fieldLength.minus(blueStationLow.getMeasureX()), fieldWidth.minus(blueStationLow.getMeasureY()), Rotation2d.fromDegrees(blueStationLow.getRotation().getDegrees() - 180));
 
-    public static final List<Pose2d> coralStationList = new ArrayList<Pose2d>();
-    static { //! Verify if this is what we want to do
-        coralStationList.add(blueStationLow);
-        coralStationList.add(blueStationTop);
-        coralStationList.add(redStationLow);
-        coralStationList.add(redStationLow);
-    }
+    public static final List<Pose2d> blueCoralStationList = List.of(blueStationLow, blueStationTop);
+    public static final List<Pose2d> redCoralStationList = List.of(redStationLow, redStationTop);
 
     // Processor
     //^ processor location is on the edge of the arena carpet rather then the exact middle of the structure

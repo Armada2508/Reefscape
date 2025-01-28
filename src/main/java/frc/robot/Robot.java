@@ -14,6 +14,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -66,6 +68,9 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(driveFieldOriented);
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve);
+
+        swerve.resetOdometry(new Pose2d(Field.blueReefB.getMeasureX().minus(Field.blueStationLow.getMeasureX()), Field.blueReefB.getMeasureY().minus(Field.blueStationLow.getMeasureY()), Rotation2d.fromDegrees(0)));
+
     }
 
     private void logGitConstants() {
@@ -144,8 +149,12 @@ public class Robot extends TimedRobot {
         swerve.stop();
     }
 
+    /**
+     * Returns the alliance
+     * @return true if the robot is on Blue, false if the robot is on Red
+     */
     public static boolean onBlueAlliance() {
-        return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
+        return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
     }
     
 }

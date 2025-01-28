@@ -94,7 +94,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             e.printStackTrace();
             throw new RuntimeException("Swerve directory not found.");
         }
-        swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
+        swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotVelocity.in(MetersPerSecond));
         this.visionSource = visionSource;
         swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(SwerveK.kS, SwerveK.kV, SwerveK.kA));
         frontLeft = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
@@ -149,7 +149,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             (speeds, feedforward) -> setChassisSpeeds(speeds), 
             pathPlannerController,
             SwerveK.robotConfig,
-            () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, 
+            () -> Robot.onBlueAlliance(), 
             this);
     }
 
@@ -200,21 +200,21 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return driveToPoseCommand(new Pose2d(x, y, rotation));
     }
     /**
-     * Constructs a command to take the robot from current position to an end position
+     * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
      * @param endPose Final pose to end the robot at
      * @return Command to drive along the constructed path
      */
     public Command driveToPoseCommand(Pose2d endPose) {
         PathPlannerPath path = new PathPlannerPath(
             PathPlannerPath.waypointsFromPoses(getPose(), endPose), 
-            new PathConstraints(SwerveK.maxRobotSpeed, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
+            new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
             null, 
             new GoalEndState(MetersPerSecond.of(0), endPose.getRotation()));
 
         return new FollowPathCommand(
             path, 
-            () -> getPose(), 
-            () -> getRobotVelocity(), 
+            this::getPose, 
+            this::getRobotVelocity, 
             (speeds, feedforward) -> setChassisSpeeds(speeds),
             pathPlannerController, 
             SwerveK.robotConfig,
@@ -225,18 +225,21 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     /**
      * Creates a command to drive the robot to the nearest reef from its current position
-     * @return driveToPoseCommand to drive to the nearest reef
+     * @return driveToPoseCommand to drive to the nearest reef on your side
      */
     public Command alignToReef() {
-        return driveToPoseCommand(getPose().nearest(Field.reefList));
+        // return driveToPoseCommand(getPose().nearest(Field.reefList));
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(getPose().nearest(Field.blueReefList));
+        return driveToPoseCommand(getPose().nearest(Field.redReefList));
     }
 
     /**
      * Creates a command to drive the robot to the nearest coral station to it
-     * @return driveToPoseCommand to drive to the nearest station
+     * @return driveToPoseCommand to drive to the nearest station on your side
      */
     public Command alignToCoralStation() {
-        return driveToPoseCommand(getPose().nearest(Field.coralStationList));
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(getPose().nearest(Field.blueCoralStationList));
+        return driveToPoseCommand(getPose().nearest(Field.redCoralStationList));
     }
 
     /**
@@ -244,10 +247,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the top cage
      */
     public Command alignToTopCage() {
-        if (Robot.onBlueAlliance()) {
-            return driveToPoseCommand(Field.blueCageTop.getMeasureX().minus(SwerveK.cageOffset), Field.blueCageTop.getMeasureY(), Rotation2d.fromDegrees(0)); //! Verify rotations
-        }
-        return driveToPoseCommand(Field.redCageTop.getMeasureX().minus(SwerveK.cageOffset), Field.redCageTop.getMeasureY(), Rotation2d.fromDegrees(0));
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(Field.blueCageTop.getMeasureX().minus(Field.cageOffset), Field.blueCageTop.getMeasureY(), Rotation2d.fromDegrees(180)); //! Verify rotations
+        return driveToPoseCommand(Field.redCageTop.getMeasureX().minus(Field.cageOffset), Field.redCageTop.getMeasureY(), Rotation2d.fromDegrees(0));
     }
 
     /**
@@ -256,9 +257,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToMidCage() {
         if (Robot.onBlueAlliance()) {
-            return driveToPoseCommand(Field.blueCageMid.getMeasureX().minus(SwerveK.cageOffset), Field.blueCageMid.getMeasureY(), Rotation2d.fromDegrees(0)); //! Verify rotations
+            return driveToPoseCommand(Field.blueCageMid.getMeasureX().minus(Field.cageOffset), Field.blueCageMid.getMeasureY(), Rotation2d.fromDegrees(180)); //! Verify rotations
         }
-        return driveToPoseCommand(Field.redCageMid.getMeasureX().minus(SwerveK.cageOffset), Field.redCageMid.getMeasureY(), Rotation2d.fromDegrees(0));
+        return driveToPoseCommand(Field.redCageMid.getMeasureX().minus(Field.cageOffset), Field.redCageMid.getMeasureY(), Rotation2d.fromDegrees(0));
     }
 
     /**
@@ -267,9 +268,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToLowCage() {
         if (Robot.onBlueAlliance()) {
-            return driveToPoseCommand(Field.blueCageLow.getMeasureX().minus(SwerveK.cageOffset), Field.blueCageLow.getMeasureY(), Rotation2d.fromDegrees(0)); //! Verify rotations
+            return driveToPoseCommand(Field.blueCageLow.getMeasureX().minus(Field.cageOffset), Field.blueCageLow.getMeasureY(), Rotation2d.fromDegrees(180)); //! Verify rotations
         }
-        return driveToPoseCommand(Field.redCageLow.getMeasureX().minus(SwerveK.cageOffset), Field.redCageLow.getMeasureY(), Rotation2d.fromDegrees(0));
+        return driveToPoseCommand(Field.redCageLow.getMeasureX().minus(Field.cageOffset), Field.redCageLow.getMeasureY(), Rotation2d.fromDegrees(0));
     }
 
     /**
