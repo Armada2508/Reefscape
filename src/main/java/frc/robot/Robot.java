@@ -15,13 +15,16 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -41,6 +44,10 @@ public class Robot extends TimedRobot {
     private final Swerve swerve = new Swerve(vision::getVisionResults);
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private final SendableChooser<Command> autoChooser;
+
+    // ===========
+    private static Field2d alignmentTest = new Field2d();
+    // ===========
     
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
@@ -81,14 +88,22 @@ public class Robot extends TimedRobot {
         // Reset forward direction for field relative
         xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
         // D-pad snap turning
-        xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
-        xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
-        xboxController.povLeft().onTrue(swerve.turnCommand(Degrees.of(90))); 
-        xboxController.povDownLeft().onTrue(swerve.turnCommand(Degrees.of(135))); 
-        xboxController.povDown().onTrue(swerve.turnCommand(Degrees.of(180))); 
-        xboxController.povDownRight().onTrue(swerve.turnCommand(Degrees.of(-135))); 
-        xboxController.povRight().onTrue(swerve.turnCommand(Degrees.of(-90))); 
-        xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
+        // xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
+        // xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
+        // xboxController.povLeft().onTrue(swerve.turnCommand(Degrees.of(90))); 
+        // xboxController.povDownLeft().onTrue(swerve.turnCommand(Degrees.of(135))); 
+        // xboxController.povDown().onTrue(swerve.turnCommand(Degrees.of(180))); 
+        // xboxController.povDownRight().onTrue(swerve.turnCommand(Degrees.of(-135))); 
+        // xboxController.povRight().onTrue(swerve.turnCommand(Degrees.of(-90))); 
+        // xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
+
+        // Alignment
+        xboxController.a().onTrue(swerve.alignToCoralStation());
+        xboxController.b().onTrue(swerve.alignToReef());
+        xboxController.povUp().onTrue(swerve.alignToTopCage());
+        xboxController.povRight().onTrue(swerve.alignToMidCage());
+        xboxController.povDown().onTrue(swerve.alignToLowCage());
+
 
         // SysID
         // xboxController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -104,6 +119,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        SmartDashboard.putData("Field", alignmentTest);
+        alignmentTest.getObject("Robot Pose").setPose(swerve.getPose());
     }
 
     @Override
