@@ -158,7 +158,11 @@ public class Constants {
         //Positions/Angles
         public static final Angle startingAngle = Degrees.of(0);
         public static final Angle turnLimit = Degrees.of(90);
-        // public static final Voltage voltage = Volts.of(2); //Find
+        public static final Voltage voltagePos = Volts.of(2); //Find
+        public static final Voltage voltageNeg = Volts.of(-2); //Find
+        
+        public static final Angle maxForwardAngle = Degrees.of(0); //Find
+        public static final Angle maxReverseAngle = Degrees.of(0); //Find
 
         //Motion Magic
         public static final AngularVelocity velocity = DegreesPerSecond.of(0);
@@ -166,6 +170,14 @@ public class Constants {
 
         public static final Angle climbArmUp = Degrees.of(0);
         public static final Angle climbArmDown = Degrees.of(90);
+        
+        //Voltage
+        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withReverseSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(0)
+        .withReverseSoftLimitThreshold(0);
+
     }
 }
 
