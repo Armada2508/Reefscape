@@ -157,18 +157,18 @@ public class Field {
     public static final Translation2d redCageLow = new Translation2d(Inches.of(345.4375), fieldWidth.minus(blueCageLow.getMeasureY()));
 
     // Coral Station
-    public static final Translation2d blueStationLow = new Translation2d(Inches.of(130.71), Inches.of(81.69));
-    public static final Translation2d blueStationTop = new Translation2d(blueStationLow.getMeasureX(), fieldWidth.minus(blueStationLow.getMeasureY()));
+    public static final Pose2d blueStationLow = new Pose2d(Inches.of(31.127), Inches.of(21.796), Rotation2d.fromDegrees(55));
+    public static final Pose2d blueStationTop = new Pose2d(blueStationLow.getMeasureX(), fieldWidth.minus(blueStationLow.getMeasureY()), Rotation2d.fromDegrees(305));
 
-    public static final Translation2d redStationLow = new Translation2d(fieldLength.minus(blueStationLow.getMeasureX()), blueStationLow.getMeasureY());
-    public static final Translation2d redStationTop = new Translation2d(fieldLength.minus(blueStationLow.getMeasureX()), fieldWidth.minus(blueStationLow.getMeasureY()));
+    public static final Pose2d redStationLow = new Pose2d(fieldLength.minus(blueStationLow.getMeasureX()), blueStationLow.getMeasureY(), Rotation2d.fromDegrees(blueStationTop.getRotation().getDegrees() - 180));
+    public static final Pose2d redStationTop = new Pose2d(fieldLength.minus(blueStationLow.getMeasureX()), fieldWidth.minus(blueStationLow.getMeasureY()), Rotation2d.fromDegrees(blueStationLow.getRotation().getDegrees() - 180));
 
     public static final List<Pose2d> coralStationList = new ArrayList<Pose2d>();
     static { //! Verify if this is what we want to do
-        coralStationList.add(getAsPose(blueStationLow));
-        coralStationList.add(getAsPose(blueStationTop));
-        coralStationList.add(getAsPose(redStationLow));
-        coralStationList.add(getAsPose(redStationLow));
+        coralStationList.add(blueStationLow);
+        coralStationList.add(blueStationTop);
+        coralStationList.add(redStationLow);
+        coralStationList.add(redStationLow);
     }
 
     // Processor

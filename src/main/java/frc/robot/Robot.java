@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.urcl.URCL;
@@ -15,7 +14,6 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -120,6 +118,15 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         SmartDashboard.putData("Field", alignmentTest);
+        alignmentTest.getObject("Blue Cage Top").setPose(Field.getAsPose(Field.blueCageTop));
+        alignmentTest.getObject("Blue Cage Mid").setPose(Field.getAsPose(Field.blueCageMid));
+        alignmentTest.getObject("Blue Cage Low").setPose(Field.getAsPose(Field.blueCageLow));
+        alignmentTest.getObject("Blue Station Top").setPose(Field.blueStationTop); 
+        alignmentTest.getObject("Blue Station Low").setPose(Field.blueStationLow); 
+        alignmentTest.getObject("red Station Top").setPose(Field.redStationTop); 
+        alignmentTest.getObject("red Station Low").setPose(Field.redStationLow); 
+
+
         alignmentTest.getObject("Robot Pose").setPose(swerve.getPose());
     }
 
