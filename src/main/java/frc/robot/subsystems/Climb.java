@@ -26,15 +26,15 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import frc.robot.lib.util.Util;
 public class Climb extends SubsystemBase {
     
-    TalonFX armMotor = new TalonFX(ClimbK.armMotorID);
-    TalonFX armMotorFollow = new TalonFX(ClimbK.fArmMotorID);
+    private TalonFX armMotor = new TalonFX(ClimbK.armMotorID);
+    private TalonFX armMotorFollow = new TalonFX(ClimbK.fArmMotorID);
 
    
     //^Takes the number from Constant's ClimbK class and uses it as the motor ID^
     //Configure motors
     public Climb() {
         configTalons();
-        configMotionMagic(ClimbK.velocity, ClimbK.acceleration);
+        // configMotionMagic(ClimbK.velocity, ClimbK.acceleration);
 
     } 
     private void configTalons() {
@@ -46,14 +46,14 @@ public class Climb extends SubsystemBase {
     }
     
     //MotionMagic
-    private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
-        //Set the Configs
-        MotionMagicConfigs MotionMagicConfigs = new MotionMagicConfigs();
-        MotionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(DegreesPerSecond); 
-        MotionMagicConfigs.MotionMagicAcceleration = acceleration.in(DegreesPerSecondPerSecond); 
-        armMotor.getConfigurator().apply(MotionMagicConfigs);
+    // private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
+    //     //Set the Configs
+    //     MotionMagicConfigs MotionMagicConfigs = new MotionMagicConfigs();
+    //     MotionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(DegreesPerSecond); 
+    //     MotionMagicConfigs.MotionMagicAcceleration = acceleration.in(DegreesPerSecondPerSecond); 
+    //     armMotor.getConfigurator().apply(MotionMagicConfigs);
 
-    }
+    // }
     
     //Climb
     public Command setVoltage(Voltage volts) {
@@ -63,12 +63,12 @@ public class Climb extends SubsystemBase {
 
     public Command deepclimb() {
         // MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmDown);
-        return setVoltage(ClimbK.voltagePos);
+        return setVoltage(ClimbK.climbVoltage);
         //Simply sets the voltage to positive to go forward
     }
     //Release
     public Command Release() {
-        return setVoltage(ClimbK.voltagePos.unaryMinus());
+        return setVoltage(ClimbK.climbVoltage.unaryMinus());
     }
     //Stop
     

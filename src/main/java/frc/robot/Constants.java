@@ -156,11 +156,11 @@ public class Constants {
         public static final int fArmMotorID = 5;
 
         //Positions/Angles/Voltage
-        public static final Voltage voltagePos = Volts.of(2); //Find
+        public static final Voltage climbVoltage = Volts.of(2); //Find
         
         
-        public static final Angle maxForwardAngle = Degrees.of(0); //Find
-        public static final Angle maxReverseAngle = Degrees.of(0); //Find
+        public static final Angle maxAngle = Degrees.of(0); //Find
+        public static final Angle minAngle = Degrees.of(0); //Find
 
         //Motion Magic
         public static final AngularVelocity velocity = DegreesPerSecond.of(0);
