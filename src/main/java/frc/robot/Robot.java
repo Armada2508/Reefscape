@@ -7,6 +7,8 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.Map;
+
 import org.littletonrobotics.urcl.URCL;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -24,8 +26,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.Constants.IntakeK;
 import frc.robot.commands.Autos;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
@@ -45,7 +49,7 @@ public class Robot extends TimedRobot {
         DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this); // Should be configured for Network Tables or DataLog
-        URCL.start(); // Can be passed dataLog to only log to DataLog
+        URCL.start(Map.of(AlgaeK.sparkMaxID, "Algae Spark", IntakeK.motorLeftId, "Intake Left Spark", IntakeK.motorRightId, "Intake Right Spark")); // Can be passed dataLog to only log to DataLog
         LogUtil.logDriverStation(this); // Network Tables
         LogUtil.logCommandInterrupts(dataLog); // Network Tables & DataLog
         DriverStation.startDataLog(dataLog); // DataLog
