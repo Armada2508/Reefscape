@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
     private final SendableChooser<Command> autoChooser;
 
     // ===========
-    private static Field2d alignmentTest = new Field2d();
+    public static Field2d alignmentTest = new Field2d();
     // ===========
     
     public Robot() {
@@ -154,9 +154,9 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the alliance
-     * @return true if the robot is on Blue, false if the robot is on Red
+     * @return true if the robot is on Red, false if the robot is on Blue
      */
-    public static boolean onBlueAlliance() {
+    public static boolean onRedAlliance() {
         return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
     }
     
