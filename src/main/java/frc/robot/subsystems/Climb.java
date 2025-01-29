@@ -16,6 +16,8 @@ import frc.robot.Constants.ClimbK;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -34,9 +36,9 @@ public class Climb extends SubsystemBase {
     //Configure motors
     public Climb() {
         configTalons();
-        // configMotionMagic(ClimbK.velocity, ClimbK.acceleration);
-
+        configMotionMagic(ClimbK.velocity, ClimbK.acceleration); 
     } 
+    
     private void configTalons() {
         
         Util.factoryReset(armMotor, armMotorFollow);
@@ -46,14 +48,14 @@ public class Climb extends SubsystemBase {
     }
     
     //MotionMagic
-    // private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
-    //     //Set the Configs
-    //     MotionMagicConfigs MotionMagicConfigs = new MotionMagicConfigs();
-    //     MotionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(DegreesPerSecond); 
-    //     MotionMagicConfigs.MotionMagicAcceleration = acceleration.in(DegreesPerSecondPerSecond); 
-    //     armMotor.getConfigurator().apply(MotionMagicConfigs);
+    private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
+        //Set the Configs
+        MotionMagicConfigs MotionMagicConfigs = new MotionMagicConfigs();
+        MotionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(RotationsPerSecond); 
+        MotionMagicConfigs.MotionMagicAcceleration = acceleration.in(RotationsPerSecondPerSecond); 
+        armMotor.getConfigurator().apply(MotionMagicConfigs);
 
-    // }
+    }
     
     //Climb
     public Command setVoltage(Voltage volts) {
@@ -62,14 +64,21 @@ public class Climb extends SubsystemBase {
     }
 
     public Command deepclimb() {
-        // MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmDown);
+        
         return setVoltage(ClimbK.climbVoltage);
-        //Simply sets the voltage to positive to go forward
+        
+    }
+    public Command deepClimbMM() {
+        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmDown);
+        return runOnce(() -> armMotor.setControl(request));
     }
     //Release
     public Command Release() {
         return setVoltage(ClimbK.climbVoltage.unaryMinus());
     }
     //Stop
-    
+    public Command releaseMM() {
+        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmUp);
+        return runOnce(() -> armMotor.setControl(request));
+    }
 }
