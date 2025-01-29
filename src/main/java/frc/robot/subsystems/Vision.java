@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
 
-// TODO: The logged methods can throw null pointer exceptions because getLatestResult can change in between calls
 public class Vision extends SubsystemBase {
 
     private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
@@ -37,6 +36,18 @@ public class Vision extends SubsystemBase {
     private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToBackCamera);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Vision");
     private final StructPublisher<Pose3d> pub = table.getStructTopic("StdDevs: estimatedPose", Pose3d.struct).publish();
+    private PhotonPipelineResult frontLatestResult;
+    private PhotonPipelineResult backLatestResult;
+
+    @Override
+    public void periodic() {
+        if (isCameraConnectedFront()) {
+            frontLatestResult = frontCamera.getLatestResult();
+        }
+        if (isCameraConnectedBack()) {
+            backLatestResult = backCamera.getLatestResult();
+        }
+    }
 
     /**
      * Returns a wrapper object containing a list of estimated robot poses and their standard deviations stored as a Pair to be added into 
@@ -130,7 +141,7 @@ public class Vision extends SubsystemBase {
     @Logged(name = "Front Camera Sees Tag")
     public boolean canSeeTagFront() {
         if (!isCameraConnectedFront()) return false;
-        return frontCamera.getLatestResult().hasTargets();    
+        return frontLatestResult.hasTargets();    
     }
 
     /**
@@ -139,7 +150,7 @@ public class Vision extends SubsystemBase {
     @Logged(name = "Back Camera Sees Tag")
     public boolean canSeeTagBack() {
         if (!isCameraConnectedBack()) return false;
-        return backCamera.getLatestResult().hasTargets();    
+        return backLatestResult.hasTargets();    
     }
 
     /**
@@ -148,7 +159,7 @@ public class Vision extends SubsystemBase {
     @Logged(name = "Front Camera Best Tag ID")
     public int bestTagIDFront() {
         if (!canSeeTagFront()) return -1;
-        return frontCamera.getLatestResult().getBestTarget().getFiducialId();
+        return frontLatestResult.getBestTarget().getFiducialId();
     }
 
     /**
@@ -157,7 +168,7 @@ public class Vision extends SubsystemBase {
     @Logged(name = "Back Camera Best Tag ID")
     public int bestTagIDBack() {
         if (!canSeeTagBack()) return -1;
-        return backCamera.getLatestResult().getBestTarget().getFiducialId();
+        return backLatestResult.getBestTarget().getFiducialId();
     }
 
     /**
@@ -166,7 +177,7 @@ public class Vision extends SubsystemBase {
     @Logged(name = "Front Camera Number Tags Seen")
     public int numTagsSeenFront() {
         if (!canSeeTagFront()) return 0;
-        return frontCamera.getLatestResult().getTargets().size();
+        return frontLatestResult.getTargets().size();
     }
 
     /**
@@ -175,7 +186,7 @@ public class Vision extends SubsystemBase {
     @Logged(name = "Back Camera Number Tags Seen")
     public int numTagsSeenBack() {
         if (!canSeeTagBack()) return 0;
-        return backCamera.getLatestResult().getTargets().size();
+        return backLatestResult.getTargets().size();
     }
 
     /**
@@ -184,7 +195,7 @@ public class Vision extends SubsystemBase {
     @Logged(name = "Front Camera Normal Distance to Best Tag")
     public double distanceToBestTagFront() {
         if (!canSeeTagFront()) return -1;
-        return Units.metersToInches(frontCamera.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
+        return Units.metersToInches(frontLatestResult.getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
     }
 
     /**
@@ -193,7 +204,7 @@ public class Vision extends SubsystemBase {
     @Logged(name = "Back Camera Normal Distance to Best Tag")
     public double distanceToBestTagBack() {
         if (!canSeeTagBack()) return -1;
-        return Units.metersToInches(backCamera.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
+        return Units.metersToInches(backLatestResult.getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
     }
 
     // This is your poor man's type alias, allows me to shorten the type and reference it by using VisionResults instead of List<Pair<EstimatedRobotPose, Matrix<N3, N1>>>
