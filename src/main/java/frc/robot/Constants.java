@@ -16,11 +16,12 @@ import org.json.simple.parser.ParseException;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
-
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -175,7 +176,11 @@ public class Constants {
         .withReverseSoftLimitEnable(true)
         .withForwardSoftLimitThreshold(0)
         .withReverseSoftLimitThreshold(0);
-
+        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs()
+        .withForwardLimitAutosetPositionEnable(true)
+        .withReverseLimitAutosetPositionEnable(true)
+        .withForwardLimitAutosetPositionValue(climbArmDown)
+        .withReverseLimitAutosetPositionValue(climbArmUp);
     }
 }
 

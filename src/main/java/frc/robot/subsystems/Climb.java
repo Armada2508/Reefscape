@@ -37,7 +37,8 @@ public class Climb extends SubsystemBase {
         
         Util.factoryReset(armMotor, armMotorFollow);
         Util.brakeMode(armMotor, armMotorFollow);
-        armMotor.getConfigurator().apply(ClimbK.softLimitConfigs);
+        armMotor.getConfigurator().apply(ClimbK.hardLimitSwitchConfigs);
+        // armMotor.getConfigurator().apply(ClimbK.softLimitConfigs);
         armMotorFollow.setControl(new StrictFollower(ClimbK.armMotorID));
     }
     
