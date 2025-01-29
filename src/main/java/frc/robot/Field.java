@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
+import frc.robot.Constants.SwerveK;
 
 public class Field {
     // TODO: double check all values in at some point, good chance something could be wrong here, rookie task?
@@ -82,9 +83,6 @@ public class Field {
     public static final Pose2d redCageMid = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageMid.getMeasureY()), Rotation2d.fromDegrees(0));
     public static final Pose2d redCageLow = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.fromDegrees(0));
 
-    public static final Distance cageOffset = Inches.of(10);
-    public static final Distance reefOffset = Inches.of(6.5);
-
     // Coral Station
     public static final Pose2d blueStationLow = new Pose2d(Inches.of(31.127), Inches.of(21.796), Rotation2d.fromDegrees(55));
     public static final Pose2d blueStationTop = new Pose2d(blueStationLow.getMeasureX(), fieldWidth.minus(blueStationLow.getMeasureY()), Rotation2d.fromDegrees(305));
@@ -94,6 +92,34 @@ public class Field {
 
     public static final List<Pose2d> blueCoralStationList = List.of(blueStationLow, blueStationTop);
     public static final List<Pose2d> redCoralStationList = List.of(redStationLow, redStationTop);
+
+    // Offsets
+    public static final Distance cageOffset = SwerveK.driveBaseLength.plus(SwerveK.driveBaseLength.div(2)); // Might need to tune this
+
+    public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2);
+    public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2);
+
+    /*
+    Side A -> A B
+    Side B -> C D
+    Side C -> E F
+    Side D -> G H
+    Side E -> I J
+    Side F -> K L
+     */
+    //! Check to see if we need to alter this for red
+    public static final Translation2d reefOffsetSideA = new Translation2d(reefOffsetDistance, Inches.of(0)).rotateBy(blueReefA.getRotation());
+    public static final Translation2d reefOffsetSideB = new Translation2d(reefOffsetDistance, Inches.of(0)).rotateBy(blueReefC.getRotation());
+    public static final Translation2d reefOffsetSideC = new Translation2d(reefOffsetDistance, Inches.of(0)).rotateBy(blueReefE.getRotation());
+    public static final Translation2d reefOffsetSideD = new Translation2d(reefOffsetDistance, Inches.of(0)).rotateBy(blueReefG.getRotation());
+    public static final Translation2d reefOffsetSideE = new Translation2d(reefOffsetDistance, Inches.of(0)).rotateBy(blueReefI.getRotation());
+    public static final Translation2d reefOffsetSideF = new Translation2d(reefOffsetDistance, Inches.of(0)).rotateBy(blueReefK.getRotation());
+
+    public static final Translation2d stationOffsetBlueTop = new Translation2d(stationOffsetDistance, Inches.of(0)).rotateBy(blueStationTop.getRotation());
+    public static final Translation2d stationOffsetBlueLow = new Translation2d(stationOffsetDistance, Inches.of(0)).rotateBy(blueStationLow.getRotation());
+    public static final Translation2d stationOffsetRedTop = new Translation2d(stationOffsetDistance, Inches.of(0)).rotateBy(redStationTop.getRotation());
+    public static final Translation2d stationOffsetRedLow = new Translation2d(stationOffsetDistance, Inches.of(0)).rotateBy(redStationTop.getRotation());
+
 
     // Processor
     //^ processor location is on the edge of the arena carpet rather then the exact middle of the structure

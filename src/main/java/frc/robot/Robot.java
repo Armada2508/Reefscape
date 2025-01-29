@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.Set;
+
 import org.littletonrobotics.urcl.URCL;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -27,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
@@ -101,11 +104,11 @@ public class Robot extends TimedRobot {
         // xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
 
         // Alignment
-        xboxController.a().onTrue(swerve.alignToCoralStation());
-        xboxController.b().onTrue(swerve.alignToReef());
-        xboxController.povUp().onTrue(swerve.alignToTopCage());
-        xboxController.povRight().onTrue(swerve.alignToMidCage());
-        xboxController.povDown().onTrue(swerve.alignToLowCage());
+        xboxController.a().onTrue(Commands.defer(swerve::alignToCoralStation, Set.of(swerve)));
+        xboxController.b().onTrue(Commands.defer(swerve::alignToReef, Set.of(swerve))); //align to reef
+        xboxController.povUp().onTrue(Commands.defer(swerve::alignToTopCage, Set.of(swerve))); // top cage
+        xboxController.povRight().onTrue(Commands.defer(swerve::alignToMidCage, Set.of(swerve))); // mid cage
+        xboxController.povDown().onTrue(Commands.defer(swerve::alignToLowCage, Set.of(swerve))); // low cage
 
 
         // SysID

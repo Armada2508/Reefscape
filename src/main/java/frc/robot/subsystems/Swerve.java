@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -24,6 +25,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
@@ -230,8 +232,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the top cage
      */
     public Command alignToTopCage() {
-        if (Robot.onBlueAlliance()) return driveToPoseCommand(Field.blueCageTop); 
-        return driveToPoseCommand(Field.redCageTop);
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(
+            new Pose2d(Field.blueCageTop.getMeasureX().minus(Field.cageOffset), Field.blueCageTop.getMeasureY(), Field.blueCageTop.getRotation())
+        ); 
+        return driveToPoseCommand(
+            new Pose2d(Field.redCageTop.getMeasureX().plus(Field.cageOffset), Field.redCageTop.getMeasureY(), Field.redCageTop.getRotation())
+        );
     }
 
     /**
@@ -239,8 +245,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the mid cage
      */
     public Command alignToMidCage() {
-        if (Robot.onBlueAlliance()) return driveToPoseCommand(Field.blueCageMid); 
-        return driveToPoseCommand(Field.redCageMid);
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(
+            Field.blueCageMid.getMeasureX().minus(Field.cageOffset), Field.blueCageMid.getMeasureY(), Field.blueCageMid.getRotation()
+        ); 
+        return driveToPoseCommand(
+            Field.redCageMid.getMeasureX().plus(Field.cageOffset), Field.redCageMid.getMeasureY(), Field.redCageMid.getRotation()
+        );
     }
 
     /**
@@ -248,8 +258,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the low cage
      */
     public Command alignToLowCage() {
-        if (Robot.onBlueAlliance()) return driveToPoseCommand(Field.blueCageLow);
-        return driveToPoseCommand(Field.redCageLow);
+        if (Robot.onBlueAlliance()) return driveToPoseCommand(
+            new Pose2d(Field.blueCageLow.getMeasureX().minus(Field.cageOffset), Field.blueCageLow.getMeasureY(), Field.blueCageLow.getRotation())
+        ); 
+        return driveToPoseCommand(
+            new Pose2d(Field.redCageLow.getMeasureX().plus(Field.cageOffset), Field.redCageLow.getMeasureY(), Field.redCageLow.getRotation())
+        );
     }
 
     /**
