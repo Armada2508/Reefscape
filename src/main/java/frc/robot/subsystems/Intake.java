@@ -43,7 +43,6 @@ public class Intake extends SubsystemBase {
         motorRightConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
         motorRightConfig.inverted(true);
 
-
         motorLeft.configure(motorLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motorRight.configure(motorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
