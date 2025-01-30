@@ -212,25 +212,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the nearest reef on your side
      */
     public Command alignToReef() {
-        if (Robot.onRedAlliance()) {
-            // TODO: This can be simplified
-            Pose2d reefPose = getPose().nearest(Field.redReefList);
-            Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
-            Pose2d endPose = new Pose2d(
-	            reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
-	            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-	            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
-            );
-            return driveToPoseCommand(endPose);
-        }
-        Pose2d reefPose = getPose().nearest(Field.blueReefList);
+        Pose2d reefPose = getPose().nearest(Robot.onRedAlliance() ? Field.redReefList : Field.blueReefList);
         Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
-        Pose2d endPose = new Pose2d(
+        return driveToPoseCommand(
             reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
             reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
             reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
         );
-        return driveToPoseCommand(endPose);
     }
 
     /**
@@ -238,25 +226,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the nearest station on your side
      */
     public Command alignToCoralStation() {
-        if (Robot.onRedAlliance()) {
-            // TODO: This can be simplified
-            Pose2d stationPose = getPose().nearest(Field.redCoralStationList);
-            Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
-            Pose2d endPose = new Pose2d(
-                stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
-                stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
-                stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
-            );
-            return driveToPoseCommand(endPose);
-        }
-        Pose2d stationPose = getPose().nearest(Field.blueCoralStationList);
+        Pose2d stationPose = getPose().nearest(Robot.onRedAlliance() ? Field.redCoralStationList : Field.blueCoralStationList);
         Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
-        Pose2d endPose = new Pose2d(
+        return driveToPoseCommand(            
             stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
             stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
-            stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
-        );
-        return driveToPoseCommand(endPose);
+            stationPose.getRotation().plus(Rotation2d.fromDegrees(180)));
     }
 
     /**
