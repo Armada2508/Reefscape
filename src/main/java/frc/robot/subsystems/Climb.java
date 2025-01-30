@@ -33,7 +33,6 @@ public class Climb extends SubsystemBase {
         configMotionMagic(ClimbK.velocity, ClimbK.acceleration); 
     } 
     private void configTalons() {
-        
         Util.factoryReset(armMotor, armMotorFollow);
         Util.brakeMode(armMotor, armMotorFollow);
         armMotor.getConfigurator().apply(ClimbK.hardLimitSwitchConfigs);
@@ -62,10 +61,8 @@ public class Climb extends SubsystemBase {
      * 
      */
     public Command deepclimb() {
-        
         return setVoltage(ClimbK.climbVoltage)
         .withName("Climbed");
-        
     }
     /**
      * Motion magic version of the deepClimb command.
