@@ -6,10 +6,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.Set;
-
-import java.util.Map;
-
 import java.util.Map;
 
 import org.littletonrobotics.urcl.URCL;
@@ -20,20 +16,15 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
@@ -54,10 +45,6 @@ public class Robot extends TimedRobot {
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private final SendableChooser<Command> autoChooser;
 
-    // ===========
-    public static Field2d alignmentTest = new Field2d();
-    // ===========
-    
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -69,17 +56,14 @@ public class Robot extends TimedRobot {
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
         Command driveFieldOriented = swerve.driveCommand(
-            () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)) * 0.2, 
-            () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)) * 0.2,  
+            () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
+            () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
             () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)),
             true
         ).withName("Swerve Drive Field Oriented");
         swerve.setDefaultCommand(driveFieldOriented);
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve);
-
-        swerve.resetOdometry(new Pose2d(Field.blueReefB.getMeasureX().minus(Field.blueStationLow.getMeasureX()), Field.blueReefB.getMeasureY().minus(Field.blueStationLow.getMeasureY()), Rotation2d.fromDegrees(0)));
-
     }
 
     private void logGitConstants() {
@@ -110,12 +94,11 @@ public class Robot extends TimedRobot {
         // xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
 
         // Alignment
-        xboxController.a().onTrue(Commands.defer(swerve::alignToCoralStation, Set.of(swerve)));
-        xboxController.b().onTrue(Commands.defer(swerve::alignToReef, Set.of(swerve))); //align to reef
-        xboxController.povUp().onTrue(Commands.defer(swerve::alignToTopCage, Set.of(swerve))); // top cage
-        xboxController.povRight().onTrue(Commands.defer(swerve::alignToMidCage, Set.of(swerve))); // mid cage
-        xboxController.povDown().onTrue(Commands.defer(swerve::alignToLowCage, Set.of(swerve))); // low cage
-
+        // xboxController.a().onTrue(Commands.defer(swerve::alignToCoralStation, Set.of(swerve)));
+        // xboxController.b().onTrue(Commands.defer(swerve::alignToReef, Set.of(swerve)));
+        // xboxController.povUp().onTrue(Commands.defer(swerve::alignToTopCage, Set.of(swerve)));
+        // xboxController.povRight().onTrue(Commands.defer(swerve::alignToMidCage, Set.of(swerve)));
+        // xboxController.povDown().onTrue(Commands.defer(swerve::alignToLowCage, Set.of(swerve)));
 
         // SysID
         // xboxController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
