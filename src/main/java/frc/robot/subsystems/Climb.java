@@ -68,7 +68,7 @@ public class Climb extends SubsystemBase {
     public Command deepClimbMotionMagic() {
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmDown);
         return runOnce(() -> armMotor.setControl(request))
-        .andThen(Commands.waitUntil(() -> armMotor.getPosition().isNear()));
+        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.climbArmDown, ClimbK.allowableError)));
     }
     //Release
     public Command Release() {
@@ -77,6 +77,7 @@ public class Climb extends SubsystemBase {
     //Stop
     public Command releaseMotionMagic() {
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmUp);
-        return runOnce(() -> armMotor.setControl(request));
+        return runOnce(() -> armMotor.setControl(request))
+        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.climbArmUp, ClimbK.allowableError)));
     }
 }

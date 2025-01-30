@@ -223,6 +223,7 @@ public class Constants {
         
         public static final Angle maxAngle = Degrees.of(0); //Find
         public static final Angle minAngle = Degrees.of(0); //Find
+        public static final Angle allowableError = Degrees.of(0);
 
         //Motion Magic
         public static final AngularVelocity velocity = DegreesPerSecond.of(0);
