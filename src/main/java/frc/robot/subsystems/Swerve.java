@@ -183,6 +183,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public Command driveToPoseCommand(Distance x, Distance y, Rotation2d rotation) {
         return driveToPoseCommand(new Pose2d(x, y, rotation));
     }
+
     /**
      * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
      * @param endPose Final pose to end the robot at
@@ -212,7 +213,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToReef() {
         if (Robot.onRedAlliance()) {
-            // We should see if we can simplify this at all
+            // TODO: This can be simplified
             Pose2d reefPose = getPose().nearest(Field.redReefList);
             Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
             Pose2d endPose = new Pose2d(
@@ -238,6 +239,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToCoralStation() {
         if (Robot.onRedAlliance()) {
+            // TODO: This can be simplified
             Pose2d stationPose = getPose().nearest(Field.redCoralStationList);
             Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
             Pose2d endPose = new Pose2d(
