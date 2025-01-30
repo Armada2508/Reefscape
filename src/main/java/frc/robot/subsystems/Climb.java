@@ -5,9 +5,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
-
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbK;
 
@@ -38,7 +40,7 @@ public class Climb extends SubsystemBase {
         Util.factoryReset(armMotor, armMotorFollow);
         Util.brakeMode(armMotor, armMotorFollow);
         armMotor.getConfigurator().apply(ClimbK.hardLimitSwitchConfigs);
-        // armMotor.getConfigurator().apply(ClimbK.softLimitConfigs);
+        armMotor.getConfigurator().apply(ClimbK.softLimitConfigs);
         armMotorFollow.setControl(new StrictFollower(ClimbK.armMotorID));
     }
     
@@ -63,16 +65,17 @@ public class Climb extends SubsystemBase {
         return setVoltage(ClimbK.climbVoltage);
         
     }
-    public Command deepClimbMM() {
+    public Command deepClimbMotionMagic() {
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmDown);
-        return runOnce(() -> armMotor.setControl(request));
+        return runOnce(() -> armMotor.setControl(request))
+        .andThen(Commands.waitUntil(() -> armMotor.getPosition().isNear()));
     }
     //Release
     public Command Release() {
         return setVoltage(ClimbK.climbVoltage.unaryMinus());
     }
     //Stop
-    public Command releaseMM() {
+    public Command releaseMotionMagic() {
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmUp);
         return runOnce(() -> armMotor.setControl(request));
     }

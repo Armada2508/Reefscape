@@ -170,16 +170,20 @@ public class Constants {
         public static final Angle climbArmUp = Degrees.of(0);
         public static final Angle climbArmDown = Degrees.of(90);
         
+        public static final double Kp = 0;
+        public static final double Kd = 0;
+
+        public static final Slot0Configs pidconfig = new Slot0Configs().withKD(Kd).withKP(Kp);
+        public static final double GearRatio = 0;
         //Voltage
-        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
+        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs() //for forward limit
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(0)
-        .withReverseSoftLimitThreshold(0);
-        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs()
+        .withForwardSoftLimitThreshold(0);
+        
+        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() //for reverse limit
         .withForwardLimitAutosetPositionEnable(true)
         .withReverseLimitAutosetPositionEnable(true)
-        .withForwardLimitAutosetPositionValue(climbArmDown)
         .withReverseLimitAutosetPositionValue(climbArmUp);
     }
 }
