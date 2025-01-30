@@ -25,7 +25,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPoint;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
@@ -40,7 +39,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -196,7 +194,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
             null, 
             new GoalEndState(MetersPerSecond.of(0), endPose.getRotation()));
-
         return new FollowPathCommand(
             path, 
             this::getPose, 
@@ -206,7 +203,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             SwerveK.robotConfig,
             () -> false, 
             this 
-            );
+        );
     }
 
     /**
@@ -225,14 +222,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             );
             return driveToPoseCommand(endPose);
         }
-            Pose2d reefPose = getPose().nearest(Field.blueReefList);
-            Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
-            Pose2d endPose = new Pose2d(
-	            reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
-	            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-	            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
-            );
-            return driveToPoseCommand(endPose);
+        Pose2d reefPose = getPose().nearest(Field.blueReefList);
+        Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
+        Pose2d endPose = new Pose2d(
+            reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
+            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
+            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
+        );
+        return driveToPoseCommand(endPose);
     }
 
     /**
@@ -250,14 +247,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             );
             return driveToPoseCommand(endPose);
         }
-            Pose2d stationPose = getPose().nearest(Field.blueCoralStationList);
-            Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
-            Pose2d endPose = new Pose2d(
-                stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
-                stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
-                stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
-            );
-            return driveToPoseCommand(endPose);
+        Pose2d stationPose = getPose().nearest(Field.blueCoralStationList);
+        Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
+        Pose2d endPose = new Pose2d(
+            stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
+            stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
+            stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
+        );
+        return driveToPoseCommand(endPose);
     }
 
     /**
@@ -265,11 +262,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the top cage
      */
     public Command alignToTopCage() {
-        if (Robot.onRedAlliance()) return driveToPoseCommand(
-            new Pose2d(Field.redCageTop.getMeasureX().plus(Field.cageOffset), Field.redCageTop.getMeasureY(), Field.redCageTop.getRotation())
-        ); 
+        if (Robot.onRedAlliance()) { 
+            return driveToPoseCommand(
+                Field.redCageTop.getMeasureX().plus(Field.cageOffset), Field.redCageTop.getMeasureY(), Field.redCageTop.getRotation()
+            ); 
+        }
         return driveToPoseCommand(
-            new Pose2d(Field.blueCageTop.getMeasureX().minus(Field.cageOffset), Field.blueCageTop.getMeasureY(), Field.blueCageTop.getRotation())
+            Field.blueCageTop.getMeasureX().minus(Field.cageOffset), Field.blueCageTop.getMeasureY(), Field.blueCageTop.getRotation()
         );
     }
 
@@ -278,9 +277,11 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the mid cage
      */
     public Command alignToMidCage() {
-        if (Robot.onRedAlliance()) return driveToPoseCommand(
-            Field.redCageMid.getMeasureX().plus(Field.cageOffset), Field.redCageMid.getMeasureY(), Field.redCageMid.getRotation()
-        ); 
+        if (Robot.onRedAlliance()) {
+            return driveToPoseCommand(
+                Field.redCageMid.getMeasureX().plus(Field.cageOffset), Field.redCageMid.getMeasureY(), Field.redCageMid.getRotation()
+            ); 
+        }
         return driveToPoseCommand(
             Field.blueCageMid.getMeasureX().minus(Field.cageOffset), Field.blueCageMid.getMeasureY(), Field.blueCageMid.getRotation()
         );
@@ -291,11 +292,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return driveToPoseCommand to drive to the low cage
      */
     public Command alignToLowCage() {
-        if (Robot.onRedAlliance()) return driveToPoseCommand(
-            new Pose2d(Field.redCageLow.getMeasureX().plus(Field.cageOffset), Field.redCageLow.getMeasureY(), Field.redCageLow.getRotation())
-        ); 
+        if (Robot.onRedAlliance()) {
+            return driveToPoseCommand(
+                Field.redCageLow.getMeasureX().plus(Field.cageOffset), Field.redCageLow.getMeasureY(), Field.redCageLow.getRotation()
+            );
+        }
         return driveToPoseCommand(
-            new Pose2d(Field.blueCageLow.getMeasureX().minus(Field.cageOffset), Field.blueCageLow.getMeasureY(), Field.blueCageLow.getRotation())
+            Field.blueCageLow.getMeasureX().minus(Field.cageOffset), Field.blueCageLow.getMeasureY(), Field.blueCageLow.getRotation()
         );
     }
 
