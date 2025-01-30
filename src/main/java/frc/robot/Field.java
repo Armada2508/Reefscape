@@ -84,7 +84,7 @@ public class Field {
     public static final Pose2d redCageLow = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.fromDegrees(0));
 
     // Coral Station
-    public static final Pose2d blueStationLow = new Pose2d(Inches.of(31.127), Inches.of(21.796), Rotation2d.fromDegrees(55));
+    public static final Pose2d blueStationLow = new Pose2d(Inches.of(32.875), Inches.of(25.573), Rotation2d.fromDegrees(55));
     public static final Pose2d blueStationTop = new Pose2d(blueStationLow.getMeasureX(), fieldWidth.minus(blueStationLow.getMeasureY()), Rotation2d.fromDegrees(305));
 
     public static final Pose2d redStationLow = new Pose2d(fieldLength.minus(blueStationLow.getMeasureX()), blueStationLow.getMeasureY(), Rotation2d.fromDegrees(blueStationTop.getRotation().getDegrees() - 180));
@@ -96,7 +96,7 @@ public class Field {
     // Offsets
     public static final Distance cageOffset = SwerveK.driveBaseLength.plus(SwerveK.driveBaseLength.div(2)); // Might need to tune this
 
-    public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2);
+    public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(6));
     public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2);
 
     // Processor

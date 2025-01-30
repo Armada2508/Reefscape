@@ -69,8 +69,8 @@ public class Robot extends TimedRobot {
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
         Command driveFieldOriented = swerve.driveCommand(
-            () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
-            () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
+            () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)) * 0.2, 
+            () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)) * 0.2,  
             () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)),
             true
         ).withName("Swerve Drive Field Oriented");
@@ -131,17 +131,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        SmartDashboard.putData("Field", alignmentTest);
-        alignmentTest.getObject("Blue Cage Top").setPose(Field.blueCageTop);
-        alignmentTest.getObject("Blue Cage Mid").setPose(Field.blueCageMid);
-        alignmentTest.getObject("Blue Cage Low").setPose(Field.blueCageLow);
-        alignmentTest.getObject("Blue Station Top").setPose(Field.blueStationTop); 
-        alignmentTest.getObject("Blue Station Low").setPose(Field.blueStationLow); 
-        alignmentTest.getObject("red Station Top").setPose(Field.redStationTop); 
-        alignmentTest.getObject("red Station Low").setPose(Field.redStationLow); 
-
-
-        alignmentTest.getObject("Robot Pose").setPose(swerve.getPose());
     }
 
     @Override

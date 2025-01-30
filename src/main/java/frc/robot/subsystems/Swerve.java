@@ -223,8 +223,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 	            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
 	            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
             );
-            Robot.alignmentTest.getObject("Reef Pose").setPose(reefPose);
-            Robot.alignmentTest.getObject("End Pose").setPose(endPose);
             return driveToPoseCommand(endPose);
         }
             Pose2d reefPose = getPose().nearest(Field.blueReefList);
@@ -234,8 +232,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 	            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
 	            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
             );
-            Robot.alignmentTest.getObject("Reef Pose").setPose(reefPose);
-            Robot.alignmentTest.getObject("End Pose").setPose(endPose);
             return driveToPoseCommand(endPose);
     }
 
