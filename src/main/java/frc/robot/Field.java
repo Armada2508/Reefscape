@@ -38,28 +38,19 @@ public class Field {
     public static final Pose2d blueReefE = new Pose2d(blueReefG.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(-60));
     public static final Pose2d blueReefC = new Pose2d(blueReefE.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(-120));
 
-
     public static final Pose2d redReefA = new Pose2d(fieldLength.minus(blueReefA.getMeasureX()), blueReefA.getMeasureY(), Rotation2d.fromDegrees(0));
     public static final Pose2d redReefK = new Pose2d(fieldLength.minus(blueReefK.getMeasureX()), blueReefK.getMeasureY(), Rotation2d.fromDegrees(60));
     public static final Pose2d redReefI = new Pose2d(fieldLength.minus(blueReefI.getMeasureX()), blueReefI.getMeasureY(), Rotation2d.fromDegrees(120));
     public static final Pose2d redReefG = new Pose2d(fieldLength.minus(blueReefG.getMeasureX()), blueReefG.getMeasureY(), Rotation2d.fromDegrees(180));
-    public static final Pose2d redReefE = new Pose2d(fieldLength.minus(blueReefE.getMeasureX()), blueReefE.getMeasureY(), Rotation2d.fromDegrees(-120)); //!
-    public static final Pose2d redReefC = new Pose2d(fieldLength.minus(blueReefC.getMeasureX()), blueReefC.getMeasureY(), Rotation2d.fromDegrees(-60)); //!
+    public static final Pose2d redReefE = new Pose2d(fieldLength.minus(blueReefE.getMeasureX()), blueReefE.getMeasureY(), Rotation2d.fromDegrees(-120));
+    public static final Pose2d redReefC = new Pose2d(fieldLength.minus(blueReefC.getMeasureX()), blueReefC.getMeasureY(), Rotation2d.fromDegrees(-60));
 
     public static final Pose2d redReefB = new Pose2d(fieldLength.minus(blueReefB.getMeasureX()), blueReefB.getMeasureY(), Rotation2d.fromDegrees(0));
     public static final Pose2d redReefL = new Pose2d(fieldLength.minus(blueReefL.getMeasureX()), blueReefL.getMeasureY(), Rotation2d.fromDegrees(60));
     public static final Pose2d redReefJ = new Pose2d(fieldLength.minus(blueReefJ.getMeasureX()), blueReefJ.getMeasureY(), Rotation2d.fromDegrees(120));
     public static final Pose2d redReefH = new Pose2d(fieldLength.minus(blueReefH.getMeasureX()), blueReefH.getMeasureY(), Rotation2d.fromDegrees(180));
-    public static final Pose2d redReefF = new Pose2d(fieldLength.minus(blueReefF.getMeasureX()), blueReefF.getMeasureY(), Rotation2d.fromDegrees(-120)); //!
-    public static final Pose2d redReefD = new Pose2d(fieldLength.minus(blueReefD.getMeasureX()), blueReefD.getMeasureY(), Rotation2d.fromDegrees(-60)); //!
-    // 17 - 22, 6-11
-
-    /**
-     * Converts a tag ID with an offset into a reef position
-     * @param tagId ID for the april tag
-     * @param offset true for left offset, false for right offset
-     * @return Pose2d of the determined reef position
-     */
+    public static final Pose2d redReefF = new Pose2d(fieldLength.minus(blueReefF.getMeasureX()), blueReefF.getMeasureY(), Rotation2d.fromDegrees(-120));
+    public static final Pose2d redReefD = new Pose2d(fieldLength.minus(blueReefD.getMeasureX()), blueReefD.getMeasureY(), Rotation2d.fromDegrees(-60));
 
     public static final List<Pose2d> blueReefList = List.of(blueReefA, blueReefB, blueReefC, blueReefD, blueReefE, blueReefF, blueReefG, blueReefH, blueReefI, blueReefJ, blueReefK, blueReefL);
     public static final List<Pose2d> redReefList = List.of(redReefA, redReefB, redReefC, redReefD, redReefE, redReefF, redReefG, redReefH, redReefI, redReefJ, redReefK, redReefL);
@@ -95,7 +86,6 @@ public class Field {
 
     // Offsets
     public static final Distance cageOffset = SwerveK.driveBaseLength.plus(SwerveK.driveBaseLength.div(2)); // Might need to tune this
-
     public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(6));
     public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2);
 
@@ -104,12 +94,4 @@ public class Field {
     public static final Translation2d blueProcessor = new Translation2d(Inches.of(0), Inches.of(235.7255));
     public static final Translation2d redProcessor = new Translation2d(fieldWidth, fieldLength.minus(blueProcessor.getMeasureY()));
     
-    /**
-     * Creates a pose2d with 0 degrees from a given translation
-     * @param translation Translation to get the x and y from
-     * @return Pose with the translation's x and y, and 0 degrees for rotation
-     */
-    public static Pose2d getAsPose(Translation2d translation) {
-        return new Pose2d(translation, Rotation2d.fromDegrees(0));
-    }
 }
