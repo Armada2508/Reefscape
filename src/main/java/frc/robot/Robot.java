@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
@@ -21,6 +20,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
     private final Swerve swerve = new Swerve(vision::getVisionResults);
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private final SendableChooser<Command> autoChooser;
-    
+
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -84,14 +84,21 @@ public class Robot extends TimedRobot {
         // Reset forward direction for field relative
         xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
         // D-pad snap turning
-        xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
-        xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
-        xboxController.povLeft().onTrue(swerve.turnCommand(Degrees.of(90))); 
-        xboxController.povDownLeft().onTrue(swerve.turnCommand(Degrees.of(135))); 
-        xboxController.povDown().onTrue(swerve.turnCommand(Degrees.of(180))); 
-        xboxController.povDownRight().onTrue(swerve.turnCommand(Degrees.of(-135))); 
-        xboxController.povRight().onTrue(swerve.turnCommand(Degrees.of(-90))); 
-        xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
+        // xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
+        // xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
+        // xboxController.povLeft().onTrue(swerve.turnCommand(Degrees.of(90))); 
+        // xboxController.povDownLeft().onTrue(swerve.turnCommand(Degrees.of(135))); 
+        // xboxController.povDown().onTrue(swerve.turnCommand(Degrees.of(180))); 
+        // xboxController.povDownRight().onTrue(swerve.turnCommand(Degrees.of(-135))); 
+        // xboxController.povRight().onTrue(swerve.turnCommand(Degrees.of(-90))); 
+        // xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
+
+        // Alignment
+        // xboxController.a().onTrue(Commands.defer(swerve::alignToCoralStation, Set.of(swerve)));
+        // xboxController.b().onTrue(Commands.defer(swerve::alignToReef, Set.of(swerve)));
+        // xboxController.povUp().onTrue(Commands.defer(swerve::alignToTopCage, Set.of(swerve)));
+        // xboxController.povRight().onTrue(Commands.defer(swerve::alignToMidCage, Set.of(swerve)));
+        // xboxController.povDown().onTrue(Commands.defer(swerve::alignToLowCage, Set.of(swerve)));
 
         // SysID
         // xboxController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -121,6 +128,14 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         swerve.stop();
+    }
+
+    /**
+     * Returns the alliance
+     * @return true if the robot is on Red, false if the robot is on Blue
+     */
+    public static boolean onRedAlliance() {
+        return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
     }
     
 }

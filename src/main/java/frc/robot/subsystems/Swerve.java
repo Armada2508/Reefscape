@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -19,7 +20,11 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
@@ -33,12 +38,13 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SwerveK;
+import frc.robot.Field;
+import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
 import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
@@ -72,7 +78,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             e.printStackTrace();
             throw new RuntimeException("Swerve directory not found.");
         }
-        swerveDrive = parser.createSwerveDrive(SwerveK.maxRobotSpeed.in(MetersPerSecond));
+        swerveDrive = parser.createSwerveDrive(SwerveK.maxPossibleRobotSpeed.in(MetersPerSecond));
         this.visionSource = visionSource;
         swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(SwerveK.kS, SwerveK.kV, SwerveK.kA));
         frontLeft = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
@@ -127,7 +133,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             (speeds, feedforward) -> setChassisSpeeds(speeds), 
             pathPlannerController,
             SwerveK.robotConfig,
-            () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, 
+            Robot::onRedAlliance, 
             this);
     }
 
@@ -165,6 +171,137 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         .until(rotationPIDController::atSetpoint)
         .withTimeout(Seconds.of(2))
         .withName("Swerve Turn");
+    }
+
+    /**
+     * Constructs a command to take the robot from current position to an end position
+     * @param x x component of the final position
+     * @param y y component of the final position
+     * @param rotation Rotations of the final position
+     * @return Command to drive along the constructed path
+     */
+    public Command driveToPoseCommand(Distance x, Distance y, Rotation2d rotation) {
+        return driveToPoseCommand(new Pose2d(x, y, rotation));
+    }
+
+    /**
+     * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
+     * @param endPose Final pose to end the robot at
+     * @return Command to drive along the constructed path
+     */
+    public Command driveToPoseCommand(Pose2d endPose) {
+        PathPlannerPath path = new PathPlannerPath(
+            PathPlannerPath.waypointsFromPoses(getPose(), endPose), 
+            new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
+            null, 
+            new GoalEndState(MetersPerSecond.of(0), endPose.getRotation()));
+        return new FollowPathCommand(
+            path, 
+            this::getPose, 
+            this::getRobotVelocity, 
+            (speeds, feedforward) -> setChassisSpeeds(speeds),
+            pathPlannerController, 
+            SwerveK.robotConfig,
+            () -> false, 
+            this 
+        );
+    }
+
+    /**
+     * Creates a command to drive the robot to the nearest reef from its current position
+     * @return driveToPoseCommand to drive to the nearest reef on your side
+     */
+    public Command alignToReef() {
+        if (Robot.onRedAlliance()) {
+            // TODO: This can be simplified
+            Pose2d reefPose = getPose().nearest(Field.redReefList);
+            Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
+            Pose2d endPose = new Pose2d(
+	            reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
+	            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
+	            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
+            );
+            return driveToPoseCommand(endPose);
+        }
+        Pose2d reefPose = getPose().nearest(Field.blueReefList);
+        Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
+        Pose2d endPose = new Pose2d(
+            reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
+            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
+            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
+        );
+        return driveToPoseCommand(endPose);
+    }
+
+    /**
+     * Creates a command to drive the robot to the nearest coral station to it
+     * @return driveToPoseCommand to drive to the nearest station on your side
+     */
+    public Command alignToCoralStation() {
+        if (Robot.onRedAlliance()) {
+            // TODO: This can be simplified
+            Pose2d stationPose = getPose().nearest(Field.redCoralStationList);
+            Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
+            Pose2d endPose = new Pose2d(
+                stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
+                stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
+                stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
+            );
+            return driveToPoseCommand(endPose);
+        }
+        Pose2d stationPose = getPose().nearest(Field.blueCoralStationList);
+        Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
+        Pose2d endPose = new Pose2d(
+            stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
+            stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
+            stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
+        );
+        return driveToPoseCommand(endPose);
+    }
+
+    /**
+     * Creates a command to drive to the top cage of your side
+     * @return driveToPoseCommand to drive to the top cage
+     */
+    public Command alignToTopCage() {
+        if (Robot.onRedAlliance()) { 
+            return driveToPoseCommand(
+                Field.redCageTop.getMeasureX().plus(Field.cageOffset), Field.redCageTop.getMeasureY(), Field.redCageTop.getRotation()
+            ); 
+        }
+        return driveToPoseCommand(
+            Field.blueCageTop.getMeasureX().minus(Field.cageOffset), Field.blueCageTop.getMeasureY(), Field.blueCageTop.getRotation()
+        );
+    }
+
+    /**
+     * Creates a command to drive to the mid cage of your side
+     * @return driveToPoseCommand to drive to the mid cage
+     */
+    public Command alignToMidCage() {
+        if (Robot.onRedAlliance()) {
+            return driveToPoseCommand(
+                Field.redCageMid.getMeasureX().plus(Field.cageOffset), Field.redCageMid.getMeasureY(), Field.redCageMid.getRotation()
+            ); 
+        }
+        return driveToPoseCommand(
+            Field.blueCageMid.getMeasureX().minus(Field.cageOffset), Field.blueCageMid.getMeasureY(), Field.blueCageMid.getRotation()
+        );
+    }
+
+    /**
+     * Creates a command to drive to the low cage of your side
+     * @return driveToPoseCommand to drive to the low cage
+     */
+    public Command alignToLowCage() {
+        if (Robot.onRedAlliance()) {
+            return driveToPoseCommand(
+                Field.redCageLow.getMeasureX().plus(Field.cageOffset), Field.redCageLow.getMeasureY(), Field.redCageLow.getRotation()
+            );
+        }
+        return driveToPoseCommand(
+            Field.blueCageLow.getMeasureX().minus(Field.cageOffset), Field.blueCageLow.getMeasureY(), Field.blueCageLow.getRotation()
+        );
     }
 
     /**

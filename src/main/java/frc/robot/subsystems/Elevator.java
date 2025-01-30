@@ -71,7 +71,7 @@ public class Elevator extends SubsystemBase {
 
     /**
      * Sets the volts of the motors
-     * @param speed speed of the motor in volts
+     * @param volts speed of the motor in volts
      */
     public Command setVoltage(Voltage volts) {
         return runOnce(() -> talon.setControl(new VoltageOut(volts))).withName("Set Voltage");

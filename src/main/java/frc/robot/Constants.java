@@ -3,6 +3,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -43,11 +44,18 @@ public class Constants {
     public static class SwerveK {
         public static final Distance wheelDiameter = Inches.of(2.7); 
         public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
+        public static final Distance driveBaseLength = Inches.of(35); // Base is a square so this is the same as the width
 
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
-        public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(5.426);
+        public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
+
+        // Path Constraints
+        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(2); //! Find
+        public static final LinearAcceleration maxRobotAcceleration = MetersPerSecondPerSecond.of(0.3); // around 1 foot per second
+        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(90); //! Find
+        public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(90); //! Find
 
         // Drive Feedforward
         public static final double kS = 0.10431;
