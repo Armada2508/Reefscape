@@ -244,8 +244,8 @@ public class Constants {
         .withForwardSoftLimitThreshold(0);
         
         public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() //for reverse limit
-        .withForwardLimitAutosetPositionEnable(true)
-        .withReverseLimitAutosetPositionEnable(true)
+        .withForwardLimitEnable(true)
+        .withReverseLimitEnable(true)
         .withReverseLimitAutosetPositionValue(climbArmUp);
     }
 }
