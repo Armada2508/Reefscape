@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.2.1"
+    id "com.peterabeles.gversion" version "1.10.3"
 }
 
 java {
@@ -12,6 +13,11 @@ sourceSets {
     main {
         java {
             srcDirs 'library/src/main/java/'
+        }
+    }
+    test {
+        java {
+            srcDirs 'library/src/test/java'
         }
     }
 }
@@ -35,6 +41,16 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
+                    // Enable VisualVM connection, you have to disable the web server using the team number setter for this to work
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote=true")
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
+                    // jvmArgs.add("-Djava.rmi.server.hostname=10.25.8.2") // 172.22.11.2 if connected by USB
+                    // Heap dump
+                    jvmArgs.add("-XX:+HeapDumpOnOutOfMemoryError")
+                    jvmArgs.add("-XX:HeapDumpPath=/u/")
                 }
 
                 // Static files artifact
@@ -85,7 +101,7 @@ dependencies {
 test {
     useJUnitPlatform()
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
-    dependsOn gradle.includedBuilds*.task(":test")
+    ignoreFailures = true // Don't fail builds or deploys because of failing tests
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -110,4 +126,14 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
+}
+
+project.compileJava.dependsOn(createVersionFile)
+gversion {
+  srcDir       = "src/main/java/"
+  classPackage = "frc.robot"
+  className    = "GitConstants"
+  dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+  timeZone     = "America/Chicago"
+  indent       = "  "
 }

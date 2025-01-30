@@ -2,6 +2,7 @@
 # If you remove items from this file, intellisense might break.
 
 simgui-ds.json
+src/main/java/frc/robot/GitConstants.java
 
 ### C++ ###
 # Prerequisites

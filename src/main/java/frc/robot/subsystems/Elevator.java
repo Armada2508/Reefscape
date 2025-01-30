@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -22,6 +23,7 @@ import frc.robot.Constants.ElevatorK;
 import frc.robot.lib.util.Encoder;
 import frc.robot.lib.util.Util;
 
+@Logged
 public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.elevatorID);
@@ -53,9 +55,10 @@ public class Elevator extends SubsystemBase {
      * @param position position of the elavator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.toRotations(position.level.div(ElevatorK.stageCount), 1, ElevatorK.sprocketDiameter));
+        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(position.level.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
         return runOnce(() -> talon.setControl(request))
-        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))); // end command when we reach set position
+        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))) // end command when we reach set position
+        .withName("Set Position"); 
     }
 
     /**
@@ -63,16 +66,15 @@ public class Elevator extends SubsystemBase {
      * @return Height of the elevator as a Distance
      */
     public Distance getPosition() {
-        return Encoder.toDistance(talon.getPosition().getValue().times(ElevatorK.stageCount), 1, ElevatorK.sprocketDiameter);
+        return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
     }
 
     /**
      * Sets the volts of the motors
-     * @param speed speed of the motor in volts
+     * @param volts speed of the motor in volts
      */
-    public void setVoltage(Voltage volts) {
-        VoltageOut request = new VoltageOut(volts);
-        talon.setControl(request);
+    public Command setVoltage(Voltage volts) {
+        return runOnce(() -> talon.setControl(new VoltageOut(volts))).withName("Set Voltage");
     }
 
     /**
@@ -81,4 +83,12 @@ public class Elevator extends SubsystemBase {
     public void stop() {
         talon.setControl(new NeutralOut());
     }
+
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
+    }
+    
 }

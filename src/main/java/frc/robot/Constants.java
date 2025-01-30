@@ -3,6 +3,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -20,6 +21,14 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import edu.wpi.first.units.measure.Angle;
@@ -31,20 +40,34 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
+import frc.robot.lib.util.Encoder;
 
 public class Constants {
 
     public static class SwerveK {
-        public static final Distance wheelDiameter = Inches.of(3); 
-        public static final Distance driveBaseRadius = Inches.of(12.75);
+        public static final Distance wheelDiameter = Inches.of(2.7); 
+        public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
+        public static final Distance driveBaseLength = Inches.of(35); // Base is a square so this is the same as the width
 
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
-        public static final LinearVelocity maxRobotSpeed = MetersPerSecond.of(5.426);
+        public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
 
-        public static final PIDConstants translationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune
-        public static final PIDConstants rotationConstants = new PIDConstants(0, 0, 0); //! TODO: Tune
+        // Path Constraints
+        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(2); //! Find
+        public static final LinearAcceleration maxRobotAcceleration = MetersPerSecondPerSecond.of(0.3); // around 1 foot per second
+        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(90); //! Find
+        public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(90); //! Find
+
+        // Drive Feedforward
+        public static final double kS = 0.10431;
+        public static final double kV = 2.0967;
+        public static final double kA = 0.055428;
+
+        // PathPlanner
+        public static final PIDConstants translationConstants = new PIDConstants(5, 0, 0);
+        public static final PIDConstants rotationConstants = new PIDConstants(5, 0, 0);
         public static RobotConfig robotConfig; static {
             try {
                 robotConfig = RobotConfig.fromGUISettings();
@@ -53,6 +76,7 @@ public class Constants {
             }
         }
 
+        // Turn PID
         public static final PIDConstants angularPID = new PIDConstants(5, 0, 0.4); // kP = degrees/second per degree
         public static final Angle angularDeadband = Degrees.of(2);
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
@@ -77,17 +101,18 @@ public class Constants {
         public static final int elevatorID = 0;
         public static final int followID = 0;
 
-        public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(ElevatorK.maxHeight.in(Inches))
-        .withReverseSoftLimitThreshold(ElevatorK.minHeight.in(Inches));
-
         public static final double gearRatio = 16;
 
         public static final Distance sprocketDiameter = Inches.of(0); //! Find
 
         public static final int stageCount = 3;
+
+        public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
+            .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
+
 
         // Motion Magic Values
         public static final LinearVelocity velocity = MetersPerSecond.of(0);
@@ -132,14 +157,35 @@ public class Constants {
         }
     }  
 
+    public static class IntakeK { // TODO: Confirm motor ids and detection range
+        // IDs
+        public static final int motorLeftId = 2; 
+        public static final int motorRightId = 3; 
+        public static final int timeOfFlightId = 0; 
+
+        public static final Distance coralDetectionRange = Inches.of(4);
+
+        // Current limit for motors in amps
+        public static final int currentLimit = 20;
+
+        // Voltage during intake
+        public static final Voltage coralIntakeVolts = Volts.of(8);
+
+        // Voltage while scoring
+        public static final Voltage levelOneVolts = Volts.of(4);
+        public static final Voltage levelTwoThreeVolts = Volts.of(5);
+        public static final Voltage levelFourVolts = Volts.of(5);
+    }
+
     public static class AlgaeK { // TODO: Tune everything here
-        public static final int sparkMaxID = 0;
-        public static final int limitSwitchID = 0;
-        public static final double gearRatio = 50;
-        public static final Voltage zeroingVoltage = Volts.of(-1.5);
+        public static final int sparkMaxID = 1;
+        public static final double gearRatio = 64;
+        public static final Voltage zeroingVoltage = Volts.of(1.5);
+        public static final int currentLimit = 20;
 
         public static final Angle maxPosition = Degrees.of(120);
         public static final Angle algaePosition = Degrees.of(0);
+        public static final Angle loweredAlgaePosition = Degrees.of(0);
         public static final Angle stowPosition = Degrees.of(0);
         public static final Angle zeroPosition = Degrees.of(0);
         public static final Angle allowableError = Degrees.of(1);
@@ -149,7 +195,22 @@ public class Constants {
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
     }
-    
+
+    public static class VisionK { // TODO: Find transform and standard deviations
+        public static final String frontCameraName = "ArducamFront";
+        public static final String backCameraName = "ArducamBack";
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(14), Inches.of(7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(0)));
+        public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(0), Inches.of(0), Inches.of(0), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+        // Acceptable height of pose estimation to consider it a valid pose
+        public static final Distance maxPoseZ = Inches.of(12);
+        public static final Distance minPoseZ = Inches.of(-6);
+        // Used in scaling the standard deviations by average distance to april tags
+        public static final Distance baseLineAverageTagDistance = Inches.of(80);
+        // Vision Standard Deviations (Meters, Meters, Radians)
+        public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(6), Units.feetToMeters(6), Units.degreesToRadians(360));
+        public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(45));
+        public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    }
 
     public static class ClimbK {
         //Motors

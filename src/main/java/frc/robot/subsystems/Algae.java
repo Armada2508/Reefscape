@@ -16,17 +16,14 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeK;
 
-@Logged
 public class Algae extends SubsystemBase {
 
     private final SparkMax sparkMax = new SparkMax(AlgaeK.sparkMaxID, MotorType.kBrushless);
-    private final DigitalInput limitSwitch = new DigitalInput(AlgaeK.limitSwitchID);
 
     public Algae() {
         SparkMaxConfig config = new SparkMaxConfig();
@@ -35,6 +32,12 @@ public class Algae extends SubsystemBase {
             .positionConversionFactor(1.0 / AlgaeK.gearRatio) // Converts rotations of the motor into rotations of the mechanism
             .velocityConversionFactor(1.0 / (AlgaeK.gearRatio * 60.0)); // Divide by 60 to turn RPM into RPS
         config.idleMode(IdleMode.kBrake);
+        config.smartCurrentLimit(AlgaeK.currentLimit);
+        config.signals
+            .primaryEncoderPositionAlwaysOn(true)
+            .primaryEncoderVelocityAlwaysOn(true)
+            .warningsAlwaysOn(true)
+            .faultsAlwaysOn(true);
         config.softLimit // It's a little unclear if these limits are affected by the conversion factor but it seems like they're not
             .forwardSoftLimit(AlgaeK.maxPosition.in(Rotations) * AlgaeK.gearRatio)
             .forwardSoftLimitEnabled(true)
@@ -49,6 +52,14 @@ public class Algae extends SubsystemBase {
             .allowedClosedLoopError(AlgaeK.allowableError.in(Rotations));
         sparkMax.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
+
+    private Command setPosition(Angle position) {
+        return runOnce(() -> {
+            sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kMAXMotionPositionControl);
+        })
+        .andThen(Commands.waitUntil(() -> getAngle().isNear(position, AlgaeK.allowableError)))
+        .withName("Set Position");
+    }
     
     /**
      * Sets the voltage of the arm motor
@@ -60,15 +71,19 @@ public class Algae extends SubsystemBase {
     }
 
     /**
+     * Commands the arm to go slightly below the algae so it can then be raised and knock it off, waits until it's within the allowable error
+     * @return A command to put the arm in lowered position
+     */
+    public Command loweredPosition() {
+        return setPosition(AlgaeK.loweredAlgaePosition).withName("Lowered Algae Position");
+    }
+
+    /**
      * Commands the arm into the position to knock the algae off and waits until it's within the allowable error
      * @return A command to put the arm in clear algae position
      */
     public Command algaePosition() {
-        return runOnce(() -> {
-            sparkMax.getClosedLoopController().setReference(AlgaeK.algaePosition.in(Rotations), ControlType.kMAXMotionPositionControl);
-        })
-        .andThen(Commands.waitUntil(() -> getAngle().isNear(AlgaeK.algaePosition, AlgaeK.allowableError)))
-        .withName("Clear Algae Position");
+        return setPosition(AlgaeK.algaePosition).withName("Clear Algae Position");
     }
 
     /**
@@ -76,11 +91,8 @@ public class Algae extends SubsystemBase {
      * @return A command to put the arm in stow position
      */
     public Command stow() {
-        return runOnce(() -> {
-            sparkMax.getClosedLoopController().setReference(AlgaeK.stowPosition.in(Rotations), ControlType.kMAXMotionPositionControl);
-        })
-        .andThen(Commands.waitUntil(() -> getAngle().isNear(AlgaeK.stowPosition, AlgaeK.allowableError)))
-        .withName("Stow");
+        return setPosition(AlgaeK.stowPosition).withName("Stow");
+
     }
 
     /**
@@ -88,8 +100,8 @@ public class Algae extends SubsystemBase {
      * @return A command to zero the arm
      */
     public Command zero() {
-        return setVoltage(AlgaeK.zeroingVoltage)
-            .andThen(Commands.waitUntil(limitSwitch::get))
+        return setVoltage(AlgaeK.zeroingVoltage.unaryMinus())
+            .andThen(Commands.waitUntil(sparkMax.getForwardLimitSwitch()::isPressed))
             .andThen(() -> sparkMax.getEncoder().setPosition(AlgaeK.zeroPosition.in(Rotations)))
             .finallyDo(this::stop)
             .withName("Zero");
@@ -106,8 +118,16 @@ public class Algae extends SubsystemBase {
      * Returns the angle of the arm
      * @return angle of the arm
      */
+    @Logged(name = "Arm Angle")
     public Angle getAngle() {
         return Rotations.of(sparkMax.getEncoder().getPosition());
+    }
+
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
     }
 
 }
