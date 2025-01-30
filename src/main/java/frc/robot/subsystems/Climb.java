@@ -22,8 +22,8 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import frc.robot.lib.util.Util;
 public class Climb extends SubsystemBase {
     
-    private TalonFX armMotor = new TalonFX(ClimbK.armMotorID);
-    private TalonFX armMotorFollow = new TalonFX(ClimbK.fArmMotorID);
+    private final TalonFX armMotor = new TalonFX(ClimbK.armMotorID);
+    private final TalonFX armMotorFollow = new TalonFX(ClimbK.fArmMotorID);
 
    
     //^Takes the number from Constant's ClimbK class and uses it as the motor ID^
