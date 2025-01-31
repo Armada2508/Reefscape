@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -43,7 +42,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SwerveK;
-import frc.robot.Field;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
 import frc.robot.subsystems.Vision.VisionResults;
@@ -204,78 +202,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             SwerveK.robotConfig,
             () -> false, 
             this 
-        );
-    }
-
-    /**
-     * Creates a command to drive the robot to the nearest reef from its current position
-     * @return driveToPoseCommand to drive to the nearest reef on your side
-     */
-    public Command alignToReef() {
-        Pose2d reefPose = getPose().nearest(Robot.onRedAlliance() ? Field.redReefList : Field.blueReefList);
-        Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
-        return driveToPoseCommand(
-            reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
-            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
-        );
-    }
-
-    /**
-     * Creates a command to drive the robot to the nearest coral station to it
-     * @return driveToPoseCommand to drive to the nearest station on your side
-     */
-    public Command alignToCoralStation() {
-        Pose2d stationPose = getPose().nearest(Robot.onRedAlliance() ? Field.redCoralStationList : Field.blueCoralStationList);
-        Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
-        return driveToPoseCommand(            
-            stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
-            stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
-            stationPose.getRotation().plus(Rotation2d.fromDegrees(180)));
-    }
-
-    /**
-     * Creates a command to drive to the top cage of your side
-     * @return driveToPoseCommand to drive to the top cage
-     */
-    public Command alignToTopCage() {
-        if (Robot.onRedAlliance()) { 
-            return driveToPoseCommand(
-                Field.redCageTop.getMeasureX().plus(Field.cageOffset), Field.redCageTop.getMeasureY(), Field.redCageTop.getRotation()
-            ); 
-        }
-        return driveToPoseCommand(
-            Field.blueCageTop.getMeasureX().minus(Field.cageOffset), Field.blueCageTop.getMeasureY(), Field.blueCageTop.getRotation()
-        );
-    }
-
-    /**
-     * Creates a command to drive to the mid cage of your side
-     * @return driveToPoseCommand to drive to the mid cage
-     */
-    public Command alignToMidCage() {
-        if (Robot.onRedAlliance()) {
-            return driveToPoseCommand(
-                Field.redCageMid.getMeasureX().plus(Field.cageOffset), Field.redCageMid.getMeasureY(), Field.redCageMid.getRotation()
-            ); 
-        }
-        return driveToPoseCommand(
-            Field.blueCageMid.getMeasureX().minus(Field.cageOffset), Field.blueCageMid.getMeasureY(), Field.blueCageMid.getRotation()
-        );
-    }
-
-    /**
-     * Creates a command to drive to the low cage of your side
-     * @return driveToPoseCommand to drive to the low cage
-     */
-    public Command alignToLowCage() {
-        if (Robot.onRedAlliance()) {
-            return driveToPoseCommand(
-                Field.redCageLow.getMeasureX().plus(Field.cageOffset), Field.redCageLow.getMeasureY(), Field.redCageLow.getRotation()
-            );
-        }
-        return driveToPoseCommand(
-            Field.blueCageLow.getMeasureX().minus(Field.cageOffset), Field.blueCageLow.getMeasureY(), Field.blueCageLow.getRotation()
         );
     }
 
