@@ -23,7 +23,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 
 import frc.robot.lib.util.Util;
 public class Climb extends SubsystemBase {
-    
+
     private final TalonFX armMotor = new TalonFX(ClimbK.armMotorID);
     private final TalonFX armMotorFollow = new TalonFX(ClimbK.fArmMotorID);
     //^Takes the number from Constant's ClimbK class and uses it as the motor ID^
@@ -37,6 +37,8 @@ public class Climb extends SubsystemBase {
         Util.brakeMode(armMotor, armMotorFollow);
         armMotor.getConfigurator().apply(ClimbK.hardLimitSwitchConfigs);
         armMotor.getConfigurator().apply(ClimbK.softLimitConfigs);
+        armMotor.getConfigurator().apply(ClimbK.gearRatioConfig);
+        armMotor.getConfigurator().apply(ClimbK.pidconfig);
         armMotorFollow.setControl(new StrictFollower(ClimbK.armMotorID));
     }
     //MotionMagic
@@ -62,16 +64,17 @@ public class Climb extends SubsystemBase {
      */
     public Command deepclimb() {
         return setVoltage(ClimbK.climbVoltage)
-        .withName("Climbed");
+        .withName("Climbed")
+        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError)));
     }
     /**
      * Motion magic version of the deepClimb command.
      * 
      */
     public Command deepClimbMotionMagic() {
-        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmDown);
+        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.maxAngle);
         return runOnce(() -> armMotor.setControl(request))
-        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.climbArmDown, ClimbK.allowableError)))
+        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError)))
         .withName("Climbed with Motion Magic");
     }
     /** 
@@ -80,19 +83,21 @@ public class Climb extends SubsystemBase {
      */
     public Command release() {
         return setVoltage(ClimbK.climbVoltage.unaryMinus())
-        .withName("Released");
+        .withName("Released")
+        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError)));
+
     }
     /** Motion magic version of the Release command.
      */ 
     public Command releaseMotionMagic() {
-        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.climbArmUp);
+        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.minAngle);
         return runOnce(() -> armMotor.setControl(request))
-        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.climbArmUp, ClimbK.allowableError)))
+        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError)))
         .withName("Release Motion Magic");
     }
     /**
      * 
-     * Stops the arm motors
+     * Stops the arm motors.
      */
     public void stop() {
         armMotor.setControl(new NeutralOut());

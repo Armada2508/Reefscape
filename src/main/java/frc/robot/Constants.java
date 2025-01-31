@@ -221,7 +221,7 @@ public class Constants {
         public static final Voltage climbVoltage = Volts.of(2); //Find
         
         
-        public static final Angle maxAngle = Degrees.of(0); //Find
+        public static final Angle maxAngle = Degrees.of(90); //Find
         public static final Angle minAngle = Degrees.of(0); //Find
         public static final Angle allowableError = Degrees.of(0);
 
@@ -229,24 +229,23 @@ public class Constants {
         public static final AngularVelocity velocity = DegreesPerSecond.of(0);
         public static final AngularAcceleration acceleration = DegreesPerSecondPerSecond.of(0); 
 
-        public static final Angle climbArmUp = Degrees.of(0);
-        public static final Angle climbArmDown = Degrees.of(90);
+        
         
         public static final double Kp = 0;
         public static final double Kd = 0;
 
         public static final Slot0Configs pidconfig = new Slot0Configs().withKD(Kd).withKP(Kp);
-        public static final double GearRatio = 0;
+        public static final double gearRatio = 0;
+        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+        
         //Voltage
         public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs() //for forward limit
         .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(0);
+        .withForwardSoftLimitThreshold(maxAngle);
         
         public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() //for reverse limit
-        .withForwardLimitEnable(true)
         .withReverseLimitEnable(true)
-        .withReverseLimitAutosetPositionValue(climbArmUp);
+        .withReverseLimitAutosetPositionValue(minAngle);
     }
 }
 
