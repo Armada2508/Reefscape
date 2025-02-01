@@ -1,15 +1,11 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Field;
 import frc.robot.Robot;
@@ -62,15 +58,7 @@ public class Routines {
         .andThen(
             algae.loweredPosition(),
             algae.algaePosition(),
-            Commands.runOnce( 
-                () -> 
-                swerve.setChassisSpeeds(new ChassisSpeeds(
-                MetersPerSecond.of(Math.signum(Math.cos(swerve.getPose().getRotation().getDegrees()))), 
-                MetersPerSecond.of(Math.signum(Math.sin(swerve.getPose().getRotation().getDegrees()))), 
-                DegreesPerSecond.of(0)
-                )),
-                swerve 
-            ),
+            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false), //! Tune / Verify
             algae.stow()
         )
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -81,15 +69,7 @@ public class Routines {
         .andThen(
             algae.loweredPosition(),
             algae.algaePosition(),
-            Commands.runOnce( 
-                () -> 
-                swerve.setChassisSpeeds(new ChassisSpeeds(
-                MetersPerSecond.of(Math.signum(Math.cos(swerve.getPose().getRotation().getDegrees()))), 
-                MetersPerSecond.of(Math.signum(Math.sin(swerve.getPose().getRotation().getDegrees()))), 
-                DegreesPerSecond.of(0)
-                )),
-                swerve 
-            ),
+            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false), //! Tune / Verify
             algae.stow()
         ) 
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
