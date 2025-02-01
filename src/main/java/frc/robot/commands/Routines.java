@@ -92,16 +92,29 @@ public class Routines {
             ),
             algae.stow()
         ) 
-
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
     }
 
      /**
-     * Creates a command to drive the robot to the nearest reef from its current position
-     * @return driveToPoseCommand to drive to the nearest reef on your side
+     * Creates a command to drive the robot to the nearest left-sdie reef pole from its current position
+     * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
-    public Command alignToReef(Swerve swerve) {
-        Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefList : Field.blueReefList);
+    public Command alignToLeftReef(Swerve swerve) {
+        Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListLeft : Field.blueReefListLeft);
+        Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
+        return swerve.driveToPoseCommand(
+            reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
+            reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
+            reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
+        );
+    }
+
+    /**
+     * Creates a command to drive the robot to the nearest right-side reef pole from its current position
+     * @return driveToPoseCommand to drive to the nearest reef pole on your side
+     */
+    public Command alignToRightReef(Swerve swerve) {
+        Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListRight : Field.blueReefListRight);
         Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
         return swerve.driveToPoseCommand(
             reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
