@@ -63,11 +63,12 @@ public class Climb extends SubsystemBase {
      */
      public Command deepclimb() {
         // onTrue
+        
         return Commands.either(setVoltage(ClimbK.climbVoltage)
         .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError)))
         .withName("Climbed")
         // onFalse
-        ,Commands.none()
+        ,Commands.print("Not Zeroed!")
         // selector
         , () -> isZeroed);
     }
@@ -76,11 +77,20 @@ public class Climb extends SubsystemBase {
      * 
      */
     public Command deepClimbMotionMagic() {
-        
+        // MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.maxAngle);
+        // return Commands.either(armMotor.setControl(request)
+        // .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError))
+        // .withName("Climbed Motion Magic")
+        // , Commands.print("Not Zeroed!"), 
+        // () -> isZeroed());
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.maxAngle);
-        return runOnce(() -> armMotor.setControl(request))
+        
+        return Commands.either(Commands.runOnce(() -> armMotor.setControl(request))
         .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError)))
-        .withName("Climbed Motion Magic");
+        .withName("Climbed Motion Magic"),
+        Commands.print("Not Zeroed!"),
+        () -> isZeroed);
+        
     }
     /** 
      * Command for bringing the arms back up, setting the robot (in a climbing state) back on the ground
@@ -89,19 +99,19 @@ public class Climb extends SubsystemBase {
     public Command zero() {
         return setVoltage(ClimbK.climbVoltage.unaryMinus())
         .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError)))
-        .withName("Released")
         .andThen(Commands.waitUntil(() -> armMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround))
-        .andThen(() -> {isZeroed = true;});
+        .andThen(() -> {isZeroed = true;})
+        .withName("Released");
 
     }
     /** Motion magic version of the Release command.
      */ 
-    public Command releaseMotionMagic() {
-        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.minAngle);
-        return runOnce(() -> armMotor.setControl(request))
-        .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError)))
-        .withName("Release Motion Magic");
-    }
+    // public Command releaseMotionMagic() {
+    //     MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.minAngle);
+    //     return runOnce(() -> armMotor.setControl(request))
+    //     .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError)))
+    //     .withName("Release Motion Magic");
+    // }
     /**
      * 
      * Stops the arm motors.
