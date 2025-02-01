@@ -7,6 +7,7 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.Constants.SwerveK;
 
@@ -93,5 +94,23 @@ public class Field {
     //^ processor location is on the edge of the arena carpet rather then the exact middle of the structure
     public static final Translation2d blueProcessor = new Translation2d(Inches.of(0), Inches.of(235.7255));
     public static final Translation2d redProcessor = new Translation2d(fieldWidth, fieldLength.minus(blueProcessor.getMeasureY()));
-    
+
+    // Hi! Welcome to introspection :) https://www.oracle.com/technical-resources/articles/java/javareflection.html
+    /**
+     * For testing purposes only, call me to dump all Pose2d field constants onto network tables under /Field
+     */
+    public static void dumpToNT() {
+        var table = NetworkTableInstance.getDefault().getTable("Field");
+        var fields = Field.class.getDeclaredFields();
+        for (var field : fields) {
+            if (field.getType().equals(Pose2d.class)) {
+                try {
+                    table.getStructTopic(field.getName(), Pose2d.struct).publish().accept((Pose2d) field.get(null));
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    e.printStackTrace();
+                };
+            }
+        }
+    }
+
 }
