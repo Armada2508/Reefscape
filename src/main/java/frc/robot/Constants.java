@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -52,10 +53,10 @@ public class Constants {
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
 
         // Path Constraints
-        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(2); //! Find
-        public static final LinearAcceleration maxRobotAcceleration = MetersPerSecondPerSecond.of(0.3); // around 1 foot per second
-        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(90); //! Find
-        public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(90); //! Find
+        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(12); // Should be just under 3/4 of our max possible speed, arbitrary value
+        public static final LinearAcceleration maxRobotAcceleration = FeetPerSecondPerSecond.of(6); 
+        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(180); 
+        public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(180); 
 
         // Drive Feedforward
         public static final double kS = 0.10431;
