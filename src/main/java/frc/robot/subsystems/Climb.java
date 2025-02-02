@@ -100,7 +100,7 @@ public class Climb extends SubsystemBase {
         return setVoltage(ClimbK.climbVoltage.unaryMinus())
         .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError)))
         .andThen(Commands.waitUntil(() -> armMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround))
-        .andThen(() -> {isZeroed = true;})
+        .andThen(() -> isZeroed = true)
         .withName("Released");
 
     }
