@@ -61,7 +61,7 @@ public class Routines {
         .andThen(
             algae.loweredPosition(),
             algae.algaePosition(),
-            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false), //! Tune / Verify
+            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
             algae.stow()
         )
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -72,7 +72,7 @@ public class Routines {
         .andThen(
             algae.loweredPosition(),
             algae.algaePosition(),
-            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false), //! Tune / Verify
+            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
             algae.stow()
         ) 
         .finallyDo(() -> elevator.setPosition(Positions.STOW));

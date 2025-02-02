@@ -8,8 +8,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
-import java.util.Set;
-
 import java.util.function.Supplier;
 
 import org.littletonrobotics.urcl.URCL;
@@ -30,14 +28,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.Constants.IntakeK;
 import frc.robot.commands.Autos;
-import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Swerve;
