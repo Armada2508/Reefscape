@@ -24,6 +24,7 @@ import frc.robot.Constants.AlgaeK;
 public class Algae extends SubsystemBase {
 
     private final SparkMax sparkMax = new SparkMax(AlgaeK.sparkMaxID, MotorType.kBrushless);
+    private boolean zeroed = false;
 
     public Algae() {
         SparkMaxConfig config = new SparkMaxConfig();
@@ -54,10 +55,12 @@ public class Algae extends SubsystemBase {
     }
 
     private Command setPosition(Angle position) {
-        return runOnce(() -> {
-            sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kMAXMotionPositionControl);
-        })
-        .andThen(Commands.waitUntil(() -> getAngle().isNear(position, AlgaeK.allowableError)))
+        return Commands.either(
+            runOnce(() -> sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kMAXMotionPositionControl))
+            .andThen(Commands.waitUntil(() -> getAngle().isNear(position, AlgaeK.allowableError))), 
+            Commands.print("Algae not zeroed!"), 
+            () -> zeroed
+        )
         .withName("Set Position");
     }
     
@@ -102,7 +105,10 @@ public class Algae extends SubsystemBase {
     public Command zero() {
         return setVoltage(AlgaeK.zeroingVoltage.unaryMinus())
             .andThen(Commands.waitUntil(sparkMax.getForwardLimitSwitch()::isPressed))
-            .andThen(() -> sparkMax.getEncoder().setPosition(AlgaeK.zeroPosition.in(Rotations)))
+            .andThen(() -> {
+                sparkMax.getEncoder().setPosition(AlgaeK.zeroPosition.in(Rotations));
+                zeroed = true;
+            })
             .finallyDo(this::stop)
             .withName("Zero");
     }

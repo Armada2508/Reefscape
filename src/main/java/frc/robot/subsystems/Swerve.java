@@ -141,27 +141,38 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     /**
-     * Commands the robot to drive according to the given velocities
+     * Commands the robot to drive according to the given velocities, this switches the direction depending on what alliance you're on
      * @param TranslationX Translation in the X direction (Forwards, Backwards) between -1 and 1
      * @param TranslationY Translation in the Y direction (Left, Right) between -1 and 1
      * @param angularVelocity Angular Velocity to set between -1 and 1
      * @param fieldRelative Whether or not swerve is controlled using field relative speeds
      * @return A command to drive the robot according to given velocities
      */
-    public Command driveCommand(DoubleSupplier TranslationX, DoubleSupplier TranslationY, DoubleSupplier angularVelocity, boolean fieldRelative) {
-        return runOnce(() -> drive(
-                new Translation2d(TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 
-                RadiansPerSecond.of(angularVelocity.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / SwerveK.driveBaseRadius.in(Meters))),
-                fieldRelative, true)).withName("Swerve Drive");
+    public Command driveCommand(DoubleSupplier TranslationX, DoubleSupplier TranslationY, DoubleSupplier angularVelocity, boolean fieldRelative, boolean openLoop) {
+        return runOnce(() -> {
+            Translation2d translation = new Translation2d(TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity());
+            AngularVelocity rotation = RadiansPerSecond.of(angularVelocity.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / SwerveK.driveBaseRadius.in(Meters)));
+            drive(Robot.onRedAlliance() ? translation.unaryMinus() : translation, rotation, fieldRelative, openLoop);
+        }).withName("Swerve Drive");
     }
 
     /**
-     * Turns the robot to the desired angle
+     * Turns the robot to the desired field relative angle
      * @param target Desired angle
      * @return A command that turns the robot until it's at the desired angle
      */
     public Command turnCommand(Angle target) {
+        return turnCommand(() -> target);
+    }
+
+    /**
+     * Turns the robot to the desired field relative angle
+     * @param targetSupplier Desired angle
+     * @return A command that turns the robot until it's at the desired angle
+     */
+    public Command turnCommand(Supplier<Angle> targetSupplier) {
         return runOnce(() -> {
+            Angle target = targetSupplier.get();
             rotationPIDController.reset();
             rotationPIDController.setSetpoint(target.in(Degrees));
             table.getEntry("Reference").setDouble(target.in(Degrees));

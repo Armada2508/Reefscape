@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
 import java.util.Set;
+
+import java.util.function.Supplier;
 
 import org.littletonrobotics.urcl.URCL;
 
@@ -18,6 +21,7 @@ import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -62,7 +66,7 @@ public class Robot extends TimedRobot {
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
             () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)),
-            true
+            true, true
         ).withName("Swerve Drive Field Oriented");
         swerve.setDefaultCommand(driveFieldOriented);
         configureBindings();
@@ -87,6 +91,7 @@ public class Robot extends TimedRobot {
         // Reset forward direction for field relative
         xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
         // D-pad snap turning
+
         // xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
         // xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
         // xboxController.povLeft().onTrue(onRedAlliance() ? swerve.turnCommand(Degrees.of(Field.redStationTop.getRotation().getDegrees() - 180)) : swerve.turnCommand(Degrees.of(Field.blueStationTop.getRotation().getDegrees() - 180))); 
@@ -143,6 +148,18 @@ public class Robot extends TimedRobot {
      */
     public static boolean onRedAlliance() {
         return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+    }
+
+    /**
+     * Flips an angle across the x and y axis if we're on the red alliance
+     * @param angle angle to flip
+     * @return A supplier that returns the correct angle depending on the current alliance
+     */
+    public Supplier<Angle> flipAngleAlliance(Angle angle) {
+        return () -> {
+            Angle flippedAngle = angle.gte(Degrees.zero()) ? angle.minus(Constants.halfTurn) : angle.plus(Constants.halfTurn);
+            return onRedAlliance() ? flippedAngle : angle;
+        };
     }
     
 }
