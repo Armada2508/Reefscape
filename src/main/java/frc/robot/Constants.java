@@ -199,8 +199,8 @@ public class Constants {
     public static class VisionK { // TODO: Find transform and standard deviations
         public static final String frontCameraName = "ArducamFront";
         public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(14), Inches.of(7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(0)));
-        public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(0), Inches.of(0), Inches.of(0), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(14.5), Inches.of(7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(0)));
+        public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-14.5), Inches.of(-7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(15), Degrees.of(0)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);
