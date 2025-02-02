@@ -26,8 +26,8 @@ import frc.robot.lib.util.Util;
 @Logged
 public class Elevator extends SubsystemBase {
 
-    private final TalonFX talon = new TalonFX(ElevatorK.elevatorID);
-    private final TalonFX talonFollow = new TalonFX(ElevatorK.followID);
+    private final TalonFX talon = new TalonFX(ElevatorK.talonID);
+    private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
 
     public Elevator() {
         configTalons();
