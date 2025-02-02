@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
         DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this); // Should be configured for Network Tables or DataLog
-        URCL.start(Map.of(AlgaeK.sparkMaxID, "Algae Spark", IntakeK.motorLeftId, "Intake Left Spark", IntakeK.motorRightId, "Intake Right Spark")); // Can be passed dataLog to only log to DataLog
+        URCL.start(Map.of(AlgaeK.sparkMaxID, "Algae Spark", IntakeK.sparkMaxLeftID, "Intake Left Spark", IntakeK.sparkMaxRightID, "Intake Right Spark")); // Can be passed dataLog to only log to DataLog
         LogUtil.logDriverStation(this); // Network Tables
         LogUtil.logCommandInterrupts(dataLog); // Network Tables & DataLog
         DriverStation.startDataLog(dataLog); // DataLog

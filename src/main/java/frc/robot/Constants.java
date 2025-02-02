@@ -98,8 +98,8 @@ public class Constants {
 
     public static class ElevatorK {
         //! Motor ID's, Find these values
-        public static final int elevatorID = 0;
-        public static final int followID = 0;
+        public static final int talonID = 0;
+        public static final int talonFollowID = 0;
 
         public static final double gearRatio = 16;
 
@@ -157,10 +157,10 @@ public class Constants {
         }
     }  
 
-    public static class IntakeK { // TODO: Confirm motor ids and detection range
+    public static class IntakeK { // TODO: Confirm voltages and detection range
         // IDs
-        public static final int motorLeftId = 2; 
-        public static final int motorRightId = 3; 
+        public static final int sparkMaxLeftID = 2; 
+        public static final int sparkMaxRightID = 3; 
         public static final int timeOfFlightId = 0; 
 
         public static final Distance coralDetectionRange = Inches.of(4);
@@ -214,8 +214,8 @@ public class Constants {
 
     public static class ClimbK { // TODO: Tune everything
         // Motors
-        public static final int armMotorID = 4;
-        public static final int fArmMotorID = 5;
+        public static final int talonID = 4;
+        public static final int talonFollowID = 5;
 
         // Positions/Angles/Voltage
         public static final Voltage climbVoltage = Volts.of(2);
@@ -245,4 +245,3 @@ public class Constants {
     }
     
 }
-

@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -19,10 +20,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbK;
 import frc.robot.lib.util.Util;
+
+@Logged
 public class Climb extends SubsystemBase {
 
-    private final TalonFX armMotor = new TalonFX(ClimbK.armMotorID);
-    private final TalonFX armMotorFollow = new TalonFX(ClimbK.fArmMotorID);
+    private final TalonFX talon = new TalonFX(ClimbK.talonID);
+    private final TalonFX talonFollow = new TalonFX(ClimbK.talonFollowID);
     private boolean isZeroed = false;
 
     public Climb() {
@@ -31,20 +34,20 @@ public class Climb extends SubsystemBase {
     } 
 
     private void configTalons() {
-        Util.factoryReset(armMotor, armMotorFollow);
-        Util.brakeMode(armMotor, armMotorFollow);
-        armMotor.getConfigurator().apply(ClimbK.hardLimitSwitchConfigs);
-        armMotor.getConfigurator().apply(ClimbK.softLimitConfigs);
-        armMotor.getConfigurator().apply(ClimbK.gearRatioConfig);
-        armMotor.getConfigurator().apply(ClimbK.pidconfig);
-        armMotorFollow.setControl(new StrictFollower(ClimbK.armMotorID));
+        Util.factoryReset(talon, talonFollow);
+        Util.brakeMode(talon, talonFollow);
+        talon.getConfigurator().apply(ClimbK.hardLimitSwitchConfigs);
+        talon.getConfigurator().apply(ClimbK.softLimitConfigs);
+        talon.getConfigurator().apply(ClimbK.gearRatioConfig);
+        talon.getConfigurator().apply(ClimbK.pidconfig);
+        talonFollow.setControl(new StrictFollower(ClimbK.talonID));
     }
 
     private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
         MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(RotationsPerSecond); 
         motionMagicConfigs.MotionMagicAcceleration = acceleration.in(RotationsPerSecondPerSecond); 
-        armMotor.getConfigurator().apply(motionMagicConfigs);
+        talon.getConfigurator().apply(motionMagicConfigs);
     }
 
     /**
@@ -53,30 +56,30 @@ public class Climb extends SubsystemBase {
      */
     public Command setVoltage(Voltage volts) {
         VoltageOut request = new VoltageOut(volts);
-        return runOnce(() -> armMotor.setControl(request)).withName("Set Voltage");
+        return runOnce(() -> talon.setControl(request)).withName("Set Voltage");
     }
     
     /**
-     * Command for activating the climbing arms, suspending the robot in midair via use of a cage.
+     * Climbs the deep cage using voltage
      */
      public Command deepclimb() {
         return Commands.either(
             setVoltage(ClimbK.climbVoltage)
-            .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError))),
-            Commands.print("Not Zeroed!"),
+            .andThen(Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError))),
+            Commands.print("Climb not zeroed!"),
             () -> isZeroed
         ).withName("Deep Climb");
     }
     
     /**
-     * Motion magic version of the deepClimb command.
+     * Climbs the deep cage using motion magic
      */
     public Command deepClimbMotionMagic() {
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.maxAngle);
         return Commands.either(
-            Commands.runOnce(() -> armMotor.setControl(request))
-            .andThen(Commands.waitUntil(() -> armMotor.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError))),
-            Commands.print("Climb Not Zeroed!"),
+            Commands.runOnce(() -> talon.setControl(request))
+            .andThen(Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError))),
+            Commands.print("Climb not zeroed!"),
             () -> isZeroed
         )
         .withName("Deep Climb Motion Magic");
@@ -84,12 +87,13 @@ public class Climb extends SubsystemBase {
     }
 
     /** 
-     * Command for bringing the arms back up, setting the robot (in a climbing state) back on the ground
+     * Runs the climber motors back to the limit switch and zeroes them
      */
     public Command zero() {
         return setVoltage(ClimbK.climbVoltage.unaryMinus())
-        .andThen(Commands.waitUntil(() -> armMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround))
+        .andThen(Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround))
         .andThen(() -> isZeroed = true)
+        .finallyDo(this::stop)
         .withName("Zero");
 
     }
@@ -104,11 +108,17 @@ public class Climb extends SubsystemBase {
     // }
 
     /**
-     * 
-     * Stops the arm motors.
+     * Stops the climb motors
      */
     public void stop() {
-        armMotor.setControl(new NeutralOut());
+        talon.setControl(new NeutralOut());
+    }
+
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
     }
 
 }

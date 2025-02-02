@@ -21,8 +21,8 @@ import frc.robot.lib.util.Util;
 
 public class Intake extends SubsystemBase {
     
-    private final SparkMax motorLeft = new SparkMax(IntakeK.motorLeftId, MotorType.kBrushless);
-    private final SparkMax motorRight = new SparkMax(IntakeK.motorRightId, MotorType.kBrushless);
+    private final SparkMax sparkMaxLeft = new SparkMax(IntakeK.sparkMaxLeftID, MotorType.kBrushless);
+    private final SparkMax sparkMaxRight = new SparkMax(IntakeK.sparkMaxRightID, MotorType.kBrushless);
     @Logged(name = "Time of Flight")
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(IntakeK.timeOfFlightId);
 
@@ -31,20 +31,20 @@ public class Intake extends SubsystemBase {
         timeOfFlight.setRangingMode(RangingMode.Short, 24);
     }
 
-    public void configSparkMax() {
-        SparkMaxConfig motorLeftConfig = new SparkMaxConfig();
-        SparkMaxConfig motorRightConfig = new SparkMaxConfig();
+    private void configSparkMax() {
+        SparkMaxConfig leftConfig = new SparkMaxConfig();
+        SparkMaxConfig rightConfig = new SparkMaxConfig();
 
-        motorLeftConfig.idleMode(IdleMode.kCoast);
-        motorRightConfig.idleMode(IdleMode.kCoast);
-        motorLeftConfig.smartCurrentLimit(IntakeK.currentLimit);
-        motorRightConfig.smartCurrentLimit(IntakeK.currentLimit);
-        motorLeftConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
-        motorRightConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
-        motorRightConfig.inverted(true);
+        leftConfig.idleMode(IdleMode.kCoast);
+        rightConfig.idleMode(IdleMode.kCoast);
+        leftConfig.smartCurrentLimit(IntakeK.currentLimit);
+        rightConfig.smartCurrentLimit(IntakeK.currentLimit);
+        leftConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
+        rightConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
+        rightConfig.inverted(true);
 
-        motorLeft.configure(motorLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        motorRight.configure(motorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        sparkMaxLeft.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        sparkMaxRight.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
@@ -60,8 +60,8 @@ public class Intake extends SubsystemBase {
      * Stops motors
      */
     public void stop() {
-        motorLeft.stopMotor();
-        motorRight.stopMotor();
+        sparkMaxLeft.stopMotor();
+        sparkMaxRight.stopMotor();
     }
 
     /**
@@ -71,8 +71,8 @@ public class Intake extends SubsystemBase {
      */
     public Command setVoltage(Voltage volts) {
         return runOnce (() -> {
-            motorLeft.setVoltage(volts);
-            motorRight.setVoltage(volts);
+            sparkMaxLeft.setVoltage(volts);
+            sparkMaxRight.setVoltage(volts);
         })
         .withName("Set Voltage Command");
     }
@@ -95,8 +95,8 @@ public class Intake extends SubsystemBase {
      */
     public Command coralIntake() {
         return runOnce(() -> {
-            motorLeft.setVoltage(IntakeK.coralIntakeVolts);
-            motorRight.setVoltage(IntakeK.coralIntakeVolts);
+            sparkMaxLeft.setVoltage(IntakeK.coralIntakeVolts);
+            sparkMaxRight.setVoltage(IntakeK.coralIntakeVolts);
         })
         .andThen(Commands.waitUntil(this::isSensorTripped))
         .finallyDo(this::stop)
@@ -109,8 +109,8 @@ public class Intake extends SubsystemBase {
      */
     public Command scoreLevelOne() {
         return runOnce(() -> {
-            motorLeft.setVoltage(IntakeK.levelOneVolts);
-            motorRight.setVoltage(IntakeK.levelOneVolts.unaryMinus());
+            sparkMaxLeft.setVoltage(IntakeK.levelOneVolts);
+            sparkMaxRight.setVoltage(IntakeK.levelOneVolts.unaryMinus());
         })
         .andThen(Commands.waitUntil(() -> !isSensorTripped()))
         .finallyDo(this::stop)
