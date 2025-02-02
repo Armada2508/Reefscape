@@ -15,6 +15,7 @@ import java.io.IOException;
 import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -210,4 +211,38 @@ public class Constants {
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(45));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
+
+    public static class ClimbK { // TODO: Tune everything
+        // Motors
+        public static final int armMotorID = 4;
+        public static final int fArmMotorID = 5;
+
+        // Positions/Angles/Voltage
+        public static final Voltage climbVoltage = Volts.of(2);
+        
+        public static final Angle maxAngle = Degrees.of(90);
+        public static final Angle minAngle = Degrees.of(0);
+        public static final Angle allowableError = Degrees.of(0);
+
+        // Motion Magic
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); 
+        
+        public static final double kP = 0;
+        public static final double kD = 0;
+
+        public static final Slot0Configs pidconfig = new Slot0Configs().withKD(kD).withKP(kP);
+        public static final double gearRatio = 100;
+        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+        
+        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs() // Forward limit
+            .withForwardSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(maxAngle);
+        
+        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() // Reverse limit
+            .withReverseLimitEnable(true)
+            .withReverseLimitAutosetPositionValue(minAngle);
+    }
+    
 }
+
