@@ -15,9 +15,9 @@ import java.io.IOException;
 import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -29,8 +29,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import com.revrobotics.spark.config.SoftLimitConfig;
-import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -214,40 +212,37 @@ public class Constants {
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
-    public static class ClimbK {
-        //Motors
+    public static class ClimbK { // TODO: Tune everything
+        // Motors
         public static final int armMotorID = 4;
         public static final int fArmMotorID = 5;
 
-        //Positions/Angles/Voltage
-        public static final Voltage climbVoltage = Volts.of(2); //Find
+        // Positions/Angles/Voltage
+        public static final Voltage climbVoltage = Volts.of(2);
         
-        
-        public static final Angle maxAngle = Degrees.of(90); //Find
-        public static final Angle minAngle = Degrees.of(0); //Find
+        public static final Angle maxAngle = Degrees.of(90);
+        public static final Angle minAngle = Degrees.of(0);
         public static final Angle allowableError = Degrees.of(0);
 
-        //Motion Magic
-        public static final AngularVelocity velocity = DegreesPerSecond.of(0);
-        public static final AngularAcceleration acceleration = DegreesPerSecondPerSecond.of(0); 
-
+        // Motion Magic
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); 
         
-        
-        public static final double Kp = 0;
-        public static final double Kd = 0;
+        public static final double kP = 0;
+        public static final double kD = 0;
 
-        public static final Slot0Configs pidconfig = new Slot0Configs().withKD(Kd).withKP(Kp);
-        public static final double gearRatio = 0;
+        public static final Slot0Configs pidconfig = new Slot0Configs().withKD(kD).withKP(kP);
+        public static final double gearRatio = 100;
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         
-        //Voltage
-        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs() //for forward limit
-        .withForwardSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(maxAngle);
+        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs() // Forward limit
+            .withForwardSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(maxAngle);
         
-        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() //for reverse limit
-        .withReverseLimitEnable(true)
-        .withReverseLimitAutosetPositionValue(minAngle);
+        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() // Reverse limit
+            .withReverseLimitEnable(true)
+            .withReverseLimitAutosetPositionValue(minAngle);
     }
+    
 }
 
