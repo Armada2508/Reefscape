@@ -205,10 +205,10 @@ public class Constants {
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);
         // Used in scaling the standard deviations by average distance to april tags
-        public static final Distance baseLineAverageTagDistance = Inches.of(80);
+        public static final Distance baseLineAverageTagDistance = Inches.of(60);
         // Vision Standard Deviations (Meters, Meters, Radians)
-        public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(6), Units.feetToMeters(6), Units.degreesToRadians(360));
-        public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(45));
+        public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(9), Units.feetToMeters(9), Units.degreesToRadians(360));
+        public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
