@@ -35,7 +35,8 @@ public class Vision extends SubsystemBase {
     private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
     private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToBackCamera);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Vision");
-    private final StructPublisher<Pose3d> pub = table.getStructTopic("StdDevs: estimatedPose", Pose3d.struct).publish();
+    private final StructPublisher<Pose3d> pubFront = table.getStructTopic(VisionK.frontCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
+    private final StructPublisher<Pose3d> pubBack = table.getStructTopic(VisionK.backCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
     private PhotonPipelineResult frontLatestResult;
     private PhotonPipelineResult backLatestResult;
 
@@ -56,10 +57,10 @@ public class Vision extends SubsystemBase {
     public VisionResults getVisionResults() {
         List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
         if (isCameraConnectedFront()) {
-            visionResults.addAll(processResults(frontCamera.getAllUnreadResults(), frontPoseEstimator));
+            visionResults.addAll(processResults(frontCamera.getAllUnreadResults(), frontPoseEstimator, frontCamera.getName()));
         }
         if (isCameraConnectedBack()) {
-            visionResults.addAll(processResults(backCamera.getAllUnreadResults(), backPoseEstimator));
+            visionResults.addAll(processResults(backCamera.getAllUnreadResults(), backPoseEstimator, backCamera.getName()));
         }
         return new VisionResults(visionResults);
     }
@@ -67,13 +68,13 @@ public class Vision extends SubsystemBase {
     /**
      * Processes a list of photonvison results into a list of estimated poses and their respective standard deviations
      */
-    private List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> processResults(List<PhotonPipelineResult> results, PhotonPoseEstimator poseEstimator) {
+    private List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> processResults(List<PhotonPipelineResult> results, PhotonPoseEstimator poseEstimator, String name) {
         List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
         for (var result : results) {
             poseEstimator.update(result).ifPresent((pose) -> {
                 if (isValidPose(pose)) {
-                    var stdDevs = getStdDevs(result, pose, poseEstimator);
-                    table.getEntry("Standard Deviations").setDoubleArray(stdDevs.getData());
+                    var stdDevs = getStdDevs(result, pose, poseEstimator, name);
+                    table.getEntry(name + " StdDevs/Standard Deviations").setDoubleArray(stdDevs.getData());
                     visionResults.add(Pair.of(pose, stdDevs));
                 }
             });
@@ -97,7 +98,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the standard deviations for a given photonvision result and estimated pose
      */
-    private Matrix<N3, N1> getStdDevs(PhotonPipelineResult result, EstimatedRobotPose pose, PhotonPoseEstimator poseEstimator) {
+    private Matrix<N3, N1> getStdDevs(PhotonPipelineResult result, EstimatedRobotPose pose, PhotonPoseEstimator poseEstimator, String name) {
         int numTags = 0;
         double avgDistMeters = 0; 
         for (var target : result.getTargets()) {
@@ -108,10 +109,12 @@ public class Vision extends SubsystemBase {
         }
         avgDistMeters /= numTags;
         double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
-        pub.accept(pose.estimatedPose);
-        table.getEntry("StdDevs: numTags").setInteger(numTags);
-        table.getEntry("StdDevs: Average Distance to Tag (in.) RF").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
-        table.getEntry("StdDevs: stdevScalar").setDouble(stdevScalar);
+        // Logging
+        if (name == VisionK.frontCameraName) pubFront.accept(pose.estimatedPose);
+        else pubBack.accept(pose.estimatedPose);
+        table.getEntry(name + " StdDevs/numTags").setInteger(numTags);
+        table.getEntry(name + " StdDevs/Average Distance to Tag (in.) RF").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
+        table.getEntry(name + " StdDevs/stdevScalar").setDouble(stdevScalar);
         if (numTags == 0) return VisionK.untrustedStdDevs;
         if (numTags == 1) {
             return VisionK.singleTagStdDevs.times(stdevScalar);
