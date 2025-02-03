@@ -91,11 +91,18 @@ public class Climb extends SubsystemBase {
      */
     public Command zero() {
         return setVoltage(ClimbK.climbVoltage.unaryMinus())
-        .andThen(Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround))
+        .andThen(
+            runOnce(() -> talonFollow.setControl(new VoltageOut(ClimbK.climbVoltage.unaryMinus()))),
+            Commands.parallel(
+                Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround)).finallyDo(this::stop),
+                Commands.waitUntil(() -> talonFollow.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround).finallyDo(() -> talonFollow.setControl(new NeutralOut()))
+            )
         .andThen(() -> isZeroed = true)
-        .finallyDo(this::stop)
+        .finallyDo(() -> {
+            talonFollow.setControl(new StrictFollower(ClimbK.talonID));
+            stop();
+        })
         .withName("Zero");
-
     }
 
     /** Motion magic version of the Release command.
