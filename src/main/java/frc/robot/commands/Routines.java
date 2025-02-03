@@ -151,7 +151,7 @@ public class Routines {
         return new DeferredCommand(
             () ->
             swerve.driveToPoseCommand(
-                Field.blueCageTop.getMeasureX().plus(Field.cageOffset), 
+                Field.blueCageTop.getMeasureX().minus(Field.cageOffset), 
                 Field.blueCageTop.getMeasureY(), 
                 Field.blueCageTop.getRotation()
             ), 
@@ -178,7 +178,7 @@ public class Routines {
         return new DeferredCommand(
             () ->
             swerve.driveToPoseCommand(
-                Field.blueCageMid.getMeasureX().plus(Field.cageOffset), 
+                Field.blueCageMid.getMeasureX().minus(Field.cageOffset), 
                 Field.blueCageMid.getMeasureY(), 
                 Field.blueCageMid.getRotation()
             ), 
@@ -205,7 +205,7 @@ public class Routines {
         return new DeferredCommand(
             () ->
             swerve.driveToPoseCommand(
-                Field.blueCageLow.getMeasureX().plus(Field.cageOffset), 
+                Field.blueCageLow.getMeasureX().minus(Field.cageOffset), 
                 Field.blueCageLow.getMeasureY(), 
                 Field.blueCageLow.getRotation()
             ), 
