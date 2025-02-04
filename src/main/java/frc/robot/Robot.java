@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
     @Logged(name = "Vision")
     private final Vision vision = new Vision();
     @Logged(name = "Swerve")
-    private final Swerve swerve = new Swerve(vision::getVisionResults);
+    private final Swerve swerve = new Swerve(vision::getVisionResults, () -> true);
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     private final SendableChooser<Command> autoChooser;
 
@@ -115,7 +115,7 @@ public class Robot extends TimedRobot {
         xboxController.povLeft().onTrue(Routines.alignToTopCage(swerve));
         xboxController.povUp().onTrue(Routines.alignToMidCage(swerve));
         xboxController.povRight().onTrue(Routines.alignToLowCage(swerve));
-        xboxController.povDown().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redBargeMiddle.getRotation().getDegrees()) : Degrees.of(Field.blueBargeMiddle.getRotation().getDegrees())));
+        xboxController.povDown().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
 
         /*
         Left Bumper: Align to Left Reef
