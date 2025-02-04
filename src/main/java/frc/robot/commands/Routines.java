@@ -163,24 +163,15 @@ public class Routines {
      * @return driveToPoseCommand to drive to the mid cage
      */
     public static Command alignToMidCage(Swerve swerve) {
-        if (Robot.onRedAlliance()) { 
-            return Commands.defer(
-                () ->
-                swerve.driveToPoseCommand(
-                    Field.redCageMid.getMeasureX().plus(Field.cageOffset), 
-                    Field.redCageMid.getMeasureY(), 
-                    Field.redCageMid.getRotation()
-                ), 
-                Set.of(swerve)
-            );  
-        }
         return Commands.defer(
-            () ->
-            swerve.driveToPoseCommand(
-                Field.blueCageMid.getMeasureX().minus(Field.cageOffset), 
-                Field.blueCageMid.getMeasureY(), 
-                Field.blueCageMid.getRotation()
-            ), 
+            () -> {
+                Pose2d cageMid = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
+                return swerve.driveToPoseCommand(
+                    cageMid.getMeasureX().minus(Field.cageOffset), 
+                    cageMid.getMeasureY(), 
+                    cageMid.getRotation()
+                );
+            },
             Set.of(swerve)
         );
     }
@@ -190,24 +181,15 @@ public class Routines {
      * @return driveToPoseCommand to drive to the low cage
      */
     public static Command alignToLowCage(Swerve swerve) {
-        if (Robot.onRedAlliance()) { 
-            return Commands.defer(
-                () ->
-                swerve.driveToPoseCommand(
-                    Field.redCageLow.getMeasureX().plus(Field.cageOffset), 
-                    Field.redCageLow.getMeasureY(), 
-                    Field.redCageLow.getRotation()
-                ), 
-                Set.of(swerve)
-            );  
-        }
         return Commands.defer(
-            () ->
-            swerve.driveToPoseCommand(
-                Field.blueCageLow.getMeasureX().minus(Field.cageOffset), 
-                Field.blueCageLow.getMeasureY(), 
-                Field.blueCageLow.getRotation()
-            ), 
+            () -> {
+                Pose2d cageLow = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
+                return swerve.driveToPoseCommand(
+                    cageLow.getMeasureX().minus(Field.cageOffset), 
+                    cageLow.getMeasureY(), 
+                    cageLow.getRotation()
+                );
+            },
             Set.of(swerve)
         );
     }
