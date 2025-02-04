@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.IOException;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -40,9 +41,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
@@ -66,11 +65,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final SysIdRoutine sysIdRoutine; 
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
-    private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort); //! Verify this is safe to do
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
     private boolean initializedOdometryFromVision = false;
+    private BooleanSupplier overridePathPlanner = () -> false;
 
-    public Swerve(Supplier<VisionResults> visionSource) {
+    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathPlanner) {
+        this.overridePathPlanner = overridePathPlanner;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
         try {
@@ -108,6 +108,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             )
         );
         setupPathPlanner();
+
     }
 
     @Override
@@ -216,11 +217,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             SwerveK.robotConfig,
             () -> false, 
             this 
-        ).until(() -> 
-        xboxController.getLeftX() > ControllerK.leftJoystickDeadband ||
-        xboxController.getLeftY() > ControllerK.leftJoystickDeadband ||
-        xboxController.getRightX() > ControllerK.rightJoystickDeadband
-        );
+        ).until(overridePathPlanner); // I think this is how we want to do it?
     }
 
     /**
