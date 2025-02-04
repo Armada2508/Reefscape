@@ -45,7 +45,6 @@ public class Constants {
     public static final Angle halfTurn = Degrees.of(180);
 
     public static class SwerveK {
-        public static final Distance wheelDiameter = Inches.of(2.7); 
         public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
         public static final Distance driveBaseLength = Inches.of(35); // Base is a square so this is the same as the width
 
