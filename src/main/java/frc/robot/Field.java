@@ -70,12 +70,11 @@ public class Field {
     public static final Distance algaeHighHeight = levelThreeHeight.minus(Inches.of(6.25));
     
     // Barge
-    public static final Pose2d blueBargeMiddle = new Pose2d(Inches.of(345.4375), Inches.of(242.875), Rotation2d.fromDegrees(180)); // This is the same pose as the middle cage
+    
     public static final Pose2d blueCageTop = new Pose2d(Inches.of(345.4375), Inches.of(285.875), Rotation2d.fromDegrees(180));
     public static final Pose2d blueCageMid = new Pose2d(Inches.of(345.4375), Inches.of(242.875), Rotation2d.fromDegrees(180));
     public static final Pose2d blueCageLow = new Pose2d(Inches.of(345.4375), Inches.of(200), Rotation2d.fromDegrees(180));
 
-    public static final Pose2d redBargeMiddle = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageMid.getMeasureY()), Rotation2d.fromDegrees(0)); // This is the same pose as the middle cage
     public static final Pose2d redCageTop = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageTop.getMeasureY()), Rotation2d.fromDegrees(0));
     public static final Pose2d redCageMid = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageMid.getMeasureY()), Rotation2d.fromDegrees(0));
     public static final Pose2d redCageLow = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.fromDegrees(0));

@@ -8,11 +8,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Field;
 import frc.robot.Robot;
 import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -60,6 +61,7 @@ public class Routines {
         return elevator.setPosition(Positions.ALGAE_LOW)
         .andThen(
             algae.loweredPosition(),
+            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, false), //! Tune / Verify
             algae.algaePosition(),
             swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
             algae.stow()
@@ -71,6 +73,7 @@ public class Routines {
         return elevator.setPosition(Positions.ALGAE_HIGH)
         .andThen(
             algae.loweredPosition(),
+            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, false), //! Tune / Verify
             algae.algaePosition(),
             swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
             algae.stow()
@@ -83,7 +86,7 @@ public class Routines {
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
     public static Command alignToLeftReef(Swerve swerve) {
-        return new DeferredCommand(
+        return Commands.defer(
             () -> {
                 Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListLeft : Field.blueReefListLeft);
                 Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
@@ -102,7 +105,7 @@ public class Routines {
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
     public static Command alignToRightReef(Swerve swerve) {
-        return new DeferredCommand(
+        return Commands.defer(
             () -> {
                 Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListRight : Field.blueReefListRight);
                 Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
@@ -121,7 +124,7 @@ public class Routines {
      * @return driveToPoseCommand to drive to the nearest station on your side
      */
     public static Command alignToCoralStation(Swerve swerve) {
-        return new DeferredCommand(
+        return Commands.defer(
             () -> {
                 System.out.println("coral station alignment called");
                 Pose2d stationPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redCoralStationList : Field.blueCoralStationList);
@@ -140,25 +143,17 @@ public class Routines {
      * Creates a command to drive to the top cage of your side
      * @return driveToPoseCommand to drive to the top cage
      */
+
     public static Command alignToTopCage(Swerve swerve) {
-        if (Robot.onRedAlliance()) { 
-            return new DeferredCommand(
-                () ->
-                swerve.driveToPoseCommand(
-                    Field.redCageTop.getMeasureX().plus(Field.cageOffset), 
-                    Field.redCageTop.getMeasureY(), 
-                    Field.redCageTop.getRotation()
-                ), 
-                Set.of(swerve)
-            );  
-        }
-        return new DeferredCommand(
-            () ->
-            swerve.driveToPoseCommand(
-                Field.blueCageTop.getMeasureX().minus(Field.cageOffset), 
-                Field.blueCageTop.getMeasureY(), 
-                Field.blueCageTop.getRotation()
-            ), 
+        return Commands.defer(
+            () -> {
+                Pose2d cageTop = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
+                return swerve.driveToPoseCommand(
+                    cageTop.getMeasureX().minus(Field.cageOffset), 
+                    cageTop.getMeasureY(), 
+                    cageTop.getRotation()
+                );
+            },
             Set.of(swerve)
         );
     }
@@ -169,7 +164,7 @@ public class Routines {
      */
     public static Command alignToMidCage(Swerve swerve) {
         if (Robot.onRedAlliance()) { 
-            return new DeferredCommand(
+            return Commands.defer(
                 () ->
                 swerve.driveToPoseCommand(
                     Field.redCageMid.getMeasureX().plus(Field.cageOffset), 
@@ -179,7 +174,7 @@ public class Routines {
                 Set.of(swerve)
             );  
         }
-        return new DeferredCommand(
+        return Commands.defer(
             () ->
             swerve.driveToPoseCommand(
                 Field.blueCageMid.getMeasureX().minus(Field.cageOffset), 
@@ -196,7 +191,7 @@ public class Routines {
      */
     public static Command alignToLowCage(Swerve swerve) {
         if (Robot.onRedAlliance()) { 
-            return new DeferredCommand(
+            return Commands.defer(
                 () ->
                 swerve.driveToPoseCommand(
                     Field.redCageLow.getMeasureX().plus(Field.cageOffset), 
@@ -206,7 +201,7 @@ public class Routines {
                 Set.of(swerve)
             );  
         }
-        return new DeferredCommand(
+        return Commands.defer(
             () ->
             swerve.driveToPoseCommand(
                 Field.blueCageLow.getMeasureX().minus(Field.cageOffset), 
@@ -215,5 +210,14 @@ public class Routines {
             ), 
             Set.of(swerve)
         );
+    }
+    public static Command climb(Climb climb) {
+        return climb.deepclimb();
+    }
+    public static Command climbMotionMagic(Climb climb) {
+        return climb.deepClimbMotionMagic();
+    }
+    public static Command zero(Climb climb) {
+        return climb.zero();
     }
 }
