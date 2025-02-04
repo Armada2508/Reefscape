@@ -93,7 +93,7 @@ public class Field {
     // Offsets
     public static final Distance cageOffset = SwerveK.driveBaseLength.plus(SwerveK.driveBaseLength.div(2)); // Might need to tune this
     public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(6));
-    public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2);
+    public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(2));
 
     // Processor
     //^ processor location is on the edge of the arena carpet rather then the exact middle of the structure

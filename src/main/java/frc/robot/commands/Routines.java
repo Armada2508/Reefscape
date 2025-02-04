@@ -83,15 +83,16 @@ public class Routines {
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
     public static Command alignToLeftReef(Swerve swerve) {
-        Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListLeft : Field.blueReefListLeft);
-        Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
         return new DeferredCommand(
-            () ->
-            swerve.driveToPoseCommand(
-                reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
-                reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-                reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
-            ), 
+            () -> {
+                Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListLeft : Field.blueReefListLeft);
+                Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
+                return swerve.driveToPoseCommand(
+                        reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
+                        reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
+                        reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
+                ); 
+            },
             Set.of(swerve)
         );
     }
@@ -101,15 +102,16 @@ public class Routines {
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
     public static Command alignToRightReef(Swerve swerve) {
-        Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListRight : Field.blueReefListRight);
-        Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
         return new DeferredCommand(
-            () ->
-            swerve.driveToPoseCommand(
-                reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
-                reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-                reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
-            ), 
+            () -> {
+                Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListRight : Field.blueReefListRight);
+                Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
+                return swerve.driveToPoseCommand(
+                        reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
+                        reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
+                        reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
+                ); 
+            },
             Set.of(swerve)
         );
     }
@@ -119,15 +121,17 @@ public class Routines {
      * @return driveToPoseCommand to drive to the nearest station on your side
      */
     public static Command alignToCoralStation(Swerve swerve) {
-        Pose2d stationPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redCoralStationList : Field.blueCoralStationList);
-        Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
         return new DeferredCommand(
-            () -> 
-            swerve.driveToPoseCommand(            
-                stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
-                stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
-                stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
-            ), 
+            () -> {
+                System.out.println("coral station alignment called");
+                Pose2d stationPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redCoralStationList : Field.blueCoralStationList);
+                Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
+                return swerve.driveToPoseCommand(            
+                        stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
+                        stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
+                        stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
+                );
+            }, 
             Set.of(swerve)
         );
     }

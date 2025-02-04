@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.urcl.URCL;
@@ -32,7 +31,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
@@ -105,16 +103,18 @@ public class Robot extends TimedRobot {
         // xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
 
         // Alignment
-        xboxController.leftBumper().onTrue(new DeferredCommand(() -> Routines.alignToLeftReef(swerve), Set.of(swerve)));
-        xboxController.rightBumper().onTrue(new DeferredCommand(() -> Routines.alignToRightReef(swerve), Set.of(swerve)));
+        xboxController.leftBumper().onTrue(Routines.alignToLeftReef(swerve));
+        xboxController.rightBumper().onTrue(Routines.alignToRightReef(swerve));
 
         xboxController.leftTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationTop.getRotation().getDegrees() + 180))));
         xboxController.rightTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationLow.getRotation().getDegrees() + 180))));
         //^ Please for the love of god do not delete / touch this lest peril be upon ye of remaking it
 
-        xboxController.povLeft().onTrue(new DeferredCommand(() -> Routines.alignToTopCage(swerve), Set.of(swerve)));
-        xboxController.povUp().onTrue(new DeferredCommand(() -> Routines.alignToMidCage(swerve), Set.of(swerve)));
-        xboxController.povRight().onTrue(new DeferredCommand(() -> Routines.alignToLowCage(swerve), Set.of(swerve)));
+        xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
+
+        xboxController.povLeft().onTrue(Routines.alignToTopCage(swerve));
+        xboxController.povUp().onTrue(Routines.alignToMidCage(swerve));
+        xboxController.povRight().onTrue(Routines.alignToLowCage(swerve));
         xboxController.povDown().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redBargeMiddle.getRotation().getDegrees()) : Degrees.of(Field.blueBargeMiddle.getRotation().getDegrees())));
 
         /*
@@ -138,7 +138,7 @@ public class Robot extends TimedRobot {
         // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.leftTrigger().whileTrue(swerve.characterizeDriveWheelDiameter());
+        xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
     
     @Override

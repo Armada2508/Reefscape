@@ -56,9 +56,9 @@ public class Constants {
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
 
         // Path Constraints
-        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(15); // Should be just under 3/4 of our max possible speed, arbitrary value
-        public static final LinearAcceleration maxRobotAcceleration = FeetPerSecondPerSecond.of(7); 
-        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(270); 
+        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(6); // Should be just under 3/4 of our max possible speed, arbitrary value
+        public static final LinearAcceleration maxRobotAcceleration = FeetPerSecondPerSecond.of(3.5); 
+        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(180); 
         public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(270); 
 
         // Drive Feedforward
