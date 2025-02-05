@@ -32,54 +32,104 @@ public class Routines {
         .andThen(intake.coralIntake())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
     }
-
+    /**
+     * Command that raises the elevator for the intake to score the coral on an <STRONG>L1</STRONG> branch.
+     * @param elevator
+     * @param intake
+     * @return
+     */
     public static Command scoreCoralLevelOne(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L1)
         .andThen(intake.scoreLevelOne())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
     }
-
+    /**
+     * Command that raises the elevator for the intake to score the coral on an <STRONG>L2</STRONG> branch.
+     * @param elevator
+     * @param intake
+     * @return
+     */
     public static Command scoreCoralLevelTwo(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L2)
         .andThen(intake.scoreLevelTwoThree())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
     }
-
+    /**
+     * Command that raises the elevator for the intake to score the coral on an <STRONG>L3</STRONG> branch.
+     * @param elevator
+     * @param intake
+     * @return
+     */
     public static Command scoreCoralLevelThree(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L3)
         .andThen(intake.scoreLevelTwoThree())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
     }
-    
+    /**
+     * Command that raises the elevator for the intake to score the coral on an L4 branch.
+     * @param elevator
+     * @param intake
+     * @return
+     */
     public static Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L4)
         .andThen(intake.scoreLevelFour())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
     }
-
-    public static Command removeAlgaeLow(Elevator elevator, Algae algae, Swerve swerve) {
+    /**
+     * Command that sets the elevator and algae arm in position to be able to grab the <STRONG>low</STRONG> algae.
+     * 
+     * @return
+     */
+    public static Command algaeLowPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_LOW)
         .andThen(
-            algae.loweredPosition(),
-            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, false), //! Tune / Verify
-            algae.algaePosition(),
-            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
-            algae.stow()
-        )
-        .finallyDo(() -> elevator.setPosition(Positions.STOW));
+            algae.loweredPosition()
+        );
     }
-
-    public static Command removeAlgaeHigh(Elevator elevator, Algae algae, Swerve swerve) {
+    /**
+     * Command that sets the elevator and algae arm in position to be able to grab the <STRONG>high</STRONG> algae.
+     * 
+     * @return
+     */
+    public static Command algaeHighPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_HIGH)
         .andThen(
-            algae.loweredPosition(),
-            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, false), //! Tune / Verify
-            algae.algaePosition(),
-            swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
-            algae.stow()
-        ) 
-        .finallyDo(() -> elevator.setPosition(Positions.STOW));
+            algae.loweredPosition()
+        );
     }
+    /**
+     * Command that moves the algae arm to grab the algae.
+     * @param elevator
+     * @param algae
+     * @return
+     */
+    public static Command removeAlgae(Elevator elevator, Algae algae) {
+        return algae.algaePosition();
+    }
+    // public static Command removeAlgaeLow(Elevator elevator, Algae algae, Swerve swerve) {
+    //     return elevator.setPosition(Positions.ALGAE_LOW)
+    //     .andThen(
+    //         algae.loweredPosition(),
+    //         // swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, false), //! Tune / Verify
+    //         algae.algaePosition(),
+    //         // swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
+    //         algae.stow()
+    //     )
+    //     .finallyDo(() -> elevator.setPosition(Positions.STOW));
+    // }
+
+    // public static Command removeAlgaeHigh(Elevator elevator, Algae algae, Swerve swerve) {
+    //     return elevator.setPosition(Positions.ALGAE_HIGH)
+    //     .andThen(
+    //         algae.loweredPosition(),
+    //         swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, false), //! Tune / Verify
+    //         algae.algaePosition(),
+    //         swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
+    //         algae.stow()
+    //     ) 
+    //     .finallyDo(() -> elevator.setPosition(Positions.STOW));
+    // }
 
      /**
      * Creates a command to drive the robot to the nearest left-sdie reef pole from its current position
