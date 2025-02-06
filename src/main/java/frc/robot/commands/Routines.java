@@ -13,7 +13,6 @@ import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Field;
 import frc.robot.Robot;
 import frc.robot.subsystems.Algae;
-import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -23,10 +22,6 @@ public class Routines {
     // Prevent this class from being instantiated
     private Routines() {}
     
-    public static Command stowElevator(Elevator elevator) {
-        return elevator.setPosition(Positions.STOW);
-    }
-
     public static Command intakeCoral(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.INTAKE)
         .andThen(intake.coralIntake())
@@ -98,38 +93,6 @@ public class Routines {
             algae.loweredPosition()
         );
     }
-    /**
-     * Command that moves the algae arm to grab the algae.
-     * @param elevator
-     * @param algae
-     * @return
-     */
-    public static Command removeAlgae(Elevator elevator, Algae algae) {
-        return algae.algaePosition();
-    }
-    // public static Command removeAlgaeLow(Elevator elevator, Algae algae, Swerve swerve) {
-    //     return elevator.setPosition(Positions.ALGAE_LOW)
-    //     .andThen(
-    //         algae.loweredPosition(),
-    //         // swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, false), //! Tune / Verify
-    //         algae.algaePosition(),
-    //         // swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
-    //         algae.stow()
-    //     )
-    //     .finallyDo(() -> elevator.setPosition(Positions.STOW));
-    // }
-
-    // public static Command removeAlgaeHigh(Elevator elevator, Algae algae, Swerve swerve) {
-    //     return elevator.setPosition(Positions.ALGAE_HIGH)
-    //     .andThen(
-    //         algae.loweredPosition(),
-    //         swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, false), //! Tune / Verify
-    //         algae.algaePosition(),
-    //         swerve.driveCommand(() -> 0, () -> 1, () -> 0, false, true), //! Tune / Verify
-    //         algae.stow()
-    //     ) 
-    //     .finallyDo(() -> elevator.setPosition(Positions.STOW));
-    // }
 
      /**
      * Creates a command to drive the robot to the nearest left-sdie reef pole from its current position
@@ -242,14 +205,5 @@ public class Routines {
             },
             Set.of(swerve)
         );
-    }
-    public static Command climb(Climb climb) {
-        return climb.deepclimb();
-    }
-    public static Command climbMotionMagic(Climb climb) {
-        return climb.deepClimbMotionMagic();
-    }
-    public static Command zero(Climb climb) {
-        return climb.zero();
     }
 }
