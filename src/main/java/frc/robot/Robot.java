@@ -47,12 +47,12 @@ public class Robot extends TimedRobot {
     
     @Logged(name = "Vision")
     private final Vision vision = new Vision();
-    @Logged(name = "Swerve")
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
+    @Logged(name = "Swerve")
     private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
-    xboxController.getLeftX() > ControllerK.leftJoystickDeadband * 1.5||
-    xboxController.getLeftY() > ControllerK.leftJoystickDeadband * 1.5||
-    xboxController.getRightX() > ControllerK.rightJoystickDeadband * 1.5);
+        xboxController.getLeftX() > ControllerK.leftJoystickDeadband * 1.5
+        || xboxController.getLeftY() > ControllerK.leftJoystickDeadband * 1.5
+        || xboxController.getRightX() > ControllerK.rightJoystickDeadband * 1.5);
     private final SendableChooser<Command> autoChooser;
 
     public Robot() {
