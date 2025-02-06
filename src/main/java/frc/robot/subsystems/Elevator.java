@@ -92,17 +92,10 @@ public class Elevator extends SubsystemBase {
     public Command zero() {
         return setVoltage(ElevatorK.zeroingVoltage)
             .andThen(
-                runOnce(() -> talonFollow.setControl(new VoltageOut(ElevatorK.zeroingVoltage))),
-                Commands.parallel(
-                    Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround)).finallyDo(this::stop),
-                    Commands.waitUntil(() -> talonFollow.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround).finallyDo(() -> talonFollow.setControl(new NeutralOut())
-                )
+                Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround).finallyDo(this::stop),
+                runOnce(() -> zeroed = true)
             )
-            .andThen(runOnce(() -> zeroed = true))
-            .finallyDo(() -> {
-                talonFollow.setControl(new StrictFollower(talon.getDeviceID()));
-                stop();
-            });
+            .finallyDo(() -> stop());
     }
 
     @Logged(name = "Current Command")
