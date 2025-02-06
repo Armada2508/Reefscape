@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDK;
 
@@ -10,6 +11,8 @@ public class LED extends SubsystemBase {
     private AddressableLED elevatorLED = new AddressableLED(LEDK.elevatorLEDPort);
     private AddressableLEDBuffer driveBaseLEDBuffer = new AddressableLEDBuffer(LEDK.driveBaseLEDLength);
     private AddressableLEDBuffer elevatorLEDBuffer = new AddressableLEDBuffer(LEDK.elevatorLEDLength);
+    AddressableLEDBufferView driveBaseStrip = driveBaseLEDBuffer.createView(0, LEDK.driveBaseLEDLength);
+    AddressableLEDBufferView elevatorStrip = elevatorLEDBuffer.createView(LEDK.driveBaseLEDLength + 1, LEDK.driveBaseLEDLength + LEDK.elevatorLEDLength + 1);
 
     public LED() {
         driveBaseLED.setLength(driveBaseLEDBuffer.getLength());
@@ -17,6 +20,7 @@ public class LED extends SubsystemBase {
 
         driveBaseLED.setData(driveBaseLEDBuffer);
         elevatorLED.setData(elevatorLEDBuffer);
+
     }
 }
 
