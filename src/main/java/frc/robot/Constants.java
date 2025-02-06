@@ -136,6 +136,10 @@ public class Constants {
             .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
             .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
+        public static final HardwareLimitSwitchConfigs hardwareLimitConfig = new HardwareLimitSwitchConfigs()
+            .withReverseLimitAutosetPositionEnable(true)
+            .withReverseLimitAutosetPositionValue(ElevatorK.maxHeight.in(Inches));
+
         //? Set Height Positions, Possible Tune of these
         public enum Positions {
             L1(Field.levelOneHeight.plus(reefOffset)),
