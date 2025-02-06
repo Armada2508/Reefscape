@@ -49,6 +49,7 @@ public class Constants {
         public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
         public static final Distance driveBaseLength = Inches.of(35); // Base is a square so this is the same as the width
 
+        // Currently Unused
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
@@ -177,7 +178,7 @@ public class Constants {
         public static final Voltage levelFourVolts = Volts.of(5);
     }
 
-    public static class AlgaeK { // TODO: Tune everything here
+    public static class AlgaeK { // TODO: Tune everything
         public static final int sparkMaxID = 1;
         public static final double gearRatio = 64;
         public static final Voltage zeroingVoltage = Volts.of(1.5);
@@ -241,6 +242,7 @@ public class Constants {
         
         public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() // Reverse limit
             .withReverseLimitEnable(true)
+            .withReverseLimitAutosetPositionEnable(true)
             .withReverseLimitAutosetPositionValue(minAngle);
     }
     
