@@ -244,5 +244,16 @@ public class Constants {
             .withReverseLimitAutosetPositionEnable(true)
             .withReverseLimitAutosetPositionValue(minAngle);
     }
+
+    public static class LEDK { //! Find all of these
+        // Ports
+        public static final int driveBaseLEDPort = 0;
+        public static final int elevatorLEDPort = 0;
+
+        // Lengths
+        public static final int driveBaseLEDLength = 0;
+        public static final int elevatorLEDLength = 0;
+
+    }
     
 }
