@@ -74,7 +74,7 @@ public class Routines {
      */
     public Command algaeLowPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_LOW)
-        .andThen(
+        .alongWith(
             algae.loweredPosition()
         );
     }
@@ -85,7 +85,7 @@ public class Routines {
      */
     public Command algaeHighPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_HIGH)
-        .andThen(
+        .alongWith(
             algae.loweredPosition()
         );
     }
