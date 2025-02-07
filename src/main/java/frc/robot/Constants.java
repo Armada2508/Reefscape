@@ -138,7 +138,7 @@ public class Constants {
 
         public static final HardwareLimitSwitchConfigs hardwareLimitConfig = new HardwareLimitSwitchConfigs()
             .withReverseLimitAutosetPositionEnable(true)
-            .withReverseLimitAutosetPositionValue(ElevatorK.maxHeight.in(Inches));
+            .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
         //? Set Height Positions, Possible Tune of these
         public enum Positions {
