@@ -245,14 +245,17 @@ public class Constants {
             .withReverseLimitAutosetPositionValue(minAngle);
     }
 
-    public static class LEDK { //! Find all of these
+    public static class LEDK {
         // Ports
         public static final int driveBaseLEDPort = 0;
-        public static final int elevatorLEDPort = 0;
+        public static final int leftElevatorLEDPort = 0;
+        public static final int rightElevatorLEDPort = 0;
+        public static final int climbLEDPort = 0;
 
         // Lengths
         public static final int driveBaseLEDLength = 0;
         public static final int elevatorLEDLength = 0;
+        public static final int climbLEDLength = 0; 
 
     }
     
