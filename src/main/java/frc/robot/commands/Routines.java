@@ -22,7 +22,7 @@ public class Routines {
     // Prevent this class from being instantiated
     private Routines() {}
     
-    public static Command intakeCoral(Elevator elevator, Intake intake) {
+    public Command intakeCoral(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.INTAKE)
         .andThen(intake.coralIntake())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -31,9 +31,8 @@ public class Routines {
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L1</STRONG> branch.
      * @param elevator
      * @param intake
-     * @return
      */
-    public static Command scoreCoralLevelOne(Elevator elevator, Intake intake) {
+    public Command scoreCoralLevelOne(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L1)
         .andThen(intake.scoreLevelOne())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -42,9 +41,8 @@ public class Routines {
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L2</STRONG> branch.
      * @param elevator
      * @param intake
-     * @return
      */
-    public static Command scoreCoralLevelTwo(Elevator elevator, Intake intake) {
+    public Command scoreCoralLevelTwo(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L2)
         .andThen(intake.scoreLevelTwoThree())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -53,9 +51,8 @@ public class Routines {
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L3</STRONG> branch.
      * @param elevator
      * @param intake
-     * @return
      */
-    public static Command scoreCoralLevelThree(Elevator elevator, Intake intake) {
+    public Command scoreCoralLevelThree(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L3)
         .andThen(intake.scoreLevelTwoThree())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -64,9 +61,8 @@ public class Routines {
      * Command that raises the elevator for the intake to score the coral on an L4 branch.
      * @param elevator
      * @param intake
-     * @return
      */
-    public static Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
+    public Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L4)
         .andThen(intake.scoreLevelFour())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -76,7 +72,7 @@ public class Routines {
      * 
      * @return
      */
-    public static Command algaeLowPosition(Elevator elevator, Algae algae) {
+    public Command algaeLowPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_LOW)
         .andThen(
             algae.loweredPosition()
@@ -87,7 +83,7 @@ public class Routines {
      * 
      * @return
      */
-    public static Command algaeHighPosition(Elevator elevator, Algae algae) {
+    public Command algaeHighPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_HIGH)
         .andThen(
             algae.loweredPosition()
@@ -98,7 +94,7 @@ public class Routines {
      * Creates a command to drive the robot to the nearest left-sdie reef pole from its current position
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
-    public static Command alignToLeftReef(Swerve swerve) {
+    public Command alignToLeftReef(Swerve swerve) {
         return Commands.defer(
             () -> {
                 Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListLeft : Field.blueReefListLeft);
@@ -117,7 +113,7 @@ public class Routines {
      * Creates a command to drive the robot to the nearest right-side reef pole from its current position
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
-    public static Command alignToRightReef(Swerve swerve) {
+    public Command alignToRightReef(Swerve swerve) {
         return Commands.defer(
             () -> {
                 Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListRight : Field.blueReefListRight);
@@ -136,7 +132,7 @@ public class Routines {
      * Creates a command to drive the robot to the nearest coral station to it
      * @return driveToPoseCommand to drive to the nearest station on your side
      */
-    public static Command alignToCoralStation(Swerve swerve) {
+    public Command alignToCoralStation(Swerve swerve) {
         return Commands.defer(
             () -> {
                 System.out.println("coral station alignment called");
@@ -157,7 +153,7 @@ public class Routines {
      * @return driveToPoseCommand to drive to the top cage
      */
 
-    public static Command alignToTopCage(Swerve swerve) {
+    public Command alignToTopCage(Swerve swerve) {
         return Commands.defer(
             () -> {
                 Pose2d cageTop = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
@@ -175,7 +171,7 @@ public class Routines {
      * Creates a command to drive to the mid cage of your side
      * @return driveToPoseCommand to drive to the mid cage
      */
-    public static Command alignToMidCage(Swerve swerve) {
+    public Command alignToMidCage(Swerve swerve) {
         return Commands.defer(
             () -> {
                 Pose2d cageMid = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
@@ -193,7 +189,7 @@ public class Routines {
      * Creates a command to drive to the low cage of your side
      * @return driveToPoseCommand to drive to the low cage
      */
-    public static Command alignToLowCage(Swerve swerve) {
+    public Command alignToLowCage(Swerve swerve) {
         return Commands.defer(
             () -> {
                 Pose2d cageLow = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
