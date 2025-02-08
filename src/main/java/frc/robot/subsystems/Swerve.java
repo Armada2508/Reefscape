@@ -67,7 +67,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
     private boolean initializedOdometryFromVision = false;
-    private BooleanSupplier overridePathPlanner = () -> false;
+    private final BooleanSupplier overridePathPlanner;
 
     public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathPlanner) {
         this.overridePathPlanner = overridePathPlanner;
@@ -217,7 +217,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             SwerveK.robotConfig,
             () -> false, 
             this 
-        ).until(overridePathPlanner); // I think this is how we want to do it?
+        ).until(overridePathPlanner);
     }
 
     /**

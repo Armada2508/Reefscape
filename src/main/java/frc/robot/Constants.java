@@ -89,12 +89,17 @@ public class Constants {
         public static final int xboxPort = 0;
         public static final double leftJoystickDeadband = 0.05;
         public static final double rightJoystickDeadband = 0.05;
+
+        public static final double overrideThreshold = leftJoystickDeadband * 1.5;
     }
 
     public static class DriveK {
         public static final DynamicSlewRateLimiter translationalYLimiter = new DynamicSlewRateLimiter(1.25, 2); // Larger number = faster rate of change
         public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1, 2);
+
+        public static final double driveSpeedModifier = 1;
+        public static final double rotationSpeedModifier = 1;
     }
 
     public static class ElevatorK {

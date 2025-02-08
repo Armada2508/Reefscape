@@ -89,7 +89,6 @@ public class Field {
     public static final List<Pose2d> redCoralStationList = List.of(redStationLow, redStationTop);
 
     // Offsets
-    public static final Distance cageOffset = SwerveK.driveBaseLength.plus(SwerveK.driveBaseLength.div(2)); // Might need to tune this
     public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(6));
     public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(2));
 

@@ -13,6 +13,7 @@ import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Field;
 import frc.robot.Robot;
 import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -22,7 +23,7 @@ public class Routines {
     // Prevent this class from being instantiated
     private Routines() {}
     
-    public Command intakeCoral(Elevator elevator, Intake intake) {
+    public static Command intakeCoral(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.INTAKE)
         .andThen(intake.coralIntake())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -32,7 +33,7 @@ public class Routines {
      * @param elevator
      * @param intake
      */
-    public Command scoreCoralLevelOne(Elevator elevator, Intake intake) {
+    public static Command scoreCoralLevelOne(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L1)
         .andThen(intake.scoreLevelOne())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -42,7 +43,7 @@ public class Routines {
      * @param elevator
      * @param intake
      */
-    public Command scoreCoralLevelTwo(Elevator elevator, Intake intake) {
+    public static Command scoreCoralLevelTwo(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L2)
         .andThen(intake.scoreLevelTwoThree())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -52,7 +53,7 @@ public class Routines {
      * @param elevator
      * @param intake
      */
-    public Command scoreCoralLevelThree(Elevator elevator, Intake intake) {
+    public static Command scoreCoralLevelThree(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L3)
         .andThen(intake.scoreLevelTwoThree())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -62,7 +63,7 @@ public class Routines {
      * @param elevator
      * @param intake
      */
-    public Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
+    public static Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L4)
         .andThen(intake.scoreLevelFour())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
@@ -72,10 +73,13 @@ public class Routines {
      * 
      * @return
      */
-    public Command algaeLowPosition(Elevator elevator, Algae algae) {
+    public static Command algaeLowPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_LOW)
         .alongWith(
-            algae.loweredPosition()
+            Commands.waitSeconds(1.5) //! Find the ideal time for this during debugging
+            .andThen(
+                algae.algaePosition()
+            )
         );
     }
     /**
@@ -83,10 +87,13 @@ public class Routines {
      * 
      * @return
      */
-    public Command algaeHighPosition(Elevator elevator, Algae algae) {
+    public static Command algaeHighPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_HIGH)
         .alongWith(
-            algae.loweredPosition()
+            Commands.waitSeconds(1) //! Find the ideal time for this during debugging
+            .andThen(
+                algae.algaePosition()
+            )
         );
     }
 
@@ -94,7 +101,7 @@ public class Routines {
      * Creates a command to drive the robot to the nearest left-sdie reef pole from its current position
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
-    public Command alignToLeftReef(Swerve swerve) {
+    public static Command alignToLeftReef(Swerve swerve) {
         return Commands.defer(
             () -> {
                 Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListLeft : Field.blueReefListLeft);
@@ -113,7 +120,7 @@ public class Routines {
      * Creates a command to drive the robot to the nearest right-side reef pole from its current position
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
-    public Command alignToRightReef(Swerve swerve) {
+    public static Command alignToRightReef(Swerve swerve) {
         return Commands.defer(
             () -> {
                 Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListRight : Field.blueReefListRight);
@@ -132,10 +139,9 @@ public class Routines {
      * Creates a command to drive the robot to the nearest coral station to it
      * @return driveToPoseCommand to drive to the nearest station on your side
      */
-    public Command alignToCoralStation(Swerve swerve) {
+    public static Command alignToCoralStation(Swerve swerve) {
         return Commands.defer(
             () -> {
-                System.out.println("coral station alignment called");
                 Pose2d stationPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redCoralStationList : Field.blueCoralStationList);
                 Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
                 return swerve.driveToPoseCommand(            
@@ -153,12 +159,12 @@ public class Routines {
      * @return driveToPoseCommand to drive to the top cage
      */
 
-    public Command alignToTopCage(Swerve swerve) {
+    public static Command alignToTopCage(Swerve swerve) {
         return Commands.defer(
             () -> {
                 Pose2d cageTop = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
                 return swerve.driveToPoseCommand(
-                    cageTop.getMeasureX().minus(Field.cageOffset), 
+                    cageTop.getMeasureX(), 
                     cageTop.getMeasureY(), 
                     cageTop.getRotation()
                 );
@@ -171,12 +177,12 @@ public class Routines {
      * Creates a command to drive to the mid cage of your side
      * @return driveToPoseCommand to drive to the mid cage
      */
-    public Command alignToMidCage(Swerve swerve) {
+    public static Command alignToMidCage(Swerve swerve) {
         return Commands.defer(
             () -> {
-                Pose2d cageMid = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
+                Pose2d cageMid = Robot.onRedAlliance() ? Field.redCageMid : Field.blueCageMid;
                 return swerve.driveToPoseCommand(
-                    cageMid.getMeasureX().minus(Field.cageOffset), 
+                    cageMid.getMeasureX(), 
                     cageMid.getMeasureY(), 
                     cageMid.getRotation()
                 );
@@ -189,17 +195,29 @@ public class Routines {
      * Creates a command to drive to the low cage of your side
      * @return driveToPoseCommand to drive to the low cage
      */
-    public Command alignToLowCage(Swerve swerve) {
+    public static Command alignToLowCage(Swerve swerve) {
         return Commands.defer(
             () -> {
-                Pose2d cageLow = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
+                Pose2d cageLow = Robot.onRedAlliance() ? Field.redCageLow : Field.blueCageLow;
                 return swerve.driveToPoseCommand(
-                    cageLow.getMeasureX().minus(Field.cageOffset), 
+                    cageLow.getMeasureX(), 
                     cageLow.getMeasureY(), 
                     cageLow.getRotation()
                 );
             },
             Set.of(swerve)
+        );
+    }
+
+    /**
+     * Zeros all subsystems that need to be zeroed
+     * @return
+     */
+    public static Command zeroAll(Elevator elevator, Algae algae, Climb climb) {
+        return Commands.parallel(
+            elevator.zero(),
+            algae.zero(),
+            climb.zero()
         );
     }
 }

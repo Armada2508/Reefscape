@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
@@ -19,8 +18,6 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.DataLog;
@@ -40,6 +37,10 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
+import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 
@@ -50,11 +51,15 @@ public class Robot extends TimedRobot {
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     @Logged(name = "Swerve")
     private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
-        xboxController.getLeftX() > ControllerK.leftJoystickDeadband * 1.5
-        || xboxController.getLeftY() > ControllerK.leftJoystickDeadband * 1.5
-        || xboxController.getRightX() > ControllerK.rightJoystickDeadband * 1.5);
+        xboxController.getLeftX() > ControllerK.overrideThreshold
+        || xboxController.getLeftY() > ControllerK.overrideThreshold
+        || xboxController.getRightX() > ControllerK.overrideThreshold);
+    private final Elevator elevator = new Elevator();
+    private final Climb climb = new Climb();
+    private final Algae algae = new Algae();
+    private final Intake intake = new Intake();
     private final SendableChooser<Command> autoChooser;
-
+    
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -66,17 +71,14 @@ public class Robot extends TimedRobot {
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
         Command driveFieldOriented = swerve.driveCommand(
-            () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)), 
-            () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)),  
-            () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)),
+            () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)) * DriveK.driveSpeedModifier, 
+            () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)) * DriveK.driveSpeedModifier,  
+            () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)) * DriveK.rotationSpeedModifier,
             true, true
         ).withName("Swerve Drive Field Oriented");
         swerve.setDefaultCommand(driveFieldOriented);
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve);
-
-        swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.fromDegrees(0)));
-        Field.dumpToNT();
     }
 
     private void logGitConstants() {
@@ -95,43 +97,43 @@ public class Robot extends TimedRobot {
 
     private void configureBindings() {
         // Reset forward direction for field relative
-        xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
-        // D-pad snap turning
+        xboxController.button(14).and(xboxController.button(15)).and(xboxController.button(16)).and(xboxController.button(17)).onTrue(swerve.runOnce(swerve::zeroGyro));
 
-        // xboxController.povUp().onTrue(swerve.turnCommand(Degrees.zero())); 
-        // xboxController.povUpLeft().onTrue(swerve.turnCommand(Degrees.of(45))); 
-        // xboxController.povDownLeft().onTrue(swerve.turnCommand(Degrees.of(135))); 
-        // xboxController.povDown().onTrue(swerve.turnCommand(Degrees.of(180))); 
-        // xboxController.povDownRight().onTrue(swerve.turnCommand(Degrees.of(-135))); 
-        // xboxController.povUpRight().onTrue(swerve.turnCommand(Degrees.of(-45))); 
+        // Zeroing
+        xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
 
         // Alignment
-        xboxController.leftBumper().onTrue(Routines.alignToLeftReef(swerve));
-        xboxController.rightBumper().onTrue(Routines.alignToRightReef(swerve));
-
-        xboxController.leftTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationTop.getRotation().getDegrees() + 180))));
-        xboxController.rightTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationLow.getRotation().getDegrees() + 180))));
-        //^ Please for the love of god do not delete / touch this lest peril be upon ye of remaking it
-
+        xboxController.x().onTrue(Routines.alignToLeftReef(swerve));
+        xboxController.b().onTrue(Routines.alignToRightReef(swerve));
         xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
 
-        xboxController.povLeft().onTrue(Routines.alignToTopCage(swerve));
-        xboxController.povUp().onTrue(Routines.alignToMidCage(swerve));
-        xboxController.povRight().onTrue(Routines.alignToLowCage(swerve));
-        xboxController.povDown().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
+        // Intake
+        xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
-        /*
-        Left Bumper: Align to Left Reef
-        Right Bumper: Align to Right Reef
+        // Reef Levels
+        xboxController.button(14).onTrue(Routines.scoreCoralLevelOne(elevator, intake));
+        xboxController.button(15).onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
+        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
+        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
 
-        Left Trigger: Turn to Left Coral Station
-        Right Trigger: Turn To Right Coral Station
+        // Algae
+        xboxController.button(16).onTrue(Routines.algaeLowPosition(elevator, algae));
+        xboxController.button(17).onTrue(Routines.algaeHighPosition(elevator, algae));
+        xboxController.leftTrigger().onTrue(algae.loweredPosition());
 
-        D-Pad Left: Align to Top Cage
-        D-Pad Up: Align to Mid Cage
-        D-Pad Right: Align to Low Cage
-        D-Pad Down: Turn to Barge (Middle Cage)
- */
+        // Climb
+        xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
+        xboxController.povDown().onTrue(Routines.alignToMidCage(swerve).andThen(climb.deepclimb())); // Still needs to work for any cage
+        xboxController.povRight().onTrue(climb.deepclimb()); // Incase auto-alignment fails
+
+        // xboxController.leftTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationTop.getRotation().getDegrees() + 180))));
+        // xboxController.rightTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationLow.getRotation().getDegrees() + 180))));
+        //^ Please for the love of god do not delete / touch this lest peril be upon ye of remaking it
+
+
+        // xboxController.povLeft().onTrue(Routines.alignToTopCage(swerve));
+        // xboxController.povUp().onTrue(Routines.alignToMidCage(swerve));
+        // xboxController.povRight().onTrue(Routines.alignToLowCage(swerve));
 
         // SysID
         // xboxController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -141,6 +143,7 @@ public class Robot extends TimedRobot {
         // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
+
         xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
     
