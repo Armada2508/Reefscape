@@ -147,6 +147,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        // System.out.println(xboxController.getHID().getButtonCount() + ": " + Integer.toBinaryString(DriverStation.getStickButtons(ControllerK.xboxPort)));
     }
 
     @Override

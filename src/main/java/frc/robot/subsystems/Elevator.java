@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Distance;
@@ -28,6 +29,7 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
+    private boolean zeroed = false;
 
     public Elevator() {
         configTalons();
@@ -39,6 +41,7 @@ public class Elevator extends SubsystemBase {
         Util.brakeMode(talon, talonFollow);
         talonFollow.setControl(new StrictFollower(talon.getDeviceID()));
         talon.getConfigurator().apply(ElevatorK.softwareLimitConfig);
+        talon.getConfigurator().apply(ElevatorK.hardwareLimitConfig);
         talon.getConfigurator().apply(ElevatorK.gearRatioConfig);
         talon.getConfigurator().apply(ElevatorK.pidConfig);
     }
@@ -56,9 +59,12 @@ public class Elevator extends SubsystemBase {
      */
     public Command setPosition(ElevatorK.Positions position) {
         MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(position.level.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
-        return runOnce(() -> talon.setControl(request))
-        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))) // end command when we reach set position
-        .withName("Set Position"); 
+        return Commands.either(
+            runOnce(() -> talon.setControl(request))
+                .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))),
+            Commands.print("Elevator not zeroed"),
+            () -> zeroed)
+            .withName("Set Position"); 
     }
 
     /**
@@ -82,6 +88,15 @@ public class Elevator extends SubsystemBase {
      */
     public void stop() {
         talon.setControl(new NeutralOut());
+    }
+
+    public Command zero() {
+        return setVoltage(ElevatorK.zeroingVoltage)
+            .andThen(
+                Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround).finallyDo(this::stop),
+                runOnce(() -> zeroed = true)
+            )
+            .finallyDo(() -> stop());
     }
 
     @Logged(name = "Current Command")

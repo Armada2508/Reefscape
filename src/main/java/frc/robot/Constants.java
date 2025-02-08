@@ -108,13 +108,6 @@ public class Constants {
 
         public static final int stageCount = 3;
 
-        public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
-            .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
-
-
         // Motion Magic Values
         public static final LinearVelocity velocity = MetersPerSecond.of(0);
         public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0);
@@ -138,6 +131,15 @@ public class Constants {
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD).withKG(kG).withGravityType(GravityTypeValue.Elevator_Static);
+        public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
+            .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
+
+        public static final HardwareLimitSwitchConfigs hardwareLimitConfig = new HardwareLimitSwitchConfigs()
+            .withReverseLimitAutosetPositionEnable(true)
+            .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
         //? Set Height Positions, Possible Tune of these
         public enum Positions {
@@ -156,6 +158,8 @@ public class Constants {
                 this.level = position;
             }
         }
+
+        public static final Voltage zeroingVoltage = Volts.of(0); //! Tune / Find
     }  
 
     public static class IntakeK { // TODO: Confirm voltages and detection range
