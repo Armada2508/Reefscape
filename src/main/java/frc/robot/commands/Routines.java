@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Field;
 import frc.robot.Robot;
@@ -69,6 +70,23 @@ public class Routines {
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
     }
     /**
+     * Command that sets the algae arm in its lowered position after the elevator is at a safe height
+     * @param elevator
+     * @param algae
+     * @return
+     */
+    public static Command algaeLowerArm(Elevator elevator, Algae algae) {
+        return elevator.setPosition(Positions.ALGAE_REMOVAL)
+        .alongWith (
+            Commands.waitUntil(
+                () -> elevator.getPosition().gte(ElevatorK.algaeRemovalHeight)
+            )
+            .andThen(
+                algae.algaePosition()
+                )
+        );
+    }
+    /**
      * Command that sets the elevator and algae arm in position to be able to grab the <STRONG>low</STRONG> algae.
      * 
      * @return
@@ -76,10 +94,10 @@ public class Routines {
     public static Command algaeLowPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_LOW)
         .alongWith(
-            Commands.waitSeconds(1.5) //! Find the ideal time for this during debugging
+            Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.algaeRemovalHeight))
             .andThen(
                 algae.algaePosition()
-            )
+                )
         );
     }
     /**
@@ -90,7 +108,7 @@ public class Routines {
     public static Command algaeHighPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_HIGH)
         .alongWith(
-            Commands.waitSeconds(1) //! Find the ideal time for this during debugging
+            Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.algaeRemovalHeight))
             .andThen(
                 algae.algaePosition()
             )
