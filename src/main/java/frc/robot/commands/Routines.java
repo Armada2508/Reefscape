@@ -96,7 +96,7 @@ public class Routines {
         .alongWith(
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.algaeRemovalHeight))
             .andThen(
-                algae.algaePosition()
+                algae.loweredPosition()
                 )
         );
     }
