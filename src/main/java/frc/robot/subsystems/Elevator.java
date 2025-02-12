@@ -33,7 +33,7 @@ public class Elevator extends SubsystemBase {
 
     public Elevator() {
         configTalons();
-        configMotionMagic(ElevatorK.velocity, ElevatorK.acceleration);
+        configMotionMagic(ElevatorK.maxVelocity, ElevatorK.maxAcceleration);
     }
 
     private void configTalons() {

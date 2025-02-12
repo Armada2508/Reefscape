@@ -97,25 +97,24 @@ public class Constants {
     }
 
     public static class ElevatorK {
-        //! Motor ID's, Find these values
-        public static final int talonID = 0;
-        public static final int talonFollowID = 0;
+        public static final int talonID = 4;
+        public static final int talonFollowID = 5;
 
         public static final double gearRatio = 16;
 
-        public static final Distance sprocketDiameter = Inches.of(0); //! Find
+        public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
 
         public static final int stageCount = 3;
 
         // Motion Magic Values
-        public static final LinearVelocity velocity = MetersPerSecond.of(0);
-        public static final LinearAcceleration acceleration = MetersPerSecondPerSecond.of(0);
+        public static final LinearVelocity maxVelocity = MetersPerSecond.of(0);
+        public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(0);
 
         //! Elevator-relative heights, Find all these values
         public static final Distance stowHeight = Inches.of(0);
         public static final Distance intakeHeight = Inches.of(0);
-        public static final Distance allowableError = Inches.of(0);
-        public static final Distance minHeight = Inches.of(0); //! Should be 0
+        public static final Distance allowableError = Inches.of(0.25);
+        public static final Distance minHeight = Inches.of(0);
         public static final Distance maxHeight = Inches.of(0);
 
         //! Height Offsets, Find both
@@ -158,24 +157,19 @@ public class Constants {
             }
         }
 
-        public static final Voltage zeroingVoltage = Volts.of(0); //! Tune / Find
+        public static final Voltage zeroingVoltage = Volts.of(-0.5); //! Tune / Find
     }  
 
     public static class IntakeK { // TODO: Confirm voltages and detection range
-        // IDs
         public static final int sparkMaxLeftID = 2; 
         public static final int sparkMaxRightID = 3; 
         public static final int timeOfFlightId = 0; 
 
         public static final Distance coralDetectionRange = Inches.of(4);
 
-        // Current limit for motors in amps
-        public static final int currentLimit = 20;
+        public static final int currentLimit = 20; // Amps
 
-        // Voltage during intake
         public static final Voltage coralIntakeVolts = Volts.of(8);
-
-        // Voltage while scoring
         public static final Voltage levelOneVolts = Volts.of(4);
         public static final Voltage levelTwoThreeVolts = Volts.of(5);
         public static final Voltage levelFourVolts = Volts.of(5);
@@ -218,15 +212,15 @@ public class Constants {
 
     public static class ClimbK { // TODO: Tune everything
         // Motors
-        public static final int talonID = 4;
-        public static final int talonFollowID = 5;
+        public static final int talonID = 6;
+        public static final int talonFollowID = 7;
 
         // Positions/Angles/Voltage
         public static final Voltage climbVoltage = Volts.of(2);
         
         public static final Angle maxAngle = Degrees.of(90);
         public static final Angle minAngle = Degrees.of(0);
-        public static final Angle allowableError = Degrees.of(0);
+        public static final Angle allowableError = Degrees.of(1);
 
         // Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
