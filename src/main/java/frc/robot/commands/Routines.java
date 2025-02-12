@@ -80,7 +80,7 @@ public class Routines {
         .alongWith(
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
             .andThen(
-                algae.algaePosition()
+                algae.loweredPosition()
                 )
         );
     }
