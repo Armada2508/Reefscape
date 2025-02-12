@@ -97,8 +97,8 @@ public class Constants {
     }
 
     public static class ElevatorK {
-        public static final int talonID = 4;
-        public static final int talonFollowID = 5;
+        public static final int talonID = 8;
+        public static final int talonFollowID = 9;
 
         public static final double gearRatio = 16;
 
@@ -212,8 +212,8 @@ public class Constants {
 
     public static class ClimbK { // TODO: Tune everything
         // Motors
-        public static final int talonID = 6;
-        public static final int talonFollowID = 7;
+        public static final int talonID = 10;
+        public static final int talonFollowID = 11;
 
         // Positions/Angles/Voltage
         public static final Voltage climbVoltage = Volts.of(2);
