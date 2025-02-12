@@ -69,23 +69,7 @@ public class Routines {
         .andThen(intake.scoreLevelFour())
         .finallyDo(() -> elevator.setPosition(Positions.STOW));
     }
-    /**
-     * Command that sets the algae arm in its lowered position after the elevator is at a safe height
-     * @param elevator
-     * @param algae
-     * @return
-     */
-    public static Command algaeLowerArm(Elevator elevator, Algae algae) {
-        return elevator.setPosition(Positions.ALGAE_REMOVAL)
-        .alongWith (
-            Commands.waitUntil(
-                () -> elevator.getPosition().gte(ElevatorK.algaeRemovalHeight)
-            )
-            .andThen(
-                algae.algaePosition()
-                )
-        );
-    }
+    
     /**
      * Command that sets the elevator and algae arm in position to be able to grab the <STRONG>low</STRONG> algae.
      * 
@@ -94,7 +78,7 @@ public class Routines {
     public static Command algaeLowPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_LOW)
         .alongWith(
-            Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.algaeRemovalHeight))
+            Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
             .andThen(
                 algae.algaePosition()
                 )
@@ -108,7 +92,7 @@ public class Routines {
     public static Command algaeHighPosition(Elevator elevator, Algae algae) {
         return elevator.setPosition(Positions.ALGAE_HIGH)
         .alongWith(
-            Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.algaeRemovalHeight))
+            Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
             .andThen(
                 algae.algaePosition()
             )

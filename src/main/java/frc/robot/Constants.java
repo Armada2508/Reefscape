@@ -120,7 +120,7 @@ public class Constants {
         //! Elevator-relative heights, Find all these values
         public static final Distance stowHeight = Inches.of(0);
         public static final Distance intakeHeight = Inches.of(0);
-        public static final Distance algaeRemovalHeight = Inches.of(0); //height that is safe to move algae arm w/o hitting robot
+        public static final Distance armThresholdHeight = Inches.of(0); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0);
         public static final Distance minHeight = Inches.of(0); //! Should be 0
         public static final Distance maxHeight = Inches.of(0);
@@ -155,7 +155,6 @@ public class Constants {
             L4(Field.levelFourHeight.plus(reefOffset)),
             ALGAE_LOW(Field.algaeLowHeight.plus(algaeOffset)),
             ALGAE_HIGH(Field.algaeHighHeight.plus(algaeOffset)),
-            ALGAE_REMOVAL(ElevatorK.algaeRemovalHeight),
             STOW(ElevatorK.stowHeight),
             INTAKE(ElevatorK.intakeHeight);
     
