@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -55,10 +56,10 @@ public class Constants {
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
 
         // Path Constraints
-        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(2); //! Find
-        public static final LinearAcceleration maxRobotAcceleration = MetersPerSecondPerSecond.of(0.3); // around 1 foot per second
-        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(90); //! Find
-        public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(90); //! Find
+        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(6); // Should be just under 3/4 of our max possible speed, arbitrary value
+        public static final LinearAcceleration maxRobotAcceleration = FeetPerSecondPerSecond.of(3.5); 
+        public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(180); 
+        public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(270); 
 
         // Drive Feedforward
         public static final double kS = 0.10431;
@@ -88,12 +89,17 @@ public class Constants {
         public static final int xboxPort = 0;
         public static final double leftJoystickDeadband = 0.05;
         public static final double rightJoystickDeadband = 0.05;
+
+        public static final double overrideThreshold = leftJoystickDeadband * 1.5;
     }
 
     public static class DriveK {
         public static final DynamicSlewRateLimiter translationalYLimiter = new DynamicSlewRateLimiter(1.25, 2); // Larger number = faster rate of change
         public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1, 2);
+
+        public static final double driveSpeedModifier = 1;
+        public static final double rotationSpeedModifier = 1;
     }
 
     public static class ElevatorK {
@@ -113,9 +119,13 @@ public class Constants {
         //! Elevator-relative heights, Find all these values
         public static final Distance stowHeight = Inches.of(0);
         public static final Distance intakeHeight = Inches.of(0);
-        public static final Distance allowableError = Inches.of(0.25);
-        public static final Distance minHeight = Inches.of(0);
+
+        public static final Distance armThresholdHeight = Inches.of(0); // height that is safe to move algae arm w/o hitting robot
+
+        public static final Distance minHeight = Inches.of(0); //! Should be zero
         public static final Distance maxHeight = Inches.of(0);
+      
+        public static final Distance allowableError = Inches.of(0.25);
 
         //! Height Offsets, Find both
         public static final Distance reefOffset = Inches.of(0); 
