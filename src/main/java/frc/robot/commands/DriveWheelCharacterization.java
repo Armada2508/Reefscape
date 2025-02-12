@@ -40,16 +40,16 @@ public class DriveWheelCharacterization extends Command {
     public void end(boolean interrupted) {
         swerve.stop();
         Angle accumulatedYaw = swerve.getYaw().minus(initialYaw);
-        double averageWheelPosition = 0.0;
+        double averageWheelDelta = 0.0;
         double[] wheelPositions = swerve.getWheelPositions();
         for (int i = 0; i < wheelPositions.length; i++) {
-            averageWheelPosition += Math.abs(wheelPositions[i] - initialWheelPositions[i]);
+            averageWheelDelta += Math.abs(wheelPositions[i] - initialWheelPositions[i]);
         }
-        averageWheelPosition /= 4.0;
-        double wheelRadiusInches = accumulatedYaw.abs(Radians) * SwerveK.driveBaseRadius.in(Inches) / averageWheelPosition;
+        averageWheelDelta /= 4.0;
+        double wheelRadiusInches = accumulatedYaw.abs(Radians) * SwerveK.driveBaseRadius.in(Inches) / averageWheelDelta;
         System.out.println("Accumulated Yaw: " + accumulatedYaw.toLongString());
         System.out.println("Drive Base Radius: " + SwerveK.driveBaseRadius.toLongString());
-        System.out.println("Average Wheel Distance (Rads)" + averageWheelPosition);
+        System.out.println("Average Wheel Delta (Rads)" + averageWheelDelta);
         System.out.println("Found the wheel diameter to be " + wheelRadiusInches * 2 + " inches.");
     }
 
