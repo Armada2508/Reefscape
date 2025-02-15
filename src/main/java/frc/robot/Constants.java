@@ -132,13 +132,14 @@ public class Constants {
         public static final Distance algaeOffset = Inches.of(0);
 
         //! PID Constants, Tune all
-        public static final double kP = 0; 
-        public static final double kD = 0; 
-        public static final double kG = 0; 
+        public static final double kP = 0; // Volts/rotation of error
+        public static final double kD = 0; // Volts/rps of error
+        public static final double kV = 0; // Volts/rps of target, 0.1129
+        public static final double kG = 0; // Volts
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
-        public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD).withKG(kG).withGravityType(GravityTypeValue.Elevator_Static);
+        public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD).withKV(kV).withKG(kG).withGravityType(GravityTypeValue.Elevator_Static);
         public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
