@@ -41,6 +41,7 @@ import frc.robot.commands.Autos;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 
@@ -58,7 +59,7 @@ public class Robot extends TimedRobot {
     private final Elevator elevator = new Elevator();
     // private final Climb climb = new Climb();
     // private final Algae algae = new Algae();
-    // private final Intake intake = new Intake();
+    private final Intake intake = new Intake();
     private final SendableChooser<Command> autoChooser;
     
     public Robot() {
@@ -79,7 +80,7 @@ public class Robot extends TimedRobot {
         ).withName("Swerve Drive Field Oriented");
         swerve.setDefaultCommand(driveFieldOriented);
         configureBindings();
-        autoChooser = Autos.initPathPlanner(swerve);
+        autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
     }
 
     private void logGitConstants() {
