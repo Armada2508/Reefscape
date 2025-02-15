@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.commands.Autos;
 import frc.robot.lib.logging.LogUtil;
@@ -53,6 +54,7 @@ public class Robot extends TimedRobot {
         xboxController.getLeftX() > ControllerK.overrideThreshold
         || xboxController.getLeftY() > ControllerK.overrideThreshold
         || xboxController.getRightX() > ControllerK.overrideThreshold);
+    @Logged(name = "Elevator")
     private final Elevator elevator = new Elevator();
     // private final Climb climb = new Climb();
     // private final Algae algae = new Algae();
@@ -100,9 +102,9 @@ public class Robot extends TimedRobot {
         Trigger paddle3 = xboxController.leftStick();
         Trigger paddle4 = xboxController.rightStick();
         // Testing
-        xboxController.y().onTrue(elevator.setVoltage(Volts.of(3)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
+        xboxController.y().whileTrue(elevator.setVoltage(Volts.of(3)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-3)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
-        
+        xboxController.b().onTrue(elevator.setPosition(Positions.L2));
         // Reset forward direction for field relative
         // xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro);
 
@@ -170,7 +172,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
+        CommandScheduler.getInstance().cancelAll();
         swerve.stop();
+        elevator.stop();
     }
 
     /**

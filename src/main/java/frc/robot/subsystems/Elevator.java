@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -73,6 +74,11 @@ public class Elevator extends SubsystemBase {
      */
     public Distance getPosition() {
         return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
+    }
+
+    @Logged(name = "Position (in.)")
+    public double getPositionInches() {
+        return getPosition().in(Inches);
     }
 
     /**
