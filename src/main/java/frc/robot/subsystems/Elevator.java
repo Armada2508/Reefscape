@@ -29,7 +29,7 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
-    private boolean zeroed = false;
+    private boolean zeroed = true;
 
     public Elevator() {
         configTalons();

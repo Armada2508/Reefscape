@@ -106,7 +106,7 @@ public class Constants {
         public static final int talonID = 8;
         public static final int talonFollowID = 9;
 
-        public static final double gearRatio = 16;
+        public static final double gearRatio = 12.75;
 
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
 
