@@ -104,7 +104,7 @@ public class Algae extends SubsystemBase {
      */
     public Command zero() {
         return setVoltage(AlgaeK.zeroingVoltage.unaryMinus())
-            .andThen(Commands.waitUntil(sparkMax.getForwardLimitSwitch()::isPressed))
+            .andThen(Commands.waitUntil(sparkMax.getReverseLimitSwitch()::isPressed))
             .andThen(() -> {
                 sparkMax.getEncoder().setPosition(AlgaeK.zeroPosition.in(Rotations));
                 zeroed = true;
