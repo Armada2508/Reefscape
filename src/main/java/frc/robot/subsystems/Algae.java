@@ -57,7 +57,7 @@ public class Algae extends SubsystemBase {
 
     private Command setPosition(Angle position) {
         return Commands.either(
-            runOnce(() -> sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kMAXMotionPositionControl))
+            runOnce(() -> sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kPosition))
             .andThen(Commands.waitUntil(() -> getAngle().isNear(position, AlgaeK.allowableError))), 
             Commands.print("Algae not zeroed!"), 
             () -> zeroed

@@ -6,7 +6,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -108,15 +107,15 @@ public class Robot extends TimedRobot {
         // xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-3)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         // xboxController.b().onTrue(elevator.setPosition(Positions.L2));
 
-        xboxController.x().onTrue(intake.coralIntake());
-        xboxController.a().onTrue(intake.scoreLevelOne());
-        xboxController.b().onTrue(intake.scoreLevelTwoThree());
-        xboxController.y().onTrue(intake.scoreLevelFour());
-        xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
-        xboxController.povUp().onTrue(algae.stow());
-        xboxController.povDown().onTrue(algae.algaePosition());
-        xboxController.povRight().onTrue(algae.zero());
-        xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
+        // xboxController.x().onTrue(intake.coralIntake());
+        // xboxController.a().onTrue(intake.scoreLevelOne());
+        // xboxController.b().onTrue(intake.scoreLevelTwoThree());
+        // xboxController.y().onTrue(intake.scoreLevelFour());
+        // xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
+        // xboxController.povUp().onTrue(algae.stow());
+        // xboxController.povDown().onTrue(algae.algaePosition());
+        // xboxController.povRight().onTrue(algae.zero());
+        // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
 
         // Reset forward direction for field relative
         xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro));

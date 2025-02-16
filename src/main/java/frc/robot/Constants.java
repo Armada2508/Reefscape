@@ -199,7 +199,7 @@ public class Constants {
         public static final Angle zeroPosition = Degrees.of(5);
         public static final Angle allowableError = Degrees.of(2);
 
-        public static final double kP = 4;
+        public static final double kP = 0.1;
         public static final double kD = 0;
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(15);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(15);
