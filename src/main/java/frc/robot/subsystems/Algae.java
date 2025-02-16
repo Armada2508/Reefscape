@@ -42,8 +42,8 @@ public class Algae extends SubsystemBase {
             .primaryEncoderVelocityAlwaysOn(true)
             .warningsAlwaysOn(true)
             .faultsAlwaysOn(true);
-        config.softLimit // It's a little unclear if these limits are affected by the conversion factor but it seems like they're not
-            .forwardSoftLimit(AlgaeK.maxPosition.in(Rotations) * AlgaeK.gearRatio)
+        config.softLimit
+            .forwardSoftLimit(AlgaeK.maxPosition.in(Rotations))
             .forwardSoftLimitEnabled(true);
         config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)

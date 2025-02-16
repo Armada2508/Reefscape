@@ -39,8 +39,8 @@ public class Intake extends SubsystemBase {
         rightConfig.idleMode(IdleMode.kCoast);
         leftConfig.smartCurrentLimit(IntakeK.currentLimit);
         rightConfig.smartCurrentLimit(IntakeK.currentLimit);
-        leftConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
-        rightConfig.signals.warningsAlwaysOn(true).faultsAlwaysOn(true);
+        leftConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
+        rightConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
         rightConfig.inverted(true);
 
         sparkMaxLeft.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -94,10 +94,7 @@ public class Intake extends SubsystemBase {
      * @return Command to set voltage and stop when time of flight is tripped
      */
     public Command coralIntake() {
-        return runOnce(() -> {
-            sparkMaxLeft.setVoltage(IntakeK.coralIntakeVolts);
-            sparkMaxRight.setVoltage(IntakeK.coralIntakeVolts);
-        })
+        return setVoltage(IntakeK.coralIntakeVolts)
         .andThen(Commands.waitUntil(this::isSensorTripped))
         .finallyDo(this::stop)
         .withName("Coral Intake Command");

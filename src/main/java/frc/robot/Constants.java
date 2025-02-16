@@ -180,10 +180,10 @@ public class Constants {
 
         public static final int currentLimit = 20; // Amps
 
-        public static final Voltage coralIntakeVolts = Volts.of(8);
-        public static final Voltage levelOneVolts = Volts.of(4);
-        public static final Voltage levelTwoThreeVolts = Volts.of(5);
-        public static final Voltage levelFourVolts = Volts.of(5);
+        public static final Voltage coralIntakeVolts = Volts.of(12);
+        public static final Voltage levelOneVolts = Volts.of(-4);
+        public static final Voltage levelTwoThreeVolts = Volts.of(-5);
+        public static final Voltage levelFourVolts = Volts.of(-5);
     }
 
     public static class AlgaeK { // TODO: Tune everything
