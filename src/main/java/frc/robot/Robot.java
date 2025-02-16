@@ -113,12 +113,13 @@ public class Robot extends TimedRobot {
         xboxController.b().onTrue(intake.scoreLevelTwoThree());
         xboxController.y().onTrue(intake.scoreLevelFour());
         xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
-        xboxController.povUp().onTrue(algae.setVoltage(Volts.of(-1)));
-        xboxController.povDown().onTrue(algae.setVoltage(Volts.of(1)));
+        xboxController.povUp().onTrue(algae.stow());
+        xboxController.povDown().onTrue(algae.algaePosition());
         xboxController.povRight().onTrue(algae.zero());
-        
+        xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
+
         // Reset forward direction for field relative
-        // xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro);
+        xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro));
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));

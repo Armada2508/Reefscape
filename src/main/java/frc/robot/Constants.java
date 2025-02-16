@@ -182,7 +182,7 @@ public class Constants {
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
         public static final Voltage levelOneVolts = Volts.of(-4);
-        public static final Voltage levelTwoThreeVolts = Volts.of(-5);
+        public static final Voltage levelTwoThreeVolts = Volts.of(-3.5);
         public static final Voltage levelFourVolts = Volts.of(-5);
     }
 
@@ -195,14 +195,14 @@ public class Constants {
         public static final Angle maxPosition = Degrees.of(160);
         public static final Angle algaePosition = Degrees.of(90);
         public static final Angle loweredAlgaePosition = Degrees.of(90);
-        public static final Angle stowPosition = Degrees.of(5);
+        public static final Angle stowPosition = Degrees.of(30);
         public static final Angle zeroPosition = Degrees.of(5);
-        public static final Angle allowableError = Degrees.of(1);
+        public static final Angle allowableError = Degrees.of(2);
 
-        public static final double kP = 0;
+        public static final double kP = 4;
         public static final double kD = 0;
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(15);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(15);
     }
 
     public static class VisionK { // TODO: Find transform and standard deviations
