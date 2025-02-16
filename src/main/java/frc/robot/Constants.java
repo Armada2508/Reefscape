@@ -188,15 +188,15 @@ public class Constants {
 
     public static class AlgaeK { // TODO: Tune everything
         public static final int sparkMaxID = 1;
-        public static final double gearRatio = 64;
-        public static final Voltage zeroingVoltage = Volts.of(1.5);
+        public static final double gearRatio = 47.045881;
+        public static final Voltage zeroingVoltage = Volts.of(0.5);
         public static final int currentLimit = 20;
 
-        public static final Angle maxPosition = Degrees.of(120);
-        public static final Angle algaePosition = Degrees.of(0);
-        public static final Angle loweredAlgaePosition = Degrees.of(0);
-        public static final Angle stowPosition = Degrees.of(0);
-        public static final Angle zeroPosition = Degrees.of(0);
+        public static final Angle maxPosition = Degrees.of(160);
+        public static final Angle algaePosition = Degrees.of(90);
+        public static final Angle loweredAlgaePosition = Degrees.of(90);
+        public static final Angle stowPosition = Degrees.of(5);
+        public static final Angle zeroPosition = Degrees.of(5);
         public static final Angle allowableError = Degrees.of(1);
 
         public static final double kP = 0;
