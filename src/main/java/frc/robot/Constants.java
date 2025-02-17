@@ -113,11 +113,12 @@ public class Constants {
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
 
-        // Motion Magic Values
+        // Feedfoward and feedback gains
+        public static final double kG = 0; // Volts
+        public static final double kS = 0; // Volts
+        public static final double kV = 0; // Volts/rps of target, 0.1129
         public static final double kP = 0; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
-        public static final double kV = 0; // Volts/rps of target, 0.1129
-        public static final double kG = 0; // Volts
 
         public static final LinearVelocity maxVelocity = InchesPerSecond.of(0);
         public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(0);
@@ -134,7 +135,13 @@ public class Constants {
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
-        public static final Slot0Configs pidConfig = new Slot0Configs().withKP(kP).withKD(kD).withKV(kV).withKG(kG).withGravityType(GravityTypeValue.Elevator_Static);
+        public static final Slot0Configs pidConfig = new Slot0Configs()
+            .withKG(kG)
+            .withKS(kS)
+            .withKV(kV)
+            .withKP(kP)
+            .withKD(kD)
+            .withGravityType(GravityTypeValue.Elevator_Static);
         public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
