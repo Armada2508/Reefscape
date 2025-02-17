@@ -6,8 +6,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
@@ -30,6 +31,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.LinearAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -44,6 +46,7 @@ import frc.robot.lib.util.Encoder;
 public class Constants {
 
     public static final Angle halfTurn = Degrees.of(180);
+    public static final LinearAccelerationUnit InchesPerSecondPerSecond = InchesPerSecond.per(Second);
 
     public static class SwerveK {
         public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
@@ -105,37 +108,29 @@ public class Constants {
     public static class ElevatorK {
         public static final int talonID = 8;
         public static final int talonFollowID = 9;
-
         public static final double gearRatio = 12.75;
-
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
-
         public static final int stageCount = 3;
+        public static final Voltage zeroingVoltage = Volts.of(-0.5);
 
         // Motion Magic Values
-        public static final LinearVelocity maxVelocity = MetersPerSecond.of(0);
-        public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(0);
-
-        //! Elevator-relative heights, Find all these values
-        public static final Distance stowHeight = Inches.of(0);
-        public static final Distance intakeHeight = Inches.of(0);
-
-        public static final Distance armThresholdHeight = Inches.of(0); // height that is safe to move algae arm w/o hitting robot
-
-        public static final Distance minHeight = Inches.of(0); //! Should be zero
-        public static final Distance maxHeight = Inches.of(0);
-      
-        public static final Distance allowableError = Inches.of(0.25);
-
-        //! Height Offsets, Find both
-        public static final Distance reefOffset = Inches.of(0); 
-        public static final Distance algaeOffset = Inches.of(0);
-
-        //! PID Constants, Tune all
         public static final double kP = 0; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
         public static final double kV = 0; // Volts/rps of target, 0.1129
         public static final double kG = 0; // Volts
+
+        public static final LinearVelocity maxVelocity = InchesPerSecond.of(0);
+        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(0);
+
+        public static final Distance minHeight = Inches.of(0);
+        public static final Distance maxHeight = Inches.of(0);
+        public static final Distance stowHeight = minHeight;
+        public static final Distance intakeHeight = Inches.of(0);
+        public static final Distance armThresholdHeight = Inches.of(0); // height that is safe to move algae arm w/o hitting robot
+        public static final Distance allowableError = Inches.of(0.25);
+
+        public static final Distance reefOffset = Inches.of(0); 
+        public static final Distance algaeOffset = Inches.of(0);
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
@@ -148,9 +143,8 @@ public class Constants {
 
         public static final HardwareLimitSwitchConfigs hardwareLimitConfig = new HardwareLimitSwitchConfigs()
             .withReverseLimitAutosetPositionEnable(true)
-            .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter));
+            .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
-        //? Set Height Positions, Possible Tune of these
         public enum Positions {
             L1(Field.levelOneHeight.plus(reefOffset)),
             L2(Field.levelTwoHeight.plus(reefOffset)),
@@ -167,8 +161,6 @@ public class Constants {
                 this.level = position;
             }
         }
-
-        public static final Voltage zeroingVoltage = Volts.of(-0.5); //! Tune / Find
     }  
 
     public static class IntakeK { // TODO: Confirm voltages and detection range
