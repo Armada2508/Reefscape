@@ -116,7 +116,7 @@ public class Constants {
         // Feedfoward and feedback gains
         public static final double kG = 0; // Volts
         public static final double kS = 0; // Volts
-        public static final double kV = 0; // Volts/rps of target, 0.1129
+        public static final double kV = 0; // Volts/rps of target, 1.4389
         public static final double kP = 0; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
 
