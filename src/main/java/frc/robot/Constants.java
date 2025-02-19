@@ -123,8 +123,9 @@ public class Constants {
         public static final LinearVelocity maxVelocity = InchesPerSecond.of(0);
         public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(0);
 
+        // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(0);
-        public static final Distance maxHeight = Inches.of(0);
+        public static final Distance maxHeight = Inches.of(74.5);
         public static final Distance stowHeight = minHeight;
         public static final Distance intakeHeight = Inches.of(0);
         public static final Distance armThresholdHeight = Inches.of(0); // height that is safe to move algae arm w/o hitting robot

@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -28,11 +29,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.commands.Autos;
 import frc.robot.lib.logging.LogUtil;
@@ -103,9 +106,10 @@ public class Robot extends TimedRobot {
         Trigger paddle3 = xboxController.leftStick();
         Trigger paddle4 = xboxController.rightStick();
         // Testing
-        // xboxController.y().whileTrue(elevator.setVoltage(Volts.of(3)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
-        // xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-3)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
-        // xboxController.b().onTrue(elevator.setPosition(Positions.L2));
+        xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
+        xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
+        xboxController.b().onTrue(elevator.setPosition(Positions.L2));
+        xboxController.x().onTrue(elevator.setPosition(Positions.STOW));
 
         // xboxController.x().onTrue(intake.coralIntake());
         // xboxController.a().onTrue(intake.scoreLevelOne());
@@ -118,7 +122,7 @@ public class Robot extends TimedRobot {
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
 
         // Reset forward direction for field relative
-        xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro));
+        // xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro));
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));

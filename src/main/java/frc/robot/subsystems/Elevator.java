@@ -30,7 +30,7 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
-    private boolean zeroed = true;
+    private boolean zeroed = false;
 
     public Elevator() {
         configTalons();
@@ -45,6 +45,9 @@ public class Elevator extends SubsystemBase {
         talon.getConfigurator().apply(ElevatorK.hardwareLimitConfig);
         talon.getConfigurator().apply(ElevatorK.gearRatioConfig);
         talon.getConfigurator().apply(ElevatorK.pidConfig);
+        // No limit switch
+        talon.setPosition(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
+        zeroed = true;
     }
 
     private void configMotionMagic(LinearVelocity velocity, LinearAcceleration acceleration) {
