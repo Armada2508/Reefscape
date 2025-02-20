@@ -110,6 +110,7 @@ public class Robot extends TimedRobot {
         xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         xboxController.b().onTrue(elevator.setPosition(Positions.L2));
         xboxController.x().onTrue(elevator.setPosition(Positions.STOW));
+        xboxController.back().onTrue(elevator.zeroManual());
 
         // xboxController.x().onTrue(intake.coralIntake());
         // xboxController.a().onTrue(intake.scoreLevelOne());
@@ -122,7 +123,7 @@ public class Robot extends TimedRobot {
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
 
         // Reset forward direction for field relative
-        // xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro));
+        xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro));
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));

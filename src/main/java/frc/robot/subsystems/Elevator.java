@@ -68,7 +68,7 @@ public class Elevator extends SubsystemBase {
                 .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))),
             Commands.print("Elevator not zeroed"),
             () -> zeroed)
-            .withName("Set Position"); 
+            .withName("Set Position " + position); 
     }
 
     /**
@@ -106,6 +106,10 @@ public class Elevator extends SubsystemBase {
                 runOnce(() -> zeroed = true)
             )
             .finallyDo(() -> stop());
+    }
+
+    public Command zeroManual() {
+        return runOnce(() -> talon.setPosition(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)));
     }
 
     @Logged(name = "Current Command")

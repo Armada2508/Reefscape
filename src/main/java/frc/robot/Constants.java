@@ -116,20 +116,20 @@ public class Constants {
         // Feedfoward and feedback gains
         public static final double kG = 0; // Volts
         public static final double kS = 0; // Volts
-        public static final double kV = 0; // Volts/rps of target, 1.4389
-        public static final double kP = 0; // Volts/rotation of error
+        public static final double kV = 1.4389; // Volts/rps of target, 1.4389
+        public static final double kP = 1; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
 
-        public static final LinearVelocity maxVelocity = InchesPerSecond.of(0);
-        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(0);
+        public static final LinearVelocity maxVelocity = InchesPerSecond.of(6);
+        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(6);
 
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
-        public static final Distance minHeight = Inches.of(0);
-        public static final Distance maxHeight = Inches.of(74.5);
+        public static final Distance minHeight = Inches.of(6);
+        public static final Distance maxHeight = Inches.of(65);
         public static final Distance stowHeight = minHeight;
-        public static final Distance intakeHeight = Inches.of(0);
-        public static final Distance armThresholdHeight = Inches.of(0); // height that is safe to move algae arm w/o hitting robot
-        public static final Distance allowableError = Inches.of(0.25);
+        public static final Distance intakeHeight = Inches.of(30);
+        public static final Distance armThresholdHeight = Inches.of(30); // height that is safe to move algae arm w/o hitting robot
+        public static final Distance allowableError = Inches.of(0.5);
 
         public static final Distance reefOffset = Inches.of(0); 
         public static final Distance algaeOffset = Inches.of(0);
