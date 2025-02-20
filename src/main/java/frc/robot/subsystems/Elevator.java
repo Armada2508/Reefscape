@@ -58,17 +58,25 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
-     * Sets the position of the elevator to a distance of height using the enum Positions within this classes constants file.
-     * @param position position of the elavator to move to
+     * Sets the position of the elevator to a specific height.
+     * @param height height of the elevator to move to
      */
-    public Command setPosition(ElevatorK.Positions position) {
-        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(position.level.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
+    public Command setPosition(Distance height) {
+        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(height.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
         return Commands.either(
             runOnce(() -> talon.setControl(request))
-                .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))),
+                .andThen(Commands.waitUntil(() -> getPosition().isNear(height, ElevatorK.allowableError))),
             Commands.print("Elevator not zeroed"),
             () -> zeroed)
-            .withName("Set Position " + position); 
+            .withName("Set Position " + height); 
+    }
+
+    /**
+     * Sets the position of the elevator to a distance of height using the enum Positions within this classes constants file.
+     * @param position position of the elevator to move to
+     */
+    public Command setPosition(ElevatorK.Positions position) {
+        return setPosition(position.level).withName("Set Position " + position);
     }
 
     /**

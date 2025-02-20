@@ -5,10 +5,12 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.urcl.URCL;
@@ -108,13 +110,17 @@ public class Robot extends TimedRobot {
         // Testing
         xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
-        xboxController.b().onTrue(elevator.setPosition(Positions.L2));
-        xboxController.x().onTrue(elevator.setPosition(Positions.STOW));
+        xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.one())), Set.of(elevator)));
+        xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.one())), Set.of(elevator)));
+        xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
+        xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
+        xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
+        xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         xboxController.back().onTrue(elevator.zeroManual());
 
-        // xboxController.x().onTrue(intake.coralIntake());
-        // xboxController.a().onTrue(intake.scoreLevelOne());
-        // xboxController.b().onTrue(intake.scoreLevelTwoThree());
+        xboxController.povUp().onTrue(intake.coralIntake());
+        xboxController.povLeft().onTrue(intake.scoreLevelOne());
+        xboxController.povDown().onTrue(intake.scoreLevelTwoThree());
         // xboxController.y().onTrue(intake.scoreLevelFour());
         // xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
         // xboxController.povUp().onTrue(algae.stow());

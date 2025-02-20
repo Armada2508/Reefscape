@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Millimeters;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
@@ -107,9 +108,14 @@ public class Intake extends SubsystemBase {
     public Command scoreLevelOne() {
         return runOnce(() -> {
             sparkMaxLeft.setVoltage(IntakeK.levelOneVolts);
-            sparkMaxRight.setVoltage(IntakeK.levelOneVolts.unaryMinus());
+            // sparkMaxRight.setVoltage(IntakeK.levelOneVolts.unaryMinus());
         })
-        .andThen(Commands.waitUntil(() -> !isSensorTripped()))
+        .andThen(
+            Commands.waitSeconds(0.3), // TODO: constant
+            runOnce(() -> sparkMaxRight.setVoltage(Volts.of(4))),
+            Commands.waitUntil(() -> !isSensorTripped()),
+            Commands.waitSeconds(1)
+        )
         .finallyDo(this::stop)
         .withName("Score Level One Command");
     }

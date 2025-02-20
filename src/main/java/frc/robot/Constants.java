@@ -114,8 +114,8 @@ public class Constants {
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
 
         // Feedfoward and feedback gains
-        public static final double kG = 0; // Volts
-        public static final double kS = 0; // Volts
+        public static final double kG = 0.285; // Volts
+        public static final double kS = 0.085; // Volts
         public static final double kV = 1.4389; // Volts/rps of target, 1.4389
         public static final double kP = 1; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
@@ -127,7 +127,7 @@ public class Constants {
         public static final Distance minHeight = Inches.of(6);
         public static final Distance maxHeight = Inches.of(65);
         public static final Distance stowHeight = minHeight;
-        public static final Distance intakeHeight = Inches.of(30);
+        public static final Distance intakeHeight = Inches.of(36);
         public static final Distance armThresholdHeight = Inches.of(30); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.5);
 
@@ -155,7 +155,7 @@ public class Constants {
 
         public enum Positions {
             L1(Field.levelOneHeight.plus(reefOffset)),
-            L2(Field.levelTwoHeight.plus(reefOffset)),
+            L2(Field.levelTwoHeight.plus(reefOffset)), // 29
             L3(Field.levelThreeHeight.plus(reefOffset)),
             L4(Field.levelFourHeight.plus(reefOffset)),
             ALGAE_LOW(Field.algaeLowHeight.plus(algaeOffset)),
@@ -181,8 +181,8 @@ public class Constants {
         public static final int currentLimit = 20; // Amps
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
-        public static final Voltage levelOneVolts = Volts.of(-4);
-        public static final Voltage levelTwoThreeVolts = Volts.of(-3.5);
+        public static final Voltage levelOneVolts = Volts.of(-12);
+        public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
         public static final Voltage levelFourVolts = Volts.of(-5);
     }
 
