@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -90,6 +91,16 @@ public class Elevator extends SubsystemBase {
     @Logged(name = "Position (in.)")
     public double getPositionInches() {
         return getPosition().in(Inches);
+    }
+
+    @Logged(name = "Target (in.)")
+    public double getTargetInches() {
+        return Encoder.angularToLinear(Rotations.of(talon.getClosedLoopReference().getValue() * ElevatorK.stageCount), ElevatorK.sprocketDiameter).in(Inches);
+    }
+
+    @Logged(name = "Error (in.)")
+    public double getErrorInches() {
+        return Encoder.angularToLinear(Rotations.of(talon.getClosedLoopError().getValue() * ElevatorK.stageCount), ElevatorK.sprocketDiameter).in(Inches);
     }
 
     /**

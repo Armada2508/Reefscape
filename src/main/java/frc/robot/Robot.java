@@ -110,17 +110,18 @@ public class Robot extends TimedRobot {
         // Testing
         xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
-        xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.one())), Set.of(elevator)));
-        xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.one())), Set.of(elevator)));
+        xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)));
+        xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)));
         xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
         xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
         xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
         xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
-        xboxController.back().onTrue(elevator.zeroManual());
+        // xboxController.back().onTrue(elevator.zeroManual());
 
         xboxController.povUp().onTrue(intake.coralIntake());
         xboxController.povLeft().onTrue(intake.scoreLevelOne());
         xboxController.povDown().onTrue(intake.scoreLevelTwoThree());
+        xboxController.povRight().onTrue(intake.scoreLevelFour());
         // xboxController.y().onTrue(intake.scoreLevelFour());
         // xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
         // xboxController.povUp().onTrue(algae.stow());
