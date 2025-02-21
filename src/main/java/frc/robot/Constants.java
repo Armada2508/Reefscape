@@ -126,13 +126,8 @@ public class Constants {
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(5.925);
         public static final Distance maxHeight = Inches.of(67.5);
-        public static final Distance stowHeight = minHeight;
-        public static final Distance intakeHeight = Inches.of(31.5);
         public static final Distance armThresholdHeight = Inches.of(30); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.125);
-
-        public static final Distance reefOffset = Inches.of(0); 
-        public static final Distance algaeOffset = Inches.of(0);
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
@@ -154,14 +149,14 @@ public class Constants {
             .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
         public enum Positions {
-            L1(Field.levelOneHeight.plus(reefOffset)),
-            L2(Field.levelTwoHeight.plus(reefOffset)), // 29
-            L3(Field.levelThreeHeight.plus(reefOffset)),
-            L4(Field.levelFourHeight.plus(reefOffset)),
-            ALGAE_LOW(Field.algaeLowHeight.plus(algaeOffset)),
-            ALGAE_HIGH(Field.algaeHighHeight.plus(algaeOffset)),
-            STOW(ElevatorK.stowHeight),
-            INTAKE(ElevatorK.intakeHeight);
+            L1(Inches.of(29)),
+            L2(Inches.of(29)),
+            L3(Inches.of(29)),
+            L4(Inches.of(29)),
+            ALGAE_LOW(Inches.of(29)),
+            ALGAE_HIGH(Inches.of(29)),
+            INTAKE(Inches.of(31.5)),
+            STOW(ElevatorK.minHeight);
     
             public final Distance level;
     
