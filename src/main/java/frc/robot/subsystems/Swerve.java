@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -108,7 +110,11 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             )
         );
         setupPathPlanner();
-
+        var current = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
+        frontLeft.getConfigurator().apply(current);
+        frontRight.getConfigurator().apply(current);
+        backLeft.getConfigurator().apply(current);
+        backRight.getConfigurator().apply(current);
     }
 
     @Override

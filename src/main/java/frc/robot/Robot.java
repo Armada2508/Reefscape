@@ -87,6 +87,7 @@ public class Robot extends TimedRobot {
             true, true
         ).withName("Swerve Drive Field Oriented");
         swerve.setDefaultCommand(driveFieldOriented);
+        algae.setDefaultCommand(algae.run(() -> algae.setVoltage(Volts.of(-0.25))));
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
     }
@@ -124,6 +125,7 @@ public class Robot extends TimedRobot {
         // xboxController.povUp().onTrue(intake.coralIntake());
         // xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
         xboxController.povLeft().onTrue(elevator.setPosition(Positions.STOW));
+        xboxController.povUp().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.povRight().onTrue(intake.runOnce(intake::stop));
         // xboxController.y().onTrue(intake.scoreLevelFour());
         // xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));

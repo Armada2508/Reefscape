@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -42,6 +44,9 @@ public class Elevator extends SubsystemBase {
         Util.factoryReset(talon, talonFollow);
         Util.brakeMode(talon, talonFollow);
         talonFollow.setControl(new StrictFollower(talon.getDeviceID()));
+        var current = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
+        talon.getConfigurator().apply(current);
+        talonFollow.getConfigurator().apply(current);
         talon.getConfigurator().apply(ElevatorK.softwareLimitConfig);
         talon.getConfigurator().apply(ElevatorK.hardwareLimitConfig);
         talon.getConfigurator().apply(ElevatorK.gearRatioConfig);
@@ -91,6 +96,11 @@ public class Elevator extends SubsystemBase {
     @Logged(name = "Position (in.)")
     public double getPositionInches() {
         return getPosition().in(Inches);
+    }
+
+    @Logged(name = "Velocity (in.)")
+    public double getVelocityInches() {
+        return Encoder.angularToLinear(Rotations.of(talon.getVelocity().getValueAsDouble() * ElevatorK.stageCount), ElevatorK.sprocketDiameter).in(Inches);
     }
 
     @Logged(name = "Target (in.)")
