@@ -149,13 +149,13 @@ public class Constants {
             .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
         public enum Positions {
-            L1(Inches.of(29)),
-            L2(Inches.of(29)),
-            L3(Inches.of(29)),
-            L4(Inches.of(29)),
-            ALGAE_LOW(Inches.of(29)),
-            ALGAE_HIGH(Inches.of(29)),
-            INTAKE(Inches.of(31.5)),
+            L1(Inches.of(22)),
+            L2(Inches.of(31)),
+            L3(Inches.of(47.625)),
+            L4(Inches.of(47.625)),
+            ALGAE_LOW(Inches.of(29)), // Not Found
+            ALGAE_HIGH(Inches.of(29)), // Not Found
+            INTAKE(Inches.of(32.5)),
             STOW(ElevatorK.minHeight);
     
             public final Distance level;

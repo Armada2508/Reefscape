@@ -1,7 +1,8 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Millimeters;
-import static edu.wpi.first.units.Units.Volts;
+
+import java.util.function.DoubleSupplier;
 
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
+import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.util.Util;
 
 public class Intake extends SubsystemBase {
@@ -101,20 +103,27 @@ public class Intake extends SubsystemBase {
         .withName("Coral Intake Command");
     }
 
+    DoubleSupplier voltage1 = LogUtil.getTunableDouble("First Voltage (V)", -4);
+    DoubleSupplier voltage2 = LogUtil.getTunableDouble("Second Voltage (V)", 2);
+    DoubleSupplier voltage3 = LogUtil.getTunableDouble("Third Voltage (V)", -6);
+    DoubleSupplier voltage4 = LogUtil.getTunableDouble("Fourth Voltage (V)", -4);
+    DoubleSupplier wait1 = LogUtil.getTunableDouble("First Wait (s)", 0.04);
+    DoubleSupplier wait2 = LogUtil.getTunableDouble("Second Wait (s)", 0.1);
+    DoubleSupplier wait3 = LogUtil.getTunableDouble("Third Wait (s)", 1);
+
     /**
      * Sets voltage for motors scoring level one
      * @return Command to set voltage with both motors in same direction and stop when ToF is tripped
      */
     public Command scoreLevelOne() {
         return runOnce(() -> {
-            sparkMaxLeft.setVoltage(IntakeK.levelOneVolts);
-            // sparkMaxRight.setVoltage(IntakeK.levelOneVolts.unaryMinus());
+            sparkMaxLeft.setVoltage(-7.5);
+            sparkMaxRight.setVoltage(-7.5);
         })
         .andThen(
-            Commands.waitSeconds(0.3), // TODO: constant
-            runOnce(() -> sparkMaxRight.setVoltage(Volts.of(4))),
-            Commands.waitUntil(() -> !isSensorTripped()),
-            Commands.waitSeconds(1)
+            Commands.waitSeconds(0.04),
+            runOnce(() -> sparkMaxRight.setVoltage(5.5))
+            // Commands.waitSeconds(0)
         )
         .finallyDo(this::stop)
         .withName("Score Level One Command");

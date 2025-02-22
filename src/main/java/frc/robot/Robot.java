@@ -40,6 +40,7 @@ import frc.robot.Constants.DriveK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.commands.Autos;
+import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.subsystems.Algae;
@@ -103,25 +104,25 @@ public class Robot extends TimedRobot {
     }
 
     private void configureBindings() {
-        Trigger paddle1 = xboxController.back();
+        Trigger paddle1 = xboxController.start();
         Trigger paddle2 = xboxController.y();
         Trigger paddle3 = xboxController.leftStick();
         Trigger paddle4 = xboxController.rightStick();
         // Testing
-        xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
+        // xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)));
         xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)));
-        xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
-        xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
-        xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
-        xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
+        // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
+        // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
+        // xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
+        // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
         xboxController.povUp().onTrue(intake.coralIntake());
-        xboxController.povLeft().onTrue(intake.scoreLevelOne());
-        xboxController.povDown().onTrue(intake.scoreLevelTwoThree());
-        xboxController.povRight().onTrue(intake.scoreLevelFour());
+        xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
+        xboxController.povLeft().onTrue(elevator.setPosition(Positions.L1));
+        xboxController.povRight().onTrue(intake.runOnce(intake::stop));
         // xboxController.y().onTrue(intake.scoreLevelFour());
         // xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
         // xboxController.povUp().onTrue(algae.stow());
@@ -130,31 +131,31 @@ public class Robot extends TimedRobot {
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
 
         // Reset forward direction for field relative
-        xboxController.start().onTrue(swerve.runOnce(swerve::zeroGyro));
+        xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
 
-        // // Alignment
+        // Alignment
         // xboxController.x().onTrue(Routines.alignToLeftReef(swerve));
         // xboxController.b().onTrue(Routines.alignToRightReef(swerve));
         // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
 
-        // // Intake
-        // xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
+        // Intake
+        xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
-        // // Reef Levels
-        // paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
-        // paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
-        // xboxController.rightBumper().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
-        // xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
+        // Reef Levels
+        paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
+        paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
+        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
+        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
 
-        // // Algae
+        // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
         // paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
         // xboxController.leftTrigger().onTrue(algae.loweredPosition());
 
-        // // Climb
+        // Climb
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
         // xboxController.povDown().onTrue(Routines.alignToMidCage(swerve).andThen(climb.deepclimb())); // Still needs to work for any cage
         // xboxController.povRight().onTrue(climb.deepclimb()); // Incase auto-alignment fails
