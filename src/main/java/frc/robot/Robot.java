@@ -124,7 +124,7 @@ public class Robot extends TimedRobot {
 
         // xboxController.povUp().onTrue(intake.coralIntake());
         // xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
-        xboxController.povLeft().onTrue(elevator.setPosition(Positions.STOW));
+        xboxController.povLeft().onTrue(elevator.setPosition(Positions.STOW).alongWith(intake.runOnce(intake::stop)));
         xboxController.povUp().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.povRight().onTrue(intake.runOnce(intake::stop));
         // xboxController.y().onTrue(intake.scoreLevelFour());

@@ -155,7 +155,7 @@ public class Constants {
             L4(Inches.of(46.375)),
             ALGAE_LOW(Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29)), // Not Found
-            INTAKE(Inches.of(32.5)),
+            INTAKE(Inches.of(33)),
             STOW(ElevatorK.minHeight);
     
             public final Distance level;
