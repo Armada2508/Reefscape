@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.56,
-        "y": 5.5
+        "x": 7.595,
+        "y": 5.08
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.785999152626662,
-        "y": 5.521087786965527
+        "x": 5.6746844374705105,
+        "y": 5.141585331605721
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.272697368421052,
+        "x": 5.394,
         "y": 5.112253289473684
       },
       "prevControl": {
-        "x": 6.326586506402495,
-        "y": 4.778078219273034
+        "x": 6.01533447345678,
+        "y": 4.818367552085685
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "raise elevator",
-      "waypointRelativePos": 0.5013368983957222,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 1.0,
     "maxAcceleration": 1.0,
@@ -55,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

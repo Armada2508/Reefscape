@@ -90,8 +90,8 @@ public class Constants {
 
     public static class ControllerK {
         public static final int xboxPort = 0;
-        public static final double leftJoystickDeadband = 0.05;
-        public static final double rightJoystickDeadband = 0.05;
+        public static final double leftJoystickDeadband = 0.06;
+        public static final double rightJoystickDeadband = 0.06;
 
         public static final double overrideThreshold = leftJoystickDeadband * 1.5;
     }

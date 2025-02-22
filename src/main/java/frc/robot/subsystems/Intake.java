@@ -98,7 +98,10 @@ public class Intake extends SubsystemBase {
      */
     public Command coralIntake() {
         return setVoltage(IntakeK.coralIntakeVolts)
-        .andThen(Commands.waitUntil(this::isSensorTripped))
+        .andThen(
+            Commands.waitUntil(this::isSensorTripped),
+            Commands.waitSeconds(0.25)
+        )
         .finallyDo(this::stop)
         .withName("Coral Intake Command");
     }
