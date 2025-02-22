@@ -101,7 +101,7 @@ public class Constants {
         public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1, 2);
 
-        public static final double driveSpeedModifier = 1;
+        public static final double driveSpeedModifier = 0.7                                                                                         ;
         public static final double rotationSpeedModifier = 1;
     }
 
@@ -120,8 +120,8 @@ public class Constants {
         public static final double kP = 6; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
 
-        public static final LinearVelocity maxVelocity = InchesPerSecond.of(6);
-        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(6);
+        public static final LinearVelocity maxVelocity = InchesPerSecond.of(15);
+        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(9);
 
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(5.925);
@@ -150,9 +150,9 @@ public class Constants {
 
         public enum Positions {
             L1(Inches.of(22)),
-            L2(Inches.of(31)),
-            L3(Inches.of(47.625)),
-            L4(Inches.of(47.625)),
+            L2(Inches.of(32.75)),
+            L3(Inches.of(48.5)),
+            L4(Inches.of(48.5)),
             ALGAE_LOW(Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29)), // Not Found
             INTAKE(Inches.of(32.5)),

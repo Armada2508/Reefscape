@@ -15,8 +15,8 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.urcl.URCL;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
@@ -28,7 +28,9 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -179,6 +181,7 @@ public class Robot extends TimedRobot {
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
 
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
+        SmartDashboard.putData(field);
     }
     
     @Override
@@ -186,13 +189,24 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
     }
 
+    Field2d field = new Field2d();
     @Override
     public void autonomousInit() {
-        PathPlannerAuto auto = (PathPlannerAuto) autoChooser.getSelected();
-        if (!swerve.initializedOdometryFromVision()) {
-            AutoBuilder.resetOdom(auto.getStartingPose());
+        var selected = autoChooser.getSelected();
+        System.out.println("AUTO INIT");
+        if (selected instanceof PathPlannerAuto auto) {
+            System.out.println("Im an auto!");
+            if (!swerve.initializedOdometryFromVision()) {
+                var pose = auto.getStartingPose();
+                if (onRedAlliance()) {
+                    pose = FlippingUtil.flipFieldPose(pose);
+                }
+                System.out.println("RESETINING ODOMOETMRY TO " + pose);
+                field.getObject("start").setPose(pose);
+                swerve.resetOdometry(pose);
+            }
         }
-        auto.schedule();
+        selected.schedule();
     }
 
     @Override
