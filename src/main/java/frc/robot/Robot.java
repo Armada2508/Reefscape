@@ -119,10 +119,10 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-        xboxController.povUp().onTrue(intake.coralIntake());
-        xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
-        xboxController.povLeft().onTrue(elevator.setPosition(Positions.L1));
-        xboxController.povRight().onTrue(intake.runOnce(intake::stop));
+        // xboxController.povUp().onTrue(intake.coralIntake());
+        // xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
+        xboxController.povLeft().onTrue(elevator.setPosition(Positions.STOW));
+        // xboxController.povRight().onTrue(intake.runOnce(intake::stop));
         // xboxController.y().onTrue(intake.scoreLevelFour());
         // xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
         // xboxController.povUp().onTrue(algae.stow());
@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
 
         // Reset forward direction for field relative
-        xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
+        // xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
