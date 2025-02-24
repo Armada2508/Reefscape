@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
@@ -17,7 +16,6 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -110,11 +108,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             )
         );
         setupPathPlanner();
-        var current = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
-        frontLeft.getConfigurator().apply(current);
-        frontRight.getConfigurator().apply(current);
-        backLeft.getConfigurator().apply(current);
-        backRight.getConfigurator().apply(current);
+        frontLeft.getConfigurator().apply(SwerveK.currentLimitsConfig);
+        frontRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
+        backLeft.getConfigurator().apply(SwerveK.currentLimitsConfig);
+        backRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
     }
 
     @Override
@@ -157,7 +154,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return runOnce(() -> {
             Translation2d translation = new Translation2d(TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity());
             AngularVelocity rotation = RadiansPerSecond.of(angularVelocity.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / SwerveK.driveBaseRadius.in(Meters)));
-            drive(Robot.onRedAlliance() ? translation : translation, rotation, fieldRelative, openLoop); //! TODO: fix this unary minus
+            drive(Robot.onRedAlliance() ? translation.unaryMinus() : translation, rotation, fieldRelative, openLoop);
         }).withName("Swerve Drive");
     }
 

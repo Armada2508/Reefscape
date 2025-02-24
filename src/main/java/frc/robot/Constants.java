@@ -1,5 +1,6 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -9,6 +10,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
@@ -16,6 +18,7 @@ import java.io.IOException;
 
 import org.json.simple.parser.ParseException;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -38,6 +41,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
@@ -57,6 +61,7 @@ public class Constants {
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
+        public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
 
         // Path Constraints
         public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(6); // Should be just under 3/4 of our max possible speed, arbitrary value
@@ -131,6 +136,7 @@ public class Constants {
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+        public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
         public static final Slot0Configs pidConfig = new Slot0Configs()
             .withKG(kG)
             .withKS(kS)
@@ -143,7 +149,6 @@ public class Constants {
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
             .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
-
         public static final HardwareLimitSwitchConfigs hardwareLimitConfig = new HardwareLimitSwitchConfigs()
             .withReverseLimitAutosetPositionEnable(true)
             .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
@@ -176,7 +181,12 @@ public class Constants {
         public static final int currentLimit = 20; // Amps
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
-        public static final Voltage levelOneVolts = Volts.of(-12);
+        public static final Time intakeAfterTrip = Seconds.of(0.25);
+
+        public static final Voltage levelOneVolts = Volts.of(-7.5);
+        public static final Time levelOneWait = Seconds.of(0.04);
+        public static final Voltage levelOneReverseVolts = Volts.of(5.5);
+
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
         public static final Voltage levelFourVolts = Volts.of(-5);
     }
