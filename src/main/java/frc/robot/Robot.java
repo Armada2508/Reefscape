@@ -27,6 +27,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -246,6 +247,23 @@ public class Robot extends TimedRobot {
             Angle flippedAngle = angle.gte(Degrees.zero()) ? angle.minus(Constants.halfTurn) : angle.plus(Constants.halfTurn);
             return onRedAlliance() ? flippedAngle : angle;
         };
+    }
+
+    @Logged(name = "RobotController/Battery Voltage (V)")
+    public double getBatteryVoltage() {
+        return RobotController.getBatteryVoltage();
+    }
+    @Logged(name = "RobotController/RIO Voltage (V)")
+    public double getRIOVoltage() {
+        return RobotController.getInputVoltage();
+    }
+    @Logged(name = "RobotController/RIO Current (A)")
+    public double getRIOCurrent() {
+        return RobotController.getInputCurrent();
+    }
+    @Logged(name = "RobotController/CAN Bus Utilization %")
+    public double getCANUtlization() {
+        return RobotController.getCANStatus().percentBusUtilization;
     }
     
 }
