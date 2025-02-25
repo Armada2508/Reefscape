@@ -15,8 +15,10 @@ import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
+import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -33,6 +35,7 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
+    private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
     private boolean zeroed = false;
 
     public Elevator() {
@@ -83,6 +86,15 @@ public class Elevator extends SubsystemBase {
      */
     public Command setPosition(ElevatorK.Positions position) {
         return setPosition(position.level).withName("Set Position " + position);
+    }
+
+    public Command setInterpolatedPosition(Distance lowDistance, Distance highDistance) {
+        Distance interpolatedDistance = Inches.of(MathUtil.interpolate(
+            lowDistance.in(Inches), 
+            highDistance.in(Inches), 
+            timeOfFlight.getRange() / ElevatorK.intakeHighHeight.in(Inches) // <-- This wont work :(
+        ));
+        return setPosition(interpolatedDistance);
     }
 
     /**

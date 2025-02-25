@@ -108,6 +108,7 @@ public class Constants {
     public static class ElevatorK {
         public static final int talonID = 8;
         public static final int talonFollowID = 9;
+        public static final int tofID = 1;
         public static final double gearRatio = 12.75;
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
@@ -164,6 +165,10 @@ public class Constants {
                 this.level = position;
             }
         }
+
+        // Linear Interpolation
+        public static Distance intakeHighHeight = Inches.of(33); //? Change this to use the enum
+        public static Distance intakeLowHeight = Inches.of(20);
     }  
 
     public static class IntakeK { // TODO: Confirm voltages and detection range
