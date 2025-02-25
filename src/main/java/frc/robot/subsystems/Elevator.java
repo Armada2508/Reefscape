@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -85,14 +86,16 @@ public class Elevator extends SubsystemBase {
      * @param position position of the elevator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
+        if (position.equals(ElevatorK.Positions.INTAKE)) return setInterpolatedPosition(ElevatorK.intakeLowHeight, ElevatorK.intakeHighHeight);
         return setPosition(position.level).withName("Set Position " + position);
     }
 
+    //! This currently only works for intaking at the coral station instead of scoring at the reef
     public Command setInterpolatedPosition(Distance lowDistance, Distance highDistance) {
         Distance interpolatedDistance = Inches.of(MathUtil.interpolate(
             lowDistance.in(Inches), 
             highDistance.in(Inches), 
-            timeOfFlight.getRange() / ElevatorK.intakeHighHeight.in(Inches) // <-- This wont work :(
+            timeOfFlight.getRange() / ElevatorK.intakeHighDistance.in(Millimeters)
         ));
         return setPosition(interpolatedDistance);
     }
