@@ -15,6 +15,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -31,6 +32,7 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
+    private final Current currentLimit = ElevatorK.currentSpike;
     private boolean zeroed = false;
 
     public Elevator() {
@@ -88,6 +90,10 @@ public class Elevator extends SubsystemBase {
      */
     public Distance getPosition() {
         return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
+    }
+
+    public Current getCurrent() { //reevaluate name
+        return talon.getSupplyCurrent().getValue();
     }
 
     @Logged(name = "Position (in.)")

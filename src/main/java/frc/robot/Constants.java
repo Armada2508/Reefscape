@@ -38,6 +38,7 @@ import edu.wpi.first.units.LinearAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -117,6 +118,7 @@ public class Constants {
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
+        public static final Current currentSpike = Amps.of(0); //! FIND VALUE, when coral is stuck under elevator
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
