@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.commands.Autos;
@@ -186,6 +187,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+
+        if (elevator.getCurrent().gte(ElevatorK.currentSpike)) elevator.stop();
     }
 
     @Override
