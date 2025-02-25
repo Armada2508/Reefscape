@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -39,6 +40,7 @@ import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
+import frc.robot.Constants.SwerveK;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
@@ -67,6 +69,7 @@ public class Robot extends TimedRobot {
     private final Algae algae = new Algae();
     // private final Climb climb = new Climb();
     private final SendableChooser<Command> autoChooser;
+    private final Timer swerveCoastTimer = new Timer();
     
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
@@ -186,6 +189,11 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        if (isDisabled() && swerveCoastTimer.hasElapsed(SwerveK.coastDisableTime.in(Seconds))) {
+            swerveCoastTimer.stop();
+            swerveCoastTimer.reset();
+            swerve.setCoastMode();
+        }
     }
 
     @Override
@@ -210,6 +218,14 @@ public class Robot extends TimedRobot {
         elevator.stop();
         intake.stop();
         algae.stop();
+        swerveCoastTimer.restart();
+    }
+
+    @Override
+    public void disabledExit() {
+        swerveCoastTimer.stop();
+        swerveCoastTimer.reset();
+        swerve.setBrakeMode();
     }
 
     /**

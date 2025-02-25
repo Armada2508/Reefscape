@@ -55,6 +55,7 @@ public class Constants {
     public static class SwerveK {
         public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
         public static final Distance driveBaseLength = Inches.of(35); // Base is a square so this is the same as the width
+        public static final Time coastDisableTime = Seconds.of(10);
 
         // Currently Unused
         public static final double steerGearRatio = 41.25; 

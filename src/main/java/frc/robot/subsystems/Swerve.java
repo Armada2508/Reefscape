@@ -319,6 +319,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         swerveDrive.zeroGyro();
     }
 
+    public void setCoastMode() {
+        swerveDrive.setMotorIdleMode(false);
+    }
+
+    public void setBrakeMode() {
+        swerveDrive.setMotorIdleMode(true);
+    }
+
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return sysIdRoutine.quasistatic(direction);
     }
