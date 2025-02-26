@@ -23,6 +23,12 @@ public class Routines {
 
     // Prevent this class from being instantiated
     private Routines() {}
+
+    public static Command stow(Elevator elevator, Intake intake) {
+        return elevator.setPosition(Positions.STOW)
+        .alongWith(intake.runOnce(intake::stop))
+        .withName("Stow Routine");
+    }
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.INTAKE)
