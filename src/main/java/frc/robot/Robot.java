@@ -111,8 +111,8 @@ public class Robot extends TimedRobot {
     private void configureBindings() {
         Trigger paddle1 = xboxController.start();
         Trigger paddle2 = xboxController.y();
-        Trigger paddle3 = xboxController.leftStick();
-        Trigger paddle4 = xboxController.rightStick();
+        // Trigger paddle3 = xboxController.leftStick();
+        // Trigger paddle4 = xboxController.rightStick();
         // Testing
         // xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));

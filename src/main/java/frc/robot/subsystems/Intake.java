@@ -74,7 +74,7 @@ public class Intake extends SubsystemBase {
             sparkMaxLeft.setVoltage(volts);
             sparkMaxRight.setVoltage(volts);
         })
-        .withName("Set Voltage Command");
+        .withName("Set Voltage");
     }
 
     /**
@@ -86,7 +86,7 @@ public class Intake extends SubsystemBase {
         return setVoltage(volts)
         .andThen(Commands.waitUntil(() -> !isSensorTripped()))
         .finallyDo(this::stop)
-        .withName("Score Command");
+        .withName("Score");
     }
 
     /**
@@ -100,7 +100,7 @@ public class Intake extends SubsystemBase {
             Commands.waitTime(IntakeK.intakeAfterTrip)
         )
         .finallyDo(this::stop)
-        .withName("Coral Intake Command");
+        .withName("Coral Intake");
     }
 
     /**
@@ -117,7 +117,7 @@ public class Intake extends SubsystemBase {
             runOnce(() -> sparkMaxRight.setVoltage(IntakeK.levelOneReverseVolts))
         )
         .finallyDo(this::stop)
-        .withName("Score Level One Command");
+        .withName("Score Level One");
     }
 
     /**
@@ -126,7 +126,7 @@ public class Intake extends SubsystemBase {
      */
     public Command scoreLevelTwoThree() {
         return score(IntakeK.levelTwoThreeVolts)
-        .withName("Score Levels Two and Three Command");
+        .withName("Score Levels Two and Three");
     }
 
     /**
@@ -135,7 +135,7 @@ public class Intake extends SubsystemBase {
      */
     public Command scoreLevelFour() {
         return score(IntakeK.levelFourVolts)
-        .withName("Score Level Four Command");
+        .withName("Score Level Four");
     }
 
     @Logged(name = "TOF Range Valid")

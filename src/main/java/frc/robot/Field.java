@@ -16,7 +16,7 @@ public class Field {
     //^  X is left and right from origin, Y is top to bottom
 
     // Blue bottom corner is the origin
-    public static final Pose2d origin = new Pose2d();
+    public static final Pose2d origin = Pose2d.kZero;
 
     // Field
     public static final Distance fieldLength = Inches.of(690.875);

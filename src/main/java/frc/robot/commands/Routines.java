@@ -29,7 +29,7 @@ public class Routines {
         .andThen(
             intake.coralIntake(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Intake Coral Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L1</STRONG> branch.
@@ -41,7 +41,7 @@ public class Routines {
         .andThen(intake
         .scoreLevelOne(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Score Coral L1 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L2</STRONG> branch.
@@ -53,7 +53,7 @@ public class Routines {
         .andThen(
             intake.scoreLevelTwoThree(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Score Coral L2 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L3</STRONG> branch.
@@ -65,7 +65,7 @@ public class Routines {
         .andThen(
             intake.scoreLevelTwoThree(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Score Coral L3 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an L4 branch.
@@ -74,10 +74,10 @@ public class Routines {
      */
     public static Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L4)
-        .andThen(intake
-        .scoreLevelFour(),
+        .andThen(
+            intake.scoreLevelFour(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Score Coral L4 Routine");
     }
     
     /**
@@ -89,10 +89,8 @@ public class Routines {
         return elevator.setPosition(Positions.ALGAE_LOW)
         .alongWith(
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
-            .andThen(
-                algae.loweredPosition()
-                )
-        );
+            .andThen(algae.loweredPosition())
+        ).withName("Algae Low Routine");
     }
     /**
      * Command that sets the elevator and algae arm in position to be able to grab the <STRONG>high</STRONG> algae.
@@ -103,10 +101,8 @@ public class Routines {
         return elevator.setPosition(Positions.ALGAE_HIGH)
         .alongWith(
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
-            .andThen(
-                algae.algaePosition()
-            )
-        );
+            .andThen(algae.algaePosition())
+        ).withName("Algae High Routine");
     }
 
      /**
@@ -125,7 +121,7 @@ public class Routines {
                 ); 
             },
             Set.of(swerve)
-        );
+        ).withName("Align Left Reef");
     }
 
     /**
@@ -144,7 +140,7 @@ public class Routines {
                 ); 
             },
             Set.of(swerve)
-        );
+        ).withName("Align Right Reef");
     }
 
     /**
@@ -163,7 +159,7 @@ public class Routines {
                 );
             }, 
             Set.of(swerve)
-        );
+        ).withName("Align Coral Station");
     }
 
     /**
@@ -182,7 +178,7 @@ public class Routines {
                 );
             },
             Set.of(swerve)
-        );
+        ).withName("Align Top Cage");
     }
 
     /**
@@ -200,7 +196,7 @@ public class Routines {
                 );
             },
             Set.of(swerve)
-        );
+        ).withName("Align Mid Cage");
     }
 
     /**
@@ -218,7 +214,7 @@ public class Routines {
                 );
             },
             Set.of(swerve)
-        );
+        ).withName("Align Low Cage");
     }
 
     /**
@@ -230,6 +226,6 @@ public class Routines {
             elevator.zero(),
             algae.zero(),
             climb.zero()
-        );
+        ).withName("Zero Everything");
     }
 }

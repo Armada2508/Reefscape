@@ -131,12 +131,13 @@ public class Elevator extends SubsystemBase {
                 Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround).finallyDo(this::stop),
                 runOnce(() -> zeroed = true)
             )
-            .finallyDo(() -> stop());
+            .finallyDo(() -> stop())
+            .withName("Zero");
     }
 
-    public Command zeroManual() {
-        return runOnce(() -> talon.setPosition(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)));
-    }
+    // public Command zeroManual() {
+    //     return runOnce(() -> talon.setPosition(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)));
+    // }
 
     @Logged(name = "Current Command")
     public String getCurrentCommandName() {
