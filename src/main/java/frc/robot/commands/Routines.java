@@ -177,11 +177,7 @@ public class Routines {
         return Commands.defer(
             () -> {
                 Pose2d cageTop = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
-                return swerve.driveToPoseCommand(
-                    cageTop.getMeasureX(), 
-                    cageTop.getMeasureY(), 
-                    cageTop.getRotation()
-                );
+                return swerve.driveToPoseCommand(cageTop);
             },
             Set.of(swerve)
         ).withName("Align Top Cage");
@@ -195,11 +191,7 @@ public class Routines {
         return Commands.defer(
             () -> {
                 Pose2d cageMid = Robot.onRedAlliance() ? Field.redCageMid : Field.blueCageMid;
-                return swerve.driveToPoseCommand(
-                    cageMid.getMeasureX(), 
-                    cageMid.getMeasureY(), 
-                    cageMid.getRotation()
-                );
+                return swerve.driveToPoseCommand(cageMid);
             },
             Set.of(swerve)
         ).withName("Align Mid Cage");
@@ -213,11 +205,7 @@ public class Routines {
         return Commands.defer(
             () -> {
                 Pose2d cageLow = Robot.onRedAlliance() ? Field.redCageLow : Field.blueCageLow;
-                return swerve.driveToPoseCommand(
-                    cageLow.getMeasureX(), 
-                    cageLow.getMeasureY(), 
-                    cageLow.getRotation()
-                );
+                return swerve.driveToPoseCommand(cageLow);
             },
             Set.of(swerve)
         ).withName("Align Low Cage");
