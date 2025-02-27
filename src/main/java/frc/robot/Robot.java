@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.commands.Autos;
@@ -81,6 +82,7 @@ public class Robot extends TimedRobot {
         DriverStation.startDataLog(dataLog); // DataLog
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
+        // SmartDashboard.putData(new PowerDistribution());
         Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)) * DriveK.driveSpeedModifier, 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)) * DriveK.driveSpeedModifier,  
@@ -123,9 +125,17 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-        // xboxController.povUp().onTrue(intake.coralIntake());
+        paddle2.onTrue(elevator.setPosition(Positions.L1));
+        paddle1.onTrue(elevator.setPosition(Positions.L2));
+        xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
+        xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
+
+        xboxController.povUp().onTrue(intake.scoreLevelOne());
+        xboxController.povRight().onTrue(intake.scoreLevelTwoThree());
+        xboxController.povDown().onTrue(intake.scoreLevelFour());
+        xboxController.leftTrigger().onTrue(intake.coralIntake());
+
         // xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
-        xboxController.povLeft().onTrue(Routines.stow(elevator, intake));
         // xboxController.povUp().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.povRight().onTrue(intake.runOnce(intake::stop));
         // xboxController.y().onTrue(intake.scoreLevelFour());
@@ -136,10 +146,11 @@ public class Robot extends TimedRobot {
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
 
         // Reset forward direction for field relative
-        // xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
+        xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
+        xboxController.povLeft().onTrue(Routines.stow(elevator, intake));
 
         // Alignment
         // xboxController.x().onTrue(Routines.alignToLeftReef(swerve));
@@ -150,10 +161,10 @@ public class Robot extends TimedRobot {
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
         // Reef Levels
-        paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
-        paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
-        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
-        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
+        // paddle2.onTrue(elevator.setPosition(Positions.L1));
+        // paddle1.onTrue(elevator.setPosition(Positions.L2));
+        // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
+        // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
 
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));

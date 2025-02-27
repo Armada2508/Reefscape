@@ -131,7 +131,7 @@ public class Constants {
 
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(5.925);
-        public static final Distance maxHeight = Inches.of(67.5);
+        public static final Distance maxHeight = Inches.of(74.25);
         public static final Distance armThresholdHeight = Inches.of(30); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.125);
 
@@ -158,10 +158,10 @@ public class Constants {
             L1(Inches.of(22)),
             L2(Inches.of(31.25)),
             L3(Inches.of(46.375)),
-            L4(Inches.of(46.375)),
+            L4(Inches.of(71.5)),
             ALGAE_LOW(Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29)), // Not Found
-            INTAKE(Inches.of(33)),
+            INTAKE(Inches.of(31.5)),
             STOW(ElevatorK.minHeight);
     
             public final Distance level;
