@@ -150,5 +150,10 @@ public class Elevator extends SubsystemBase {
         if (cmd == null) return "None";
         return cmd.getName();
     }
+
+    @Override
+    public void periodic() {
+        if (getCurrent().gte(ElevatorK.currentSpike)) stop();
+    }
     
 }
