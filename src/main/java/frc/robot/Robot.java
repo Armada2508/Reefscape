@@ -20,17 +20,16 @@ import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -38,9 +37,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
-import frc.robot.Constants.DriveK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
+import frc.robot.Constants.SwerveK;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
@@ -69,6 +68,7 @@ public class Robot extends TimedRobot {
     private final Algae algae = new Algae();
     // private final Climb climb = new Climb();
     private final SendableChooser<Command> autoChooser;
+    private final Timer swerveCoastTimer = new Timer();
     
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
@@ -80,14 +80,8 @@ public class Robot extends TimedRobot {
         DriverStation.startDataLog(dataLog); // DataLog
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
-        Command driveFieldOriented = swerve.driveCommand(
-            () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)) * DriveK.driveSpeedModifier, 
-            () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)) * DriveK.driveSpeedModifier,  
-            () -> DriveK.rotationalLimiter.calculate(MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband)) * DriveK.rotationSpeedModifier,
-            true, true
-        ).withName("Swerve Drive Field Oriented");
-        swerve.setDefaultCommand(driveFieldOriented);
-        algae.setDefaultCommand(algae.run(() -> algae.setVoltage(Volts.of(-0.25))));
+        // SmartDashboard.putData(new PowerDistribution()); // TODO: Wait until we get a new PDH
+        swerve.setDefaultCommand(swerve.teleopDriveCommand(() -> -xboxController.getLeftY(), () -> -xboxController.getLeftX(), () -> -xboxController.getRightX()));
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
     }
@@ -113,19 +107,31 @@ public class Robot extends TimedRobot {
         Trigger paddle4 = xboxController.rightStick();
         // Testing
         // xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
-        xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
-        xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)));
-        xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)));
+        xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop).withName("Elevator Down"));
+        xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Up"));
+        xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Down"));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-        // xboxController.povUp().onTrue(intake.coralIntake());
+        paddle2.onTrue(elevator.setPosition(Positions.L1));
+        paddle1.onTrue(elevator.setPosition(Positions.L2));
+        xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
+        xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
+
+        xboxController.povUp().onTrue(intake.scoreLevelOne());
+        xboxController.povRight().onTrue(intake.scoreLevelTwoThree());
+        xboxController.povDown().onTrue(intake.scoreLevelFour());
+        // xboxController.leftTrigger().onTrue(intake.coralIntake());
+
+        paddle4.onTrue(algae.loweredPosition());
+        paddle3.onTrue(algae.algaePosition());
+        xboxController.leftTrigger().onTrue(algae.zero());
+
         // xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
-        xboxController.povLeft().onTrue(elevator.setPosition(Positions.STOW).alongWith(intake.runOnce(intake::stop)));
-        xboxController.povUp().onTrue(elevator.setPosition(Positions.INTAKE));
+        // xboxController.povUp().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.povRight().onTrue(intake.runOnce(intake::stop));
         // xboxController.y().onTrue(intake.scoreLevelFour());
         // xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
@@ -135,10 +141,11 @@ public class Robot extends TimedRobot {
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
 
         // Reset forward direction for field relative
-        // xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
+        xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
+        xboxController.a().onTrue(Routines.stow(elevator, intake, algae));
 
         // Alignment
         // xboxController.x().onTrue(Routines.alignToLeftReef(swerve));
@@ -149,10 +156,10 @@ public class Robot extends TimedRobot {
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
         // Reef Levels
-        paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
-        paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
-        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
-        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
+        // paddle2.onTrue(elevator.setPosition(Positions.L1));
+        // paddle1.onTrue(elevator.setPosition(Positions.L2));
+        // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
+        // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
 
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
@@ -183,28 +190,27 @@ public class Robot extends TimedRobot {
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
 
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
-        SmartDashboard.putData(field);
     }
     
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        if (isDisabled() && swerveCoastTimer.hasElapsed(SwerveK.coastDisableTime.in(Seconds))) {
+            swerveCoastTimer.stop();
+            swerveCoastTimer.reset();
+            swerve.setCoastMode();
+        }
     }
 
-    Field2d field = new Field2d();
     @Override
     public void autonomousInit() {
         var selected = autoChooser.getSelected();
-        System.out.println("AUTO INIT");
         if (selected instanceof PathPlannerAuto auto) {
-            System.out.println("Im an auto!");
             if (!swerve.initializedOdometryFromVision()) {
                 var pose = auto.getStartingPose();
                 if (onRedAlliance()) {
                     pose = FlippingUtil.flipFieldPose(pose);
                 }
-                System.out.println("RESETINING ODOMOETMRY TO " + pose);
-                field.getObject("start").setPose(pose);
                 swerve.resetOdometry(pose);
             }
         }
@@ -218,6 +224,14 @@ public class Robot extends TimedRobot {
         elevator.stop();
         intake.stop();
         algae.stop();
+        swerveCoastTimer.restart();
+    }
+
+    @Override
+    public void disabledExit() {
+        swerveCoastTimer.stop();
+        swerveCoastTimer.reset();
+        swerve.setBrakeMode();
     }
 
     /**
@@ -239,5 +253,21 @@ public class Robot extends TimedRobot {
             return onRedAlliance() ? flippedAngle : angle;
         };
     }
+
+    @Logged(name = "RobotController/Battery Voltage (V)")
+    public double getBatteryVoltage() {
+        return RobotController.getBatteryVoltage();
+    }
+
+    @Logged(name = "RobotController/RIO Voltage (V)")
+    public double getRIOVoltage() {
+        return RobotController.getInputVoltage();
+    }
+
+    @Logged(name = "RobotController/RIO Current (A)")
+    public double getRIOCurrent() {
+        return RobotController.getInputCurrent();
+    }
+    
     
 }

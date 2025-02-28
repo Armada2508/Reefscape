@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Millimeters;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.DoubleSupplier;
 
@@ -29,17 +30,30 @@ public class Intake extends SubsystemBase {
     @Logged(name = "Time of Flight")
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(IntakeK.timeOfFlightId);
 
+    DoubleSupplier v = LogUtil.getTunableDouble("Intake Hold (V)", 0.375);
+
     public Intake() {
         configSparkMax();
         timeOfFlight.setRangingMode(RangingMode.Short, 24);
+        setDefaultCommand(run(() -> {
+            if (isSensorTripped()) {
+                var volts = Volts.of(v.getAsDouble());
+                System.out.println("Do stuff " + volts);
+                sparkMaxLeft.setVoltage(volts);
+                sparkMaxRight.setVoltage(volts);
+            }
+            else {
+                stop();
+            }
+        }).withName("Hold Coral"));
     }
 
     private void configSparkMax() {
         SparkMaxConfig leftConfig = new SparkMaxConfig();
         SparkMaxConfig rightConfig = new SparkMaxConfig();
 
-        leftConfig.idleMode(IdleMode.kCoast);
-        rightConfig.idleMode(IdleMode.kCoast);
+        leftConfig.idleMode(IdleMode.kBrake);
+        rightConfig.idleMode(IdleMode.kBrake);
         leftConfig.smartCurrentLimit(IntakeK.currentLimit);
         rightConfig.smartCurrentLimit(IntakeK.currentLimit);
         leftConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
@@ -77,7 +91,7 @@ public class Intake extends SubsystemBase {
             sparkMaxLeft.setVoltage(volts);
             sparkMaxRight.setVoltage(volts);
         })
-        .withName("Set Voltage Command");
+        .withName("Set Voltage");
     }
 
     /**
@@ -89,7 +103,7 @@ public class Intake extends SubsystemBase {
         return setVoltage(volts)
         .andThen(Commands.waitUntil(() -> !isSensorTripped()))
         .finallyDo(this::stop)
-        .withName("Score Command");
+        .withName("Score");
     }
 
     /**
@@ -100,19 +114,11 @@ public class Intake extends SubsystemBase {
         return setVoltage(IntakeK.coralIntakeVolts)
         .andThen(
             Commands.waitUntil(this::isSensorTripped),
-            Commands.waitSeconds(0.25)
+            Commands.waitTime(IntakeK.intakeAfterTrip)
         )
         .finallyDo(this::stop)
-        .withName("Coral Intake Command");
+        .withName("Coral Intake");
     }
-
-    DoubleSupplier voltage1 = LogUtil.getTunableDouble("First Voltage (V)", -4);
-    DoubleSupplier voltage2 = LogUtil.getTunableDouble("Second Voltage (V)", 2);
-    DoubleSupplier voltage3 = LogUtil.getTunableDouble("Third Voltage (V)", -6);
-    DoubleSupplier voltage4 = LogUtil.getTunableDouble("Fourth Voltage (V)", -4);
-    DoubleSupplier wait1 = LogUtil.getTunableDouble("First Wait (s)", 0.04);
-    DoubleSupplier wait2 = LogUtil.getTunableDouble("Second Wait (s)", 0.1);
-    DoubleSupplier wait3 = LogUtil.getTunableDouble("Third Wait (s)", 1);
 
     /**
      * Sets voltage for motors scoring level one
@@ -120,16 +126,15 @@ public class Intake extends SubsystemBase {
      */
     public Command scoreLevelOne() {
         return runOnce(() -> {
-            sparkMaxLeft.setVoltage(-7.5);
-            sparkMaxRight.setVoltage(-7.5);
+            sparkMaxLeft.setVoltage(IntakeK.levelOneVolts);
+            sparkMaxRight.setVoltage(IntakeK.levelOneVolts);
         })
         .andThen(
-            Commands.waitSeconds(0.04),
-            runOnce(() -> sparkMaxRight.setVoltage(5.5))
-            // Commands.waitSeconds(0)
+            Commands.waitTime(IntakeK.levelOneWait),
+            runOnce(() -> sparkMaxRight.setVoltage(IntakeK.levelOneReverseVolts))
         )
         .finallyDo(this::stop)
-        .withName("Score Level One Command");
+        .withName("Score Level One");
     }
 
     /**
@@ -138,7 +143,7 @@ public class Intake extends SubsystemBase {
      */
     public Command scoreLevelTwoThree() {
         return score(IntakeK.levelTwoThreeVolts)
-        .withName("Score Levels Two and Three Command");
+        .withName("Score Levels Two and Three");
     }
 
     /**
@@ -147,7 +152,7 @@ public class Intake extends SubsystemBase {
      */
     public Command scoreLevelFour() {
         return score(IntakeK.levelFourVolts)
-        .withName("Score Level Four Command");
+        .withName("Score Level Four");
     }
 
     @Logged(name = "TOF Range Valid")

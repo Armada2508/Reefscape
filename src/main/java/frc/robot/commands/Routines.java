@@ -23,13 +23,22 @@ public class Routines {
 
     // Prevent this class from being instantiated
     private Routines() {}
+
+    public static Command stow(Elevator elevator, Intake intake, Algae algae) {
+        return elevator.setPosition(Positions.STOW)
+        .alongWith(
+            intake.runOnce(intake::stop),
+            algae.stow()
+        )
+        .withName("Stow Routine");
+    }
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.INTAKE)
         .andThen(
             intake.coralIntake(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Intake Coral Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L1</STRONG> branch.
@@ -41,7 +50,7 @@ public class Routines {
         .andThen(intake
         .scoreLevelOne(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Score Coral L1 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L2</STRONG> branch.
@@ -53,7 +62,7 @@ public class Routines {
         .andThen(
             intake.scoreLevelTwoThree(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Score Coral L2 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L3</STRONG> branch.
@@ -65,7 +74,7 @@ public class Routines {
         .andThen(
             intake.scoreLevelTwoThree(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Score Coral L3 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an L4 branch.
@@ -74,10 +83,10 @@ public class Routines {
      */
     public static Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
         return elevator.setPosition(Positions.L4)
-        .andThen(intake
-        .scoreLevelFour(),
+        .andThen(
+            intake.scoreLevelFour(),
             elevator.setPosition(Positions.STOW)
-        );
+        ).withName("Score Coral L4 Routine");
     }
     
     /**
@@ -89,10 +98,8 @@ public class Routines {
         return elevator.setPosition(Positions.ALGAE_LOW)
         .alongWith(
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
-            .andThen(
-                algae.loweredPosition()
-                )
-        );
+            .andThen(algae.loweredPosition())
+        ).withName("Algae Low Routine");
     }
     /**
      * Command that sets the elevator and algae arm in position to be able to grab the <STRONG>high</STRONG> algae.
@@ -103,10 +110,8 @@ public class Routines {
         return elevator.setPosition(Positions.ALGAE_HIGH)
         .alongWith(
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
-            .andThen(
-                algae.algaePosition()
-            )
-        );
+            .andThen(algae.algaePosition())
+        ).withName("Algae High Routine");
     }
 
      /**
@@ -125,7 +130,7 @@ public class Routines {
                 ); 
             },
             Set.of(swerve)
-        );
+        ).withName("Align Left Reef");
     }
 
     /**
@@ -144,7 +149,7 @@ public class Routines {
                 ); 
             },
             Set.of(swerve)
-        );
+        ).withName("Align Right Reef");
     }
 
     /**
@@ -163,7 +168,7 @@ public class Routines {
                 );
             }, 
             Set.of(swerve)
-        );
+        ).withName("Align Coral Station");
     }
 
     /**
@@ -175,14 +180,10 @@ public class Routines {
         return Commands.defer(
             () -> {
                 Pose2d cageTop = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
-                return swerve.driveToPoseCommand(
-                    cageTop.getMeasureX(), 
-                    cageTop.getMeasureY(), 
-                    cageTop.getRotation()
-                );
+                return swerve.driveToPoseCommand(cageTop);
             },
             Set.of(swerve)
-        );
+        ).withName("Align Top Cage");
     }
 
     /**
@@ -193,14 +194,10 @@ public class Routines {
         return Commands.defer(
             () -> {
                 Pose2d cageMid = Robot.onRedAlliance() ? Field.redCageMid : Field.blueCageMid;
-                return swerve.driveToPoseCommand(
-                    cageMid.getMeasureX(), 
-                    cageMid.getMeasureY(), 
-                    cageMid.getRotation()
-                );
+                return swerve.driveToPoseCommand(cageMid);
             },
             Set.of(swerve)
-        );
+        ).withName("Align Mid Cage");
     }
 
     /**
@@ -211,14 +208,10 @@ public class Routines {
         return Commands.defer(
             () -> {
                 Pose2d cageLow = Robot.onRedAlliance() ? Field.redCageLow : Field.blueCageLow;
-                return swerve.driveToPoseCommand(
-                    cageLow.getMeasureX(), 
-                    cageLow.getMeasureY(), 
-                    cageLow.getRotation()
-                );
+                return swerve.driveToPoseCommand(cageLow);
             },
             Set.of(swerve)
-        );
+        ).withName("Align Low Cage");
     }
 
     /**
@@ -230,6 +223,6 @@ public class Routines {
             elevator.zero(),
             algae.zero(),
             climb.zero()
-        );
+        ).withName("Zero Everything");
     }
 }

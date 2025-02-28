@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
@@ -17,7 +16,6 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -29,6 +27,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -44,9 +43,12 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ControllerK;
+import frc.robot.Constants.DriveK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
+import frc.robot.lib.util.DriveUtil;
 import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
@@ -54,7 +56,6 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-@SuppressWarnings("unused")
 @Logged
 public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
 
@@ -110,11 +111,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             )
         );
         setupPathPlanner();
-        var current = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
-        frontLeft.getConfigurator().apply(current);
-        frontRight.getConfigurator().apply(current);
-        backLeft.getConfigurator().apply(current);
-        backRight.getConfigurator().apply(current);
+        frontLeft.getConfigurator().apply(SwerveK.currentLimitsConfig);
+        frontRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
+        backLeft.getConfigurator().apply(SwerveK.currentLimitsConfig);
+        backRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return runOnce(() -> {
             Translation2d translation = new Translation2d(TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity());
             AngularVelocity rotation = RadiansPerSecond.of(angularVelocity.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / SwerveK.driveBaseRadius.in(Meters)));
-            drive(Robot.onRedAlliance() ? translation : translation, rotation, fieldRelative, openLoop); //! TODO: fix this unary minus
+            drive(Robot.onRedAlliance() ? translation.unaryMinus() : translation, rotation, fieldRelative, openLoop);
         }).withName("Swerve Drive");
     }
 
@@ -223,7 +223,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             SwerveK.robotConfig,
             () -> false, 
             this 
-        ).until(overridePathPlanner);
+        ).until(overridePathPlanner).withName("Drive to Pose");
     }
 
     /**
@@ -322,6 +322,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         swerveDrive.zeroGyro();
     }
 
+    public void setCoastMode() {
+        swerveDrive.setMotorIdleMode(false);
+    }
+
+    public void setBrakeMode() {
+        swerveDrive.setMotorIdleMode(true);
+    }
+
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return sysIdRoutine.quasistatic(direction);
     }
@@ -332,6 +340,37 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     public Command characterizeDriveWheelDiameter() {
         return new DriveWheelCharacterization(this);
+    }
+
+    /**
+     * Returns the command used for teleop driving with swerve
+     * @param x forwards and backwards
+     * @param y left and right
+     * @param turn turning
+     * @return the command
+     */
+    public Command teleopDriveCommand(DoubleSupplier x, DoubleSupplier y, DoubleSupplier turn) {
+        return driveCommand(
+            () -> {
+                double val = MathUtil.applyDeadband(x.getAsDouble(), ControllerK.leftJoystickDeadband);
+                val = DriveK.translationalXLimiter.calculate(val);
+                val = DriveUtil.squareKeepSign(val);
+                return val * DriveK.driveSpeedModifier;
+            }, 
+            () -> {
+                double val = MathUtil.applyDeadband(y.getAsDouble(), ControllerK.leftJoystickDeadband);
+                val = DriveK.translationalYLimiter.calculate(val);
+                val = DriveUtil.squareKeepSign(val);
+                return val * DriveK.driveSpeedModifier;
+            },  
+            () -> {
+                double val = MathUtil.applyDeadband(turn.getAsDouble(), ControllerK.rightJoystickDeadband);
+                val = DriveK.rotationalLimiter.calculate(val);
+                val = DriveUtil.squareKeepSign(val);
+                return val * DriveK.rotationSpeedModifier;
+            },
+            true, true
+        ).withName("Swerve Drive Field Oriented");
     }
 
 }

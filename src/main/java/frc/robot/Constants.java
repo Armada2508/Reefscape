@@ -1,5 +1,6 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -9,6 +10,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
@@ -16,6 +18,7 @@ import java.io.IOException;
 
 import org.json.simple.parser.ParseException;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -38,6 +41,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
@@ -51,12 +55,14 @@ public class Constants {
     public static class SwerveK {
         public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
         public static final Distance driveBaseLength = Inches.of(35); // Base is a square so this is the same as the width
+        public static final Time coastDisableTime = Seconds.of(10);
 
         // Currently Unused
         public static final double steerGearRatio = 41.25; 
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
+        public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
 
         // Path Constraints
         public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(6); // Should be just under 3/4 of our max possible speed, arbitrary value
@@ -90,8 +96,8 @@ public class Constants {
 
     public static class ControllerK {
         public static final int xboxPort = 0;
-        public static final double leftJoystickDeadband = 0.06;
-        public static final double rightJoystickDeadband = 0.06;
+        public static final double leftJoystickDeadband = 0.07;
+        public static final double rightJoystickDeadband = 0.07;
 
         public static final double overrideThreshold = leftJoystickDeadband * 1.5;
     }
@@ -126,12 +132,13 @@ public class Constants {
 
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(5.925);
-        public static final Distance maxHeight = Inches.of(67.5);
+        public static final Distance maxHeight = Inches.of(74.25);
         public static final Distance armThresholdHeight = Inches.of(30); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.125);
 
         // Configs
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+        public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
         public static final Slot0Configs pidConfig = new Slot0Configs()
             .withKG(kG)
             .withKS(kS)
@@ -144,19 +151,18 @@ public class Constants {
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
             .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
-
         public static final HardwareLimitSwitchConfigs hardwareLimitConfig = new HardwareLimitSwitchConfigs()
             .withReverseLimitAutosetPositionEnable(true)
             .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
         public enum Positions {
             L1(Inches.of(22)),
-            L2(Inches.of(31.25)),
-            L3(Inches.of(46.375)),
-            L4(Inches.of(46.375)),
+            L2(Inches.of(30.875)),
+            L3(Inches.of(46.1875)),
+            L4(Inches.of(71.5)),
             ALGAE_LOW(Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29)), // Not Found
-            INTAKE(Inches.of(33)),
+            INTAKE(Inches.of(31.5)),
             STOW(ElevatorK.minHeight);
     
             public final Distance level;
@@ -183,7 +189,12 @@ public class Constants {
         public static final int currentLimit = 20; // Amps
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
-        public static final Voltage levelOneVolts = Volts.of(-12);
+        public static final Time intakeAfterTrip = Seconds.of(0.125);
+
+        public static final Voltage levelOneVolts = Volts.of(-7.5);
+        public static final Time levelOneWait = Seconds.of(0.04);
+        public static final Voltage levelOneReverseVolts = Volts.of(5.5);
+
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
         public static final Voltage levelFourVolts = Volts.of(-5);
     }
@@ -191,14 +202,14 @@ public class Constants {
     public static class AlgaeK { // TODO: Tune everything
         public static final int sparkMaxID = 1;
         public static final double gearRatio = 47.045881;
-        public static final Voltage zeroingVoltage = Volts.of(0.5);
+        public static final Voltage zeroingVoltage = Volts.of(-0.5);
         public static final int currentLimit = 20;
 
-        public static final Angle maxPosition = Degrees.of(160);
-        public static final Angle algaePosition = Degrees.of(90);
-        public static final Angle loweredAlgaePosition = Degrees.of(90);
-        public static final Angle stowPosition = Degrees.of(30);
         public static final Angle zeroPosition = Degrees.of(5);
+        public static final Angle maxPosition = Degrees.of(160);
+        public static final Angle algaePosition = Degrees.of(75);
+        public static final Angle loweredAlgaePosition = Degrees.of(90);
+        public static final Angle stowPosition = zeroPosition;
         public static final Angle allowableError = Degrees.of(2);
 
         public static final double kP = 0.1;
@@ -210,7 +221,7 @@ public class Constants {
     public static class VisionK { // TODO: Find transform and standard deviations
         public static final String frontCameraName = "ArducamFront";
         public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(14.5), Inches.of(7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(0)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(4.087), Inches.of(-9.5), Inches.of(26.09), new Rotation3d(Degrees.of(0), Degrees.of(15), Degrees.of(0)));
         public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-14.5), Inches.of(-7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(15), Degrees.of(180)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
