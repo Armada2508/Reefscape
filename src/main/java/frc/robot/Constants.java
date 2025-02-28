@@ -107,7 +107,7 @@ public class Constants {
         public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
         public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1, 2);
 
-        public static final double driveSpeedModifier = 0.7                                                                                         ;
+        public static final double driveSpeedModifier = 0.7;
         public static final double rotationSpeedModifier = 1;
     }
 
@@ -119,6 +119,7 @@ public class Constants {
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
         public static final Current currentSpike = Amps.of(0); //! FIND VALUE, when coral is stuck under elevator
+        public static final double spikeTime = 0.25; //Find how many seconds of spike indicates a problem
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts

@@ -15,6 +15,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -32,8 +33,8 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
-    private final Current currentLimit = ElevatorK.currentSpike;
     private boolean zeroed = false;
+    public static final Debouncer debouncer = new Debouncer(ElevatorK.spikeTime);
 
     public Elevator() {
         configTalons();
@@ -153,7 +154,10 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (getCurrent().gte(ElevatorK.currentSpike)) stop();
+        if (debouncer.calculate(getCurrent().gte(ElevatorK.currentSpike))) {
+            getCurrentCommand().cancel();
+            stop();
+        }
     }
     
 }
