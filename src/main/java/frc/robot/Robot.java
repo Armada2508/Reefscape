@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
         DriverStation.startDataLog(dataLog); // DataLog
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
-        // SmartDashboard.putData(new PowerDistribution());
+        // SmartDashboard.putData(new PowerDistribution()); // TODO: Wait until we get a new PDH
         Command driveFieldOriented = swerve.driveCommand(
             () -> DriveK.translationalYLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband)) * DriveK.driveSpeedModifier, 
             () -> DriveK.translationalXLimiter.calculate(MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband)) * DriveK.driveSpeedModifier,  
@@ -263,17 +263,16 @@ public class Robot extends TimedRobot {
     public double getBatteryVoltage() {
         return RobotController.getBatteryVoltage();
     }
+
     @Logged(name = "RobotController/RIO Voltage (V)")
     public double getRIOVoltage() {
         return RobotController.getInputVoltage();
     }
+
     @Logged(name = "RobotController/RIO Current (A)")
     public double getRIOCurrent() {
         return RobotController.getInputCurrent();
     }
-    @Logged(name = "RobotController/CAN Bus Utilization %")
-    public double getCANUtlization() {
-        return RobotController.getCANStatus().percentBusUtilization;
-    }
+    
     
 }

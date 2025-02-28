@@ -35,8 +35,8 @@ public class Intake extends SubsystemBase {
         SparkMaxConfig leftConfig = new SparkMaxConfig();
         SparkMaxConfig rightConfig = new SparkMaxConfig();
 
-        leftConfig.idleMode(IdleMode.kCoast);
-        rightConfig.idleMode(IdleMode.kCoast);
+        leftConfig.idleMode(IdleMode.kBrake);
+        rightConfig.idleMode(IdleMode.kBrake);
         leftConfig.smartCurrentLimit(IntakeK.currentLimit);
         rightConfig.smartCurrentLimit(IntakeK.currentLimit);
         leftConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);

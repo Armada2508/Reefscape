@@ -96,8 +96,8 @@ public class Constants {
 
     public static class ControllerK {
         public static final int xboxPort = 0;
-        public static final double leftJoystickDeadband = 0.06;
-        public static final double rightJoystickDeadband = 0.06;
+        public static final double leftJoystickDeadband = 0.07;
+        public static final double rightJoystickDeadband = 0.07;
 
         public static final double overrideThreshold = leftJoystickDeadband * 1.5;
     }
@@ -156,8 +156,8 @@ public class Constants {
 
         public enum Positions {
             L1(Inches.of(22)),
-            L2(Inches.of(31.25)),
-            L3(Inches.of(46.375)),
+            L2(Inches.of(30.875)),
+            L3(Inches.of(46.1875)),
             L4(Inches.of(71.5)),
             ALGAE_LOW(Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29)), // Not Found
@@ -182,7 +182,7 @@ public class Constants {
         public static final int currentLimit = 20; // Amps
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
-        public static final Time intakeAfterTrip = Seconds.of(0.25);
+        public static final Time intakeAfterTrip = Seconds.of(0.125);
 
         public static final Voltage levelOneVolts = Volts.of(-7.5);
         public static final Time levelOneWait = Seconds.of(0.04);
@@ -214,7 +214,7 @@ public class Constants {
     public static class VisionK { // TODO: Find transform and standard deviations
         public static final String frontCameraName = "ArducamFront";
         public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(14.5), Inches.of(7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(0)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(4.087), Inches.of(-9.5), Inches.of(26.09), new Rotation3d(Degrees.of(0), Degrees.of(15), Degrees.of(0)));
         public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-14.5), Inches.of(-7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(15), Degrees.of(180)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
