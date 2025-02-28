@@ -24,9 +24,12 @@ public class Routines {
     // Prevent this class from being instantiated
     private Routines() {}
 
-    public static Command stow(Elevator elevator, Intake intake) {
+    public static Command stow(Elevator elevator, Intake intake, Algae algae) {
         return elevator.setPosition(Positions.STOW)
-        .alongWith(intake.runOnce(intake::stop))
+        .alongWith(
+            intake.runOnce(intake::stop),
+            algae.stow()
+        )
         .withName("Stow Routine");
     }
     

@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Millimeters;
+import static edu.wpi.first.units.Units.Volts;
+
+import java.util.function.DoubleSupplier;
 
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
@@ -17,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
+import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.util.Util;
 
 public class Intake extends SubsystemBase {
@@ -26,9 +30,22 @@ public class Intake extends SubsystemBase {
     @Logged(name = "Time of Flight")
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(IntakeK.timeOfFlightId);
 
+    DoubleSupplier v = LogUtil.getTunableDouble("Intake Hold (V)", 0.375);
+
     public Intake() {
         configSparkMax();
         timeOfFlight.setRangingMode(RangingMode.Short, 24);
+        setDefaultCommand(run(() -> {
+            if (isSensorTripped()) {
+                var volts = Volts.of(v.getAsDouble());
+                System.out.println("Do stuff " + volts);
+                sparkMaxLeft.setVoltage(volts);
+                sparkMaxRight.setVoltage(volts);
+            }
+            else {
+                stop();
+            }
+        }).withName("Hold Coral"));
     }
 
     private void configSparkMax() {
