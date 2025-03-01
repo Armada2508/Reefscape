@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -13,8 +14,10 @@ import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
+import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -31,6 +34,7 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
+    private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
     private boolean zeroed = false;
 
     public Elevator() {
@@ -79,7 +83,18 @@ public class Elevator extends SubsystemBase {
      * @param position position of the elevator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
+        if (position.equals(ElevatorK.Positions.INTAKE)) return setInterpolatedPosition(ElevatorK.intakeLowHeight, ElevatorK.intakeHighHeight);
         return setPosition(position.level).withName("Set Position " + position);
+    }
+
+    //! This currently only works for intaking at the coral station instead of scoring at the reef
+    public Command setInterpolatedPosition(Distance lowDistance, Distance highDistance) {
+        Distance interpolatedDistance = Inches.of(MathUtil.interpolate(
+            lowDistance.in(Inches), 
+            highDistance.in(Inches), 
+            timeOfFlight.getRange() / ElevatorK.intakeHighDistance.in(Millimeters)
+        ));
+        return setPosition(interpolatedDistance);
     }
 
     /**
