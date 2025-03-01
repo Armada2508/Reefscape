@@ -35,7 +35,7 @@ public class Intake extends SubsystemBase {
     public Intake() {
         configSparkMax();
         timeOfFlight.setRangingMode(RangingMode.Short, 24);
-        setDefaultCommand(run(() -> {
+        setDefaultCommand(run(() -> { // TODO: Finalize
             if (isSensorTripped()) {
                 var volts = Volts.of(v.getAsDouble());
                 System.out.println("Do stuff " + volts);

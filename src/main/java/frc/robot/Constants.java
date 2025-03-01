@@ -28,6 +28,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -44,7 +45,6 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.lib.util.DynamicSlewRateLimiter;
 import frc.robot.lib.util.Encoder;
 
 public class Constants {
@@ -103,9 +103,9 @@ public class Constants {
     }
 
     public static class DriveK {
-        public static final DynamicSlewRateLimiter translationalYLimiter = new DynamicSlewRateLimiter(1.25, 2); // Larger number = faster rate of change
-        public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
-        public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1, 2);
+        // Larger number = faster rate of change, limit is in units of (units)/second. In this case the joystick [-1, 1].
+        public static final Pair<Double, Double> translationAccelLimits = Pair.of(1.25, 2.0); 
+        public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
 
         public static final double driveSpeedModifier = 0.7                                                                                         ;
         public static final double rotationSpeedModifier = 1;
