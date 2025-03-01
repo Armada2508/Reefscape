@@ -28,6 +28,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -44,7 +45,6 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.lib.util.DynamicSlewRateLimiter;
 import frc.robot.lib.util.Encoder;
 
 public class Constants {
@@ -103,12 +103,12 @@ public class Constants {
     }
 
     public static class DriveK {
-        public static final DynamicSlewRateLimiter translationalYLimiter = new DynamicSlewRateLimiter(1.25, 2); // Larger number = faster rate of change
-        public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
-        public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1, 2);
+        // Larger number = faster rate of change, limit is in units of (units)/second. In this case the joystick [-1, 1].
+        public static final Pair<Double, Double> translationAccelLimits = Pair.of(1.25, 2.0); 
+        public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
 
-        public static final double driveSpeedModifier = 0.7                                                                                         ;
-        public static final double rotationSpeedModifier = 1;
+        public static final double driveSpeedModifier = 0.3                                                                                         ;
+        public static final double rotationSpeedModifier = 0.5;
     }
 
     public static class ElevatorK {
@@ -160,7 +160,7 @@ public class Constants {
             L3(Inches.of(46.1875)),
             L4(Inches.of(71.5)),
             ALGAE_LOW(Inches.of(29)), // Not Found
-            ALGAE_HIGH(Inches.of(29)), // Not Found
+            ALGAE_HIGH(Inches.of(40)), // Not Found
             INTAKE(Inches.of(31.5)),
             STOW(ElevatorK.minHeight);
     
@@ -196,19 +196,19 @@ public class Constants {
         public static final int sparkMaxID = 1;
         public static final double gearRatio = 47.045881;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final int currentLimit = 20;
+        public static final int currentLimit = 30;
 
         public static final Angle zeroPosition = Degrees.of(5);
-        public static final Angle maxPosition = Degrees.of(160);
-        public static final Angle algaePosition = Degrees.of(75);
+        public static final Angle maxPosition = Degrees.of(120);
+        public static final Angle algaePosition = Degrees.of(70);
         public static final Angle loweredAlgaePosition = Degrees.of(90);
-        public static final Angle stowPosition = zeroPosition;
+        public static final Angle stowPosition = Degrees.of(15);
         public static final Angle allowableError = Degrees.of(2);
 
-        public static final double kP = 0.1;
+        public static final double kP = 10;
         public static final double kD = 0;
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(15);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(15);
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(45);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(45);
     }
 
     public static class VisionK { // TODO: Find transform and standard deviations

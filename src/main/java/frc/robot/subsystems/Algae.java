@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -15,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,6 +47,7 @@ public class Algae extends SubsystemBase {
             .forwardSoftLimitEnabled(true);
         config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .outputRange(-0.2, 0.2)
             .pid(AlgaeK.kP, 0, AlgaeK.kD)
             .maxMotion
             .maxVelocity(AlgaeK.maxVelocity.in(RotationsPerSecond))
@@ -56,9 +57,29 @@ public class Algae extends SubsystemBase {
         // setDefaultCommand(setVoltage(Volts.of(-0.25)).repeatedly());
     }
 
+    private Angle target;
+    private Debouncer debouncer = new Debouncer(0.5);
+
+    @Override
+    public void periodic() {
+        if (!zeroed || target == null) return;
+        double v = target.gte(getAngle()) ? 1 : -1;
+        if (debouncer.calculate(sparkMax.getOutputCurrent() > 12)) {
+            v += Math.copySign(5, v);
+            System.out.println("Adding");
+        }
+        System.out.println(v);
+        if (getAngle().isNear(target, AlgaeK.allowableError)) {
+            sparkMax.stopMotor();
+        }
+        else {
+            sparkMax.setVoltage(v);
+        }
+    }
+
     private Command setPosition(Angle position) {
         return Commands.either(
-            runOnce(() -> sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kPosition))
+            runOnce(() -> target = position)
             .andThen(Commands.waitUntil(() -> getAngle().isNear(position, AlgaeK.allowableError))), 
             Commands.print("Algae not zeroed!"), 
             () -> zeroed
@@ -120,6 +141,7 @@ public class Algae extends SubsystemBase {
      */
     public void stop() {
         sparkMax.stopMotor();
+        target = null;
     }
 
     /**
