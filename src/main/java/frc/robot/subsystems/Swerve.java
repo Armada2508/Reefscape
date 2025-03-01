@@ -33,6 +33,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -324,6 +325,15 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     public void setBrakeMode() {
         swerveDrive.setMotorIdleMode(true);
+    }
+
+    public Command faceWheelsForward() {
+        return run(() -> {
+            SwerveModuleState state = new SwerveModuleState();
+            for (var module : swerveDrive.getModules()) {
+                module.setDesiredState(state, true, 0);
+            }
+        }).finallyDo(this::stop).withName("Face Forward");
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

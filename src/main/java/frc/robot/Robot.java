@@ -38,7 +38,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
-import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.commands.Autos;
@@ -135,20 +134,20 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-        paddle2.onTrue(elevator.setPosition(Positions.L1));
-        paddle1.onTrue(elevator.setPosition(Positions.L2));
-        xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
-        xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
+        // paddle2.onTrue(elevator.setPosition(Positions.L1));
+        // paddle1.onTrue(elevator.setPosition(Positions.L2));
+        // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
+        // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
 
-        xboxController.povUp().onTrue(intake.scoreLevelOne());
-        xboxController.povRight().onTrue(intake.scoreLevelTwoThree());
-        xboxController.povDown().onTrue(intake.scoreLevelFour());
-        xboxController.povLeft().onTrue(elevator.setPosition(Positions.ALGAE_HIGH));
+        // xboxController.povUp().onTrue(intake.scoreLevelOne());
+        // xboxController.povRight().onTrue(intake.scoreLevelTwoThree());
+        // xboxController.povDown().onTrue(intake.scoreLevelFour());
+        // xboxController.povLeft().onTrue(elevator.setPosition(Positions.ALGAE_HIGH));
         // xboxController.leftTrigger().onTrue(intake.coralIntake());
 
-        paddle4.onTrue(algae.loweredPosition());
-        paddle3.onTrue(algae.algaePosition());
-        xboxController.leftTrigger().onTrue(algae.zero());
+        // paddle4.onTrue(algae.loweredPosition());
+        // paddle3.onTrue(algae.algaePosition());
+        // xboxController.leftTrigger().onTrue(algae.zero());
 
         // xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
         // xboxController.povUp().onTrue(elevator.setPosition(Positions.INTAKE));
@@ -159,6 +158,8 @@ public class Robot extends TimedRobot {
         // xboxController.povDown().onTrue(algae.algaePosition());
         // xboxController.povRight().onTrue(algae.zero());
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
+
+        /// Real Bindings ///
 
         // Reset forward direction for field relative
         xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
@@ -176,10 +177,10 @@ public class Robot extends TimedRobot {
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
         // Reef Levels
-        // paddle2.onTrue(elevator.setPosition(Positions.L1));
-        // paddle1.onTrue(elevator.setPosition(Positions.L2));
-        // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
-        // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
+        paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
+        paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
+        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
+        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
 
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
@@ -208,6 +209,7 @@ public class Robot extends TimedRobot {
         // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
 
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
