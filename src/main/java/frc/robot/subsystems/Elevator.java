@@ -15,6 +15,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -32,6 +34,7 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private boolean zeroed = false;
+    public static final Debouncer debouncer = new Debouncer(ElevatorK.spikeTime);
 
     public Elevator() {
         configTalons();
@@ -90,6 +93,10 @@ public class Elevator extends SubsystemBase {
         return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
     }
 
+    public Current getCurrent() { //reevaluate name
+        return talon.getSupplyCurrent().getValue();
+    }
+
     @Logged(name = "Position (in.)")
     public double getPositionInches() {
         return getPosition().in(Inches);
@@ -144,6 +151,14 @@ public class Elevator extends SubsystemBase {
         var cmd = getCurrentCommand();
         if (cmd == null) return "None";
         return cmd.getName();
+    }
+
+    @Override
+    public void periodic() {
+        if (debouncer.calculate(getCurrent().gte(ElevatorK.currentSpike))) {
+            getCurrentCommand().cancel();
+            stop();
+        }
     }
     
 }
