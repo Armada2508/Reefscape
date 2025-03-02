@@ -13,8 +13,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.photonvision.EstimatedRobotPose;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -25,6 +23,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
@@ -40,6 +39,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -117,13 +118,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     @Override
     public void periodic() {
         for (var result : visionSource.get().results()) {
-            EstimatedRobotPose pose = result.getFirst();
-            if (!initializedOdometryFromVision) {
-                resetOdometry(pose.estimatedPose.toPose2d());
-                initializedOdometryFromVision = true;
-                continue;
-            }
-            swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
+            // EstimatedRobotPose pose = result.getFirst();
+            // if (!initializedOdometryFromVision) {
+            //     resetOdometry(pose.estimatedPose.toPose2d());
+            //     initializedOdometryFromVision = true;
+            //     continue;
+            // }
+            // swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
         }
     }
 
@@ -221,6 +222,25 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             () -> false, 
             this 
         ).until(overridePathPlanner).withName("Drive to Pose");
+    }
+
+    Field2d field = new Field2d();
+    public Command alignToPosePID(Pose2d targetPose) {
+        SmartDashboard.putData(field);
+        PathPlannerTrajectoryState targetState = new PathPlannerTrajectoryState();
+        targetState.pose = targetPose;
+        field.getObject("Testing").setPose(targetPose);
+        return runOnce(() -> {
+            pathPlannerController.reset(getPose(), getRobotVelocity());
+        }).andThen(run(() -> {
+            ChassisSpeeds targetSpeeds = pathPlannerController.calculateRobotRelativeSpeeds(getPose(), targetState);
+            System.out.println(targetSpeeds);
+            setChassisSpeeds(targetSpeeds);
+            SmartDashboard.putNumber("Distance", getPose().getTranslation().getDistance(targetPose.getTranslation()));
+        })).until(() -> 
+            getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.0254
+            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < 2 
+        ).finallyDo(this::stop).withName("PID Align");
     }
 
     /**

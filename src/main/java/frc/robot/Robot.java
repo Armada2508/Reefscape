@@ -86,6 +86,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
+        swerve.resetOdometry(Field.blueCageMid);
     }
 
     public Command teleopDriveCommand() {
@@ -128,6 +129,7 @@ public class Robot extends TimedRobot {
         // xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop).withName("Elevator Down"));
         xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Up"));
         xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Down"));
+        // xboxController.a().onTrue(swerve.alignToPosePID(Field.blueReefA));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
@@ -179,8 +181,8 @@ public class Robot extends TimedRobot {
         // Reef Levels
         paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
         paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
-        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
-        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
+        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
+        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
 
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
