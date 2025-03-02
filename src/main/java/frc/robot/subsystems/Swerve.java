@@ -13,6 +13,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.photonvision.EstimatedRobotPose;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -118,13 +120,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     @Override
     public void periodic() {
         for (var result : visionSource.get().results()) {
-            // EstimatedRobotPose pose = result.getFirst();
-            // if (!initializedOdometryFromVision) {
-            //     resetOdometry(pose.estimatedPose.toPose2d());
-            //     initializedOdometryFromVision = true;
-            //     continue;
-            // }
-            // swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
+            EstimatedRobotPose pose = result.getFirst();
+            if (!initializedOdometryFromVision) {
+                resetOdometry(pose.estimatedPose.toPose2d());
+                initializedOdometryFromVision = true;
+                continue;
+            }
+            swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
         }
     }
 
@@ -224,8 +226,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         ).until(overridePathPlanner).withName("Drive to Pose");
     }
 
-    Field2d field = new Field2d();
     public Command alignToPosePID(Pose2d targetPose) {
+        // TODO: Finish
+        Field2d field = new Field2d();
         SmartDashboard.putData(field);
         PathPlannerTrajectoryState targetState = new PathPlannerTrajectoryState();
         targetState.pose = targetPose;

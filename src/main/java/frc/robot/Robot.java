@@ -86,7 +86,6 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
-        swerve.resetOdometry(Field.blueCageMid);
     }
 
     public Command teleopDriveCommand() {
