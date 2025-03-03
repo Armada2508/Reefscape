@@ -173,10 +173,17 @@ public class Constants {
         }
 
         // Linear Interpolation
-        public static Distance intakeHighHeight = Inches.of(33); //? Change this to use the enum
-        public static Distance intakeLowHeight = Inches.of(20);
+        // TODO: Find these values
+        public static final Distance L1LowHeight = Inches.of(20);
+        public static final Distance L2LowHeight = Inches.of(20);
+        public static final Distance L3LowHeight = Inches.of(20);
+        public static final Distance L4LowHeight = Inches.of(20);
 
-        public static Distance intakeHighDistance = Inches.of(5.5); // Coral Diameter (4.5") + 1 inch
+        public static final Distance algaeLowLowHeight = Inches.of(20);
+        public static final Distance algaeHighLowHeight = Inches.of(20);
+
+        public static final Distance intakeLowHeight = Inches.of(20);
+
     }  
 
     public static class IntakeK { // TODO: Confirm voltages and detection range

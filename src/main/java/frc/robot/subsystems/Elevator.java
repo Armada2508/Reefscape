@@ -83,16 +83,52 @@ public class Elevator extends SubsystemBase {
      * @param position position of the elevator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        if (position.equals(ElevatorK.Positions.INTAKE)) return setInterpolatedPosition(ElevatorK.intakeLowHeight, ElevatorK.intakeHighHeight);
-        return setPosition(position.level).withName("Set Position " + position);
+        // if (position.equals(ElevatorK.Positions.INTAKE)) return setInterpolatedPosition(ElevatorK.intakeLowHeight, ElevatorK.intakeHighHeight);
+        switch (position) {
+            case L1:
+                return setInterpolatedPosition(ElevatorK.L1LowHeight, position.level, position)
+                .withName("Set Position " + position);
+                
+            case L2:
+                return setInterpolatedPosition(ElevatorK.L2LowHeight, position.level, position)
+                .withName("Set Position " + position);
+
+            case L3:
+                return setInterpolatedPosition(ElevatorK.L3LowHeight, position.level, position)
+                .withName("Set Position " + position);
+                
+            case L4:
+                return setInterpolatedPosition(ElevatorK.L4LowHeight, position.level, position)
+                .withName("Set Position " + position);
+
+            case ALGAE_LOW:        
+                return setInterpolatedPosition(ElevatorK.algaeLowLowHeight, position.level, position)
+                .withName("Set Position " + position);
+
+            case ALGAE_HIGH:   
+                return setInterpolatedPosition(ElevatorK.algaeHighLowHeight, position.level, position)
+                .withName("Set Position " + position);
+
+            case INTAKE:
+                return setInterpolatedPosition(ElevatorK.intakeLowHeight, position.level, position)
+                .withName("Set Position " + position);
+
+            case STOW:
+                return setPosition(position)
+                .withName("Set Position " + position);
+
+            default:
+                throw new IllegalArgumentException("Invalid position by some magic of the gods");
+
+        }
     }
 
     //! This currently only works for intaking at the coral station instead of scoring at the reef
-    public Command setInterpolatedPosition(Distance lowDistance, Distance highDistance) {
+    public Command setInterpolatedPosition(Distance lowDistance, Distance highDistance, ElevatorK.Positions position) {
         Distance interpolatedDistance = Inches.of(MathUtil.interpolate(
-            lowDistance.in(Inches), 
-            highDistance.in(Inches), 
-            timeOfFlight.getRange() / ElevatorK.intakeHighDistance.in(Millimeters)
+            lowDistance.in(Millimeters), 
+            highDistance.in(Millimeters), 
+            timeOfFlight.getRange() / position.level.in(Millimeters)
         ));
         return setPosition(interpolatedDistance);
     }

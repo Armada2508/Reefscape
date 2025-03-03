@@ -70,6 +70,8 @@ public class Robot extends TimedRobot {
     private final SendableChooser<Command> autoChooser;
     private final Timer swerveCoastTimer = new Timer();
     
+    boolean isScoreReady = false;
+
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -116,8 +118,11 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-        paddle2.onTrue(elevator.setPosition(Positions.L1));
-        paddle1.onTrue(elevator.setPosition(Positions.L2));
+        // paddle2.onTrue(elevator.setPosition(Positions.L1));
+        if (isScoreReady) paddle2.onTrue(Commands.parallel(updateControllerState(), Routines.scoreCoralLevelOne(elevator, intake)));
+        else paddle2.onTrue(Commands.parallel(updateControllerState(), elevator.setPosition(Positions.L1)));
+
+        // paddle1.onTrue(elevator.setPosition(Positions.L2));
         xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
         xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
 
@@ -191,7 +196,11 @@ public class Robot extends TimedRobot {
 
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
-    
+
+    private Command updateControllerState() {
+        return Commands.runOnce(() -> isScoreReady = !isScoreReady, null);
+    }
+
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
