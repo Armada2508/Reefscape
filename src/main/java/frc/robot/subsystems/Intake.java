@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
         setDefaultCommand(run(() -> {
             if (isSensorTripped()) {
                 var volts = Volts.of(v.getAsDouble());
-                System.out.println("Do stuff " + volts);
+                // System.out.println("Do stuff " + volts);
                 sparkMaxLeft.setVoltage(volts);
                 sparkMaxRight.setVoltage(volts);
             }
