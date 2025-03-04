@@ -174,6 +174,8 @@ public class Constants {
 
         // Linear Interpolation
         // TODO: Find these values
+        public static final Distance timeOfFlightOffset = Inches.of(12.25);
+
         public static final Distance L1LowHeight = Inches.of(20);
         public static final Distance L2LowHeight = Inches.of(20);
         public static final Distance L3LowHeight = Inches.of(20);
