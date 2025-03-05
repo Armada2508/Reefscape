@@ -182,11 +182,11 @@ public class Routines {
      * Zeros all subsystems that need to be zeroed
      * @return
      */
-    public static Command zeroAll(Elevator elevator, Algae algae, Climb climb) {
+    public static Command zeroAll(Algae algae, Climb climb) {
         return Commands.parallel(
-            elevator.zero(),
             algae.zero(),
             climb.zero()
         ).withName("Zero Everything");
     }
+
 }
