@@ -34,10 +34,14 @@ public class Routines {
     }
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
-        return elevator.setPosition(Positions.INTAKE)
-        .andThen(
-            intake.coralIntake(),
-            elevator.setPosition(Positions.STOW)
+        return Commands.either(
+            intake.coralIntake(), 
+            elevator.setPosition(Positions.INTAKE)
+            .andThen(
+                intake.coralIntake(),
+                elevator.setPosition(Positions.STOW)
+            ),
+            intake::isSensorTripped
         ).withName("Intake Coral Routine");
     }
     /**
