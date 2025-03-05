@@ -119,8 +119,8 @@ public class Constants {
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final Current currentSpike = Amps.of(0); //! FIND VALUE, when coral is stuck under elevator
-        public static final double spikeTime = 0.25; //Find how many seconds of spike indicates a problem
+        public static final Current currentSpike = Amps.of(0); // TODO: Find current spike threshold and spike time
+        public static final double spikeTime = 0.25;
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
@@ -175,7 +175,7 @@ public class Constants {
         }
     }  
 
-    public static class IntakeK { // TODO: Confirm voltages and detection range
+    public static class IntakeK {
         public static final int sparkMaxLeftID = 2; 
         public static final int sparkMaxRightID = 3; 
         public static final int timeOfFlightId = 0; 
@@ -195,7 +195,7 @@ public class Constants {
         public static final Voltage levelFourVolts = Volts.of(-5);
     }
 
-    public static class AlgaeK { // TODO: Tune everything
+    public static class AlgaeK {
         public static final int sparkMaxID = 1;
         public static final double gearRatio = 47.045881;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
