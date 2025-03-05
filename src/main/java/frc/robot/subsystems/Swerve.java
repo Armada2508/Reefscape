@@ -40,7 +40,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -70,10 +69,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
     private boolean initializedOdometryFromVision = false;
-    private final BooleanSupplier overridePathPlanner;
+    private final BooleanSupplier overridePathFollowing;
 
-    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathPlanner) {
-        this.overridePathPlanner = overridePathPlanner;
+    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
+        this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
         try {
@@ -193,17 +192,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     /**
-     * Constructs a command to take the robot from current position to an end position
-     * @param x x component of the final position
-     * @param y y component of the final position
-     * @param rotation Rotations of the final position
-     * @return Command to drive along the constructed path
-     */
-    public Command driveToPoseCommand(Distance x, Distance y, Rotation2d rotation) {
-        return driveToPoseCommand(new Pose2d(x, y, rotation));
-    }
-
-    /**
      * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
      * @param endPose Final pose to end the robot at
      * @return Command to drive along the constructed path
@@ -223,26 +211,38 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             SwerveK.robotConfig,
             () -> false, 
             this 
-        ).until(overridePathPlanner).withName("Drive to Pose");
+        ).until(overridePathFollowing).withName("Drive to Pose");
     }
 
-    public Command alignToPosePID(Pose2d targetPose) {
-        // TODO: Finish
+    // PID Alignment
+    private Pose2d targetPose;
+    private PathPlannerTrajectoryState targetState;
+
+    /**
+     * Command to drive the robot to another position without creating a path
+     * @param targetPoseSupplier Supplier of the target pose
+     * @return The command
+     */
+    public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
         Field2d field = new Field2d();
         SmartDashboard.putData(field);
-        PathPlannerTrajectoryState targetState = new PathPlannerTrajectoryState();
-        targetState.pose = targetPose;
-        field.getObject("Testing").setPose(targetPose);
         return runOnce(() -> {
             pathPlannerController.reset(getPose(), getRobotVelocity());
+            targetPose = targetPoseSupplier.get();
+            targetState = new PathPlannerTrajectoryState();
+            targetState.pose = targetPose;
+
+            field.getObject("Testing").setPose(targetPose);
         }).andThen(run(() -> {
             ChassisSpeeds targetSpeeds = pathPlannerController.calculateRobotRelativeSpeeds(getPose(), targetState);
-            System.out.println(targetSpeeds);
             setChassisSpeeds(targetSpeeds);
+
+            System.out.println(targetSpeeds);
             SmartDashboard.putNumber("Distance", getPose().getTranslation().getDistance(targetPose.getTranslation()));
         })).until(() -> 
-            getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.0254
-            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < 2 
+            (getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.0254
+            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < 2)
+            || overridePathFollowing.getAsBoolean()
         ).finallyDo(this::stop).withName("PID Align");
     }
 

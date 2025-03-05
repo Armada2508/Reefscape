@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Inches;
 
-import java.util.Set;
+import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -119,41 +119,15 @@ public class Routines {
     }
 
      /**
-     * Creates a command to drive the robot to the nearest left-sdie reef pole from its current position
+     * Creates a command to drive the robot to the nearest reef pole from its current position
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
-    public static Command alignToLeftReef(Swerve swerve) {
-        return Commands.defer(
-            () -> {
-                Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListLeft : Field.blueReefListLeft);
-                Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
-                return swerve.driveToPoseCommand(
-                        reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
-                        reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-                        reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
-                ); 
-            },
-            Set.of(swerve)
-        ).withName("Align Left Reef");
-    }
-
-    /**
-     * Creates a command to drive the robot to the nearest right-side reef pole from its current position
-     * @return driveToPoseCommand to drive to the nearest reef pole on your side
-     */
-    public static Command alignToRightReef(Swerve swerve) {
-        return Commands.defer(
-            () -> {
-                Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redReefListRight : Field.blueReefListRight);
-                Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.of(0)).rotateBy(reefPose.getRotation());
-                return swerve.driveToPoseCommand(
-                        reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
-                        reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-                        reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
-                ); 
-            },
-            Set.of(swerve)
-        ).withName("Align Right Reef");
+    public static Command alignToReef(ReefSide side, Swerve swerve) {
+        return swerve.alignToPosePID(() -> {
+            Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? side.redReef : side.blueReef);
+            Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.zero()).rotateBy(reefPose.getRotation());
+            return new Pose2d(reefPose.getTranslation().plus(reefOffset), reefPose.getRotation().plus(Rotation2d.k180deg));
+        }).withName("Align " + side + " Reef");
     }
 
     /**
@@ -161,61 +135,47 @@ public class Routines {
      * @return driveToPoseCommand to drive to the nearest station on your side
      */
     public static Command alignToCoralStation(Swerve swerve) {
-        return Commands.defer(
-            () -> {
-                Pose2d stationPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redCoralStationList : Field.blueCoralStationList);
-                Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.of(0)).rotateBy(stationPose.getRotation());
-                return swerve.driveToPoseCommand(            
-                        stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
-                        stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
-                        stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
-                );
-            }, 
-            Set.of(swerve)
-        ).withName("Align Coral Station");
+        return swerve.alignToPosePID(() -> {
+            Pose2d stationPose = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redCoralStationList : Field.blueCoralStationList);
+            Translation2d stationOffset = new Translation2d(Field.stationOffsetDistance, Inches.zero()).rotateBy(stationPose.getRotation());
+            return new Pose2d(stationPose.getTranslation().plus(stationOffset), stationPose.getRotation().plus(Rotation2d.k180deg));
+        }).withName("Align Coral Station");
     }
 
     /**
-     * Creates a command to drive to the top cage of your side
-     * @return driveToPoseCommand to drive to the top cage
-     */
-
-    public static Command alignToTopCage(Swerve swerve) {
-        return Commands.defer(
-            () -> {
-                Pose2d cageTop = Robot.onRedAlliance() ? Field.redCageTop : Field.blueCageTop;
-                return swerve.driveToPoseCommand(cageTop);
-            },
-            Set.of(swerve)
-        ).withName("Align Top Cage");
-    }
-
-    /**
-     * Creates a command to drive to the mid cage of your side
+     * Creates a command to drive to the cage of your side
      * @return driveToPoseCommand to drive to the mid cage
      */
-    public static Command alignToMidCage(Swerve swerve) {
-        return Commands.defer(
-            () -> {
-                Pose2d cageMid = Robot.onRedAlliance() ? Field.redCageMid : Field.blueCageMid;
-                return swerve.driveToPoseCommand(cageMid);
-            },
-            Set.of(swerve)
-        ).withName("Align Mid Cage");
+    public static Command alignToCage(Cage cage, Swerve swerve) {
+        return swerve.alignToPosePID(() -> Robot.onRedAlliance() ? cage.redPose : cage.bluePose).withName("Align " + cage + " Cage");
     }
 
-    /**
-     * Creates a command to drive to the low cage of your side
-     * @return driveToPoseCommand to drive to the low cage
-     */
-    public static Command alignToLowCage(Swerve swerve) {
-        return Commands.defer(
-            () -> {
-                Pose2d cageLow = Robot.onRedAlliance() ? Field.redCageLow : Field.blueCageLow;
-                return swerve.driveToPoseCommand(cageLow);
-            },
-            Set.of(swerve)
-        ).withName("Align Low Cage");
+    public enum ReefSide {
+        RIGHT(Field.blueReefListRight, Field.redReefListRight),
+        LEFT(Field.blueReefListLeft, Field.redReefListLeft);
+
+        public final List<Pose2d> blueReef;
+        public final List<Pose2d> redReef;
+        
+        private ReefSide(List<Pose2d> blueReef, List<Pose2d> redReef) {
+            // The passed in lists should already be immutable
+            this.blueReef = blueReef;
+            this.redReef = redReef;
+        }
+    }
+
+    public enum Cage {
+        TOP(Field.blueCageTop, Field.redCageTop),
+        MIDDLE(Field.blueCageMid, Field.redCageMid),
+        BOTTOM(Field.blueCageLow, Field.redCageLow);
+
+        public final Pose2d bluePose;
+        public final Pose2d redPose;
+
+        private Cage(Pose2d bluePose, Pose2d redPose) {
+            this.bluePose = bluePose;
+            this.redPose = redPose;
+        }
     }
 
     /**
