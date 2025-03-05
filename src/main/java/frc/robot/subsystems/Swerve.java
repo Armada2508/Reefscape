@@ -201,7 +201,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             PathPlannerPath.waypointsFromPoses(getPose(), endPose), 
             new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
             null, 
-            new GoalEndState(MetersPerSecond.of(0), endPose.getRotation()));
+            new GoalEndState(MetersPerSecond.zero(), endPose.getRotation()));
         return new FollowPathCommand(
             path, 
             this::getPose, 
@@ -240,8 +240,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             System.out.println(targetSpeeds);
             SmartDashboard.putNumber("Distance", getPose().getTranslation().getDistance(targetPose.getTranslation()));
         })).until(() -> 
-            (getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.0254
-            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < 2)
+            (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.minimumTranslationError.in(Meters)
+            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.minimumRotationError.in(Degrees))
             || overridePathFollowing.getAsBoolean()
         ).finallyDo(this::stop).withName("PID Align");
     }
