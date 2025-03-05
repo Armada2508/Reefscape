@@ -25,6 +25,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
@@ -39,7 +40,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -67,10 +69,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
     private boolean initializedOdometryFromVision = false;
-    private final BooleanSupplier overridePathPlanner;
+    private final BooleanSupplier overridePathFollowing;
 
-    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathPlanner) {
-        this.overridePathPlanner = overridePathPlanner;
+    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
+        this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
         try {
@@ -190,27 +192,17 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     /**
-     * Constructs a command to take the robot from current position to an end position
-     * @param x x component of the final position
-     * @param y y component of the final position
-     * @param rotation Rotations of the final position
-     * @return Command to drive along the constructed path
-     */
-    public Command driveToPoseCommand(Distance x, Distance y, Rotation2d rotation) {
-        return driveToPoseCommand(new Pose2d(x, y, rotation));
-    }
-
-    /**
      * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
      * @param endPose Final pose to end the robot at
      * @return Command to drive along the constructed path
      */
     public Command driveToPoseCommand(Pose2d endPose) {
+        // TODO: Add the deferred in here because it's necessary to make it easy to switch between the two 
         PathPlannerPath path = new PathPlannerPath(
             PathPlannerPath.waypointsFromPoses(getPose(), endPose), 
             new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
             null, 
-            new GoalEndState(MetersPerSecond.of(0), endPose.getRotation()));
+            new GoalEndState(MetersPerSecond.zero(), endPose.getRotation()));
         return new FollowPathCommand(
             path, 
             this::getPose, 
@@ -220,7 +212,39 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             SwerveK.robotConfig,
             () -> false, 
             this 
-        ).until(overridePathPlanner).withName("Drive to Pose");
+        ).until(overridePathFollowing).withName("Drive to Pose");
+    }
+
+    // PID Alignment
+    private Pose2d targetPose;
+    private PathPlannerTrajectoryState targetState;
+
+    /**
+     * Command to drive the robot to another position without creating a path
+     * @param targetPoseSupplier Supplier of the target pose
+     * @return The command
+     */
+    public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
+        Field2d field = new Field2d();
+        SmartDashboard.putData(field);
+        return runOnce(() -> {
+            pathPlannerController.reset(getPose(), getRobotVelocity());
+            targetPose = targetPoseSupplier.get();
+            targetState = new PathPlannerTrajectoryState();
+            targetState.pose = targetPose;
+
+            field.getObject("Testing").setPose(targetPose);
+        }).andThen(run(() -> {
+            ChassisSpeeds targetSpeeds = pathPlannerController.calculateRobotRelativeSpeeds(getPose(), targetState);
+            setChassisSpeeds(targetSpeeds);
+
+            System.out.println(targetSpeeds);
+            SmartDashboard.putNumber("Distance", getPose().getTranslation().getDistance(targetPose.getTranslation()));
+        })).until(() -> 
+            (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.minimumTranslationError.in(Meters)
+            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.minimumRotationError.in(Degrees))
+            || overridePathFollowing.getAsBoolean()
+        ).finallyDo(this::stop).withName("PID Align");
     }
 
     /**
