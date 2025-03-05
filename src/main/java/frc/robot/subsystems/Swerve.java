@@ -197,6 +197,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return Command to drive along the constructed path
      */
     public Command driveToPoseCommand(Pose2d endPose) {
+        // TODO: Add the deferred in here because it's necessary to make it easy to switch between the two 
         PathPlannerPath path = new PathPlannerPath(
             PathPlannerPath.waypointsFromPoses(getPose(), endPose), 
             new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
