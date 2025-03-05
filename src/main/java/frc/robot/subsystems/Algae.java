@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -24,6 +26,7 @@ import frc.robot.Constants.AlgaeK;
 public class Algae extends SubsystemBase {
 
     private final SparkMax sparkMax = new SparkMax(AlgaeK.sparkMaxID, MotorType.kBrushless);
+    @Logged
     private boolean zeroed = false;
 
     public Algae() {
@@ -34,16 +37,15 @@ public class Algae extends SubsystemBase {
             .velocityConversionFactor(1.0 / (AlgaeK.gearRatio * 60.0)); // Divide by 60 to turn RPM into RPS
         config.idleMode(IdleMode.kBrake);
         config.smartCurrentLimit(AlgaeK.currentLimit);
+        config.inverted(true);
         config.signals
             .primaryEncoderPositionAlwaysOn(true)
             .primaryEncoderVelocityAlwaysOn(true)
             .warningsAlwaysOn(true)
             .faultsAlwaysOn(true);
-        config.softLimit // It's a little unclear if these limits are affected by the conversion factor but it seems like they're not
-            .forwardSoftLimit(AlgaeK.maxPosition.in(Rotations) * AlgaeK.gearRatio)
-            .forwardSoftLimitEnabled(true)
-            .reverseSoftLimit(AlgaeK.zeroPosition.in(Rotations) * AlgaeK.gearRatio)
-            .reverseSoftLimitEnabled(true);
+        config.softLimit
+            .forwardSoftLimit(AlgaeK.maxPosition.in(Rotations))
+            .forwardSoftLimitEnabled(true);
         config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(AlgaeK.kP, 0, AlgaeK.kD)
@@ -52,11 +54,12 @@ public class Algae extends SubsystemBase {
             .maxAcceleration(AlgaeK.maxAcceleration.in(RotationsPerSecondPerSecond))
             .allowedClosedLoopError(AlgaeK.allowableError.in(Rotations));
         sparkMax.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        setDefaultCommand(setVoltage(Volts.of(-0.25)).repeatedly());
     }
 
     private Command setPosition(Angle position) {
         return Commands.either(
-            runOnce(() -> sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kMAXMotionPositionControl))
+            runOnce(() -> sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kPosition))
             .andThen(Commands.waitUntil(() -> getAngle().isNear(position, AlgaeK.allowableError))), 
             Commands.print("Algae not zeroed!"), 
             () -> zeroed
@@ -103,8 +106,8 @@ public class Algae extends SubsystemBase {
      * @return A command to zero the arm
      */
     public Command zero() {
-        return setVoltage(AlgaeK.zeroingVoltage.unaryMinus())
-            .andThen(Commands.waitUntil(sparkMax.getForwardLimitSwitch()::isPressed))
+        return setVoltage(AlgaeK.zeroingVoltage)
+            .andThen(Commands.waitUntil(sparkMax.getReverseLimitSwitch()::isPressed))
             .andThen(() -> {
                 sparkMax.getEncoder().setPosition(AlgaeK.zeroPosition.in(Rotations));
                 zeroed = true;
@@ -124,9 +127,13 @@ public class Algae extends SubsystemBase {
      * Returns the angle of the arm
      * @return angle of the arm
      */
-    @Logged(name = "Arm Angle")
     public Angle getAngle() {
         return Rotations.of(sparkMax.getEncoder().getPosition());
+    }
+
+    @Logged(name = "Arm Angle (deg.)")
+    public double getAngleDegrees() {
+        return getAngle().in(Degrees);
     }
 
     @Logged(name = "Current Command")

@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -10,8 +12,10 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -28,19 +32,35 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
+    private boolean zeroed = false;
+    private final Debouncer debouncer = new Debouncer(ElevatorK.spikeTime);
 
     public Elevator() {
         configTalons();
-        configMotionMagic(ElevatorK.velocity, ElevatorK.acceleration);
+        configMotionMagic(ElevatorK.maxVelocity, ElevatorK.maxAcceleration);
+    }
+
+    @Override
+    public void periodic() {
+        if (debouncer.calculate(talon.getSupplyCurrent().getValue().gte(ElevatorK.currentSpike))) {
+            getCurrentCommand().cancel();
+            stop();
+        }
     }
 
     private void configTalons() {
         Util.factoryReset(talon, talonFollow);
         Util.brakeMode(talon, talonFollow);
         talonFollow.setControl(new StrictFollower(talon.getDeviceID()));
+        talon.getConfigurator().apply(ElevatorK.currentLimitsConfig);
+        talonFollow.getConfigurator().apply(ElevatorK.currentLimitsConfig);
         talon.getConfigurator().apply(ElevatorK.softwareLimitConfig);
+        talon.getConfigurator().apply(ElevatorK.hardwareLimitConfig);
         talon.getConfigurator().apply(ElevatorK.gearRatioConfig);
         talon.getConfigurator().apply(ElevatorK.pidConfig);
+        // No limit switch
+        talon.setPosition(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
+        zeroed = true;
     }
 
     private void configMotionMagic(LinearVelocity velocity, LinearAcceleration acceleration) {
@@ -51,14 +71,25 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
+     * Sets the position of the elevator to a specific height.
+     * @param height height of the elevator to move to
+     */
+    public Command setPosition(Distance height) {
+        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(height.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
+        return Commands.either(
+            runOnce(() -> talon.setControl(request))
+                .andThen(Commands.waitUntil(() -> getPosition().isNear(height, ElevatorK.allowableError))),
+            Commands.print("Elevator not zeroed"),
+            () -> zeroed)
+            .withName("Set Position " + height); 
+    }
+
+    /**
      * Sets the position of the elevator to a distance of height using the enum Positions within this classes constants file.
-     * @param position position of the elavator to move to
+     * @param position position of the elevator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(position.level.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
-        return runOnce(() -> talon.setControl(request))
-        .andThen(Commands.waitUntil(() -> getPosition().isNear(position.level, ElevatorK.allowableError))) // end command when we reach set position
-        .withName("Set Position"); 
+        return setPosition(position.level).withName("Set Position " + position);
     }
 
     /**
@@ -67,6 +98,26 @@ public class Elevator extends SubsystemBase {
      */
     public Distance getPosition() {
         return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
+    }
+
+    @Logged(name = "Position (in.)")
+    public double getPositionInches() {
+        return getPosition().in(Inches);
+    }
+
+    @Logged(name = "Velocity (in.)")
+    public double getVelocityInches() {
+        return Encoder.angularToLinear(Rotations.of(talon.getVelocity().getValueAsDouble() * ElevatorK.stageCount), ElevatorK.sprocketDiameter).in(Inches);
+    }
+
+    @Logged(name = "Target (in.)")
+    public double getTargetInches() {
+        return Encoder.angularToLinear(Rotations.of(talon.getClosedLoopReference().getValue() * ElevatorK.stageCount), ElevatorK.sprocketDiameter).in(Inches);
+    }
+
+    @Logged(name = "Error (in.)")
+    public double getErrorInches() {
+        return Encoder.angularToLinear(Rotations.of(talon.getClosedLoopError().getValue() * ElevatorK.stageCount), ElevatorK.sprocketDiameter).in(Inches);
     }
 
     /**
@@ -84,11 +135,21 @@ public class Elevator extends SubsystemBase {
         talon.setControl(new NeutralOut());
     }
 
+    public Command zero() {
+        return setVoltage(ElevatorK.zeroingVoltage)
+            .andThen(
+                Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround).finallyDo(this::stop),
+                runOnce(() -> zeroed = true)
+            )
+            .finallyDo(() -> stop())
+            .withName("Zero");
+    }
+
     @Logged(name = "Current Command")
     public String getCurrentCommandName() {
         var cmd = getCurrentCommand();
         if (cmd == null) return "None";
         return cmd.getName();
     }
-    
+
 }

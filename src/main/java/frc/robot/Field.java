@@ -16,7 +16,7 @@ public class Field {
     //^  X is left and right from origin, Y is top to bottom
 
     // Blue bottom corner is the origin
-    public static final Pose2d origin = new Pose2d();
+    public static final Pose2d origin = Pose2d.kZero;
 
     // Field
     public static final Distance fieldLength = Inches.of(690.875);
@@ -53,8 +53,11 @@ public class Field {
     public static final Pose2d redReefF = new Pose2d(fieldLength.minus(blueReefF.getMeasureX()), blueReefF.getMeasureY(), Rotation2d.fromDegrees(-120));
     public static final Pose2d redReefD = new Pose2d(fieldLength.minus(blueReefD.getMeasureX()), blueReefD.getMeasureY(), Rotation2d.fromDegrees(-60));
 
-    public static final List<Pose2d> blueReefList = List.of(blueReefA, blueReefB, blueReefC, blueReefD, blueReefE, blueReefF, blueReefG, blueReefH, blueReefI, blueReefJ, blueReefK, blueReefL);
-    public static final List<Pose2d> redReefList = List.of(redReefA, redReefB, redReefC, redReefD, redReefE, redReefF, redReefG, redReefH, redReefI, redReefJ, redReefK, redReefL);
+    public static final List<Pose2d> blueReefListLeft = List.of(blueReefA, blueReefC, blueReefE, blueReefG, blueReefI, blueReefK);
+    public static final List<Pose2d> blueReefListRight = List.of(blueReefB, blueReefD, blueReefF, blueReefH, blueReefJ, blueReefL);
+
+    public static final List<Pose2d> redReefListLeft = List.of(redReefA, redReefC, redReefE, redReefG, redReefI, redReefK);
+    public static final List<Pose2d> redReefListRight = List.of(redReefB, redReefD, redReefF, redReefH, redReefJ, redReefL);
 
     // Reef Coral
     public static final Distance levelOneHeight = Inches.of(18);
@@ -86,9 +89,8 @@ public class Field {
     public static final List<Pose2d> redCoralStationList = List.of(redStationLow, redStationTop);
 
     // Offsets
-    public static final Distance cageOffset = SwerveK.driveBaseLength.plus(SwerveK.driveBaseLength.div(2)); // Might need to tune this
     public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(6));
-    public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2);
+    public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(2));
 
     // Processor
     //^ processor location is on the edge of the arena carpet rather then the exact middle of the structure
