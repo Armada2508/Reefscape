@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -78,26 +80,34 @@ public class Elevator extends SubsystemBase {
             .withName("Set Position " + height); 
     }
 
+    public Command setChangingPosition(Supplier<Distance> height) {
+        MotionMagicVoltage request = new MotionMagicVoltage(0);
+        return Commands.either(
+            run(() -> talon.setControl(request.withPosition(Encoder.linearToAngular(height.get().div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)))),
+            Commands.print("Elevator not zeroed"),
+            () -> zeroed)
+            .withName("Set Position " + height); 
+    }
+
     /**
      * Sets the position of the elevator to a distance of height using the enum Positions within this classes constants file.
      * @param position position of the elevator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        // if (position.equals(ElevatorK.Positions.INTAKE)) return setInterpolatedPosition(ElevatorK.intakeLowHeight, ElevatorK.intakeHighHeight);
         return switch (position) {
-            case L1 -> setInterpolatedPosition(ElevatorK.L1LowHeight, position.level, position)
+            case L1 -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.L1LowHeight, position.level, position))
                        .withName("Set Position " + position);
-            case L2 -> setInterpolatedPosition(ElevatorK.L2LowHeight, position.level, position)
+            case L2 -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.L2LowHeight, position.level, position))
                        .withName("Set Position " + position);
-            case L3 -> setInterpolatedPosition(ElevatorK.L3LowHeight, position.level, position)
+            case L3 -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.L3LowHeight, position.level, position))
                        .withName("Set Position " + position);
-            case L4 -> setInterpolatedPosition(ElevatorK.L4LowHeight, position.level, position)
+            case L4 -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.L4LowHeight, position.level, position))
                        .withName("Set Position " + position);
-            case ALGAE_LOW -> setInterpolatedPosition(ElevatorK.algaeLowLowHeight, position.level, position)
+            case ALGAE_LOW -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.algaeLowLowHeight, position.level, position))
                               .withName("Set Position " + position);
-            case ALGAE_HIGH -> setInterpolatedPosition(ElevatorK.algaeHighLowHeight, position.level, position)
+            case ALGAE_HIGH -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.algaeHighLowHeight, position.level, position))
                                .withName("Set Position " + position);
-            case INTAKE -> setInterpolatedPosition(ElevatorK.intakeLowHeight, position.level, position)
+            case INTAKE -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.intakeLowHeight, position.level, position))
                            .withName("Set Position " + position);
             case STOW -> setPosition(ElevatorK.Positions.STOW.level)
                          .withName("Set Position " + position);
@@ -106,13 +116,13 @@ public class Elevator extends SubsystemBase {
     }
 
     //! This currently only works for intaking at the coral station instead of scoring at the reef
-    public Command setInterpolatedPosition(Distance lowDistance, Distance highDistance, ElevatorK.Positions position) {
-        Distance interpolatedDistance = Inches.of(MathUtil.interpolate(
+    public Distance getInterpolatedDistance (Distance lowDistance, Distance highDistance, ElevatorK.Positions position) {
+        Distance interpolatedDistance = Millimeters.of(MathUtil.interpolate(
             lowDistance.in(Millimeters), 
             highDistance.in(Millimeters), 
-            timeOfFlight.getRange() / position.level.in(Millimeters)
+            timeOfFlight.getRange() + ElevatorK.timeOfFlightOffset.in(Millimeters) / ElevatorK.maxLinearDistance.in(Millimeters)
         ));
-        return setPosition(interpolatedDistance);
+        return interpolatedDistance;
     }
 
     /**
@@ -121,6 +131,11 @@ public class Elevator extends SubsystemBase {
      */
     public Distance getPosition() {
         return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
+    }
+
+    @Logged(name = "TOF Reading (in.)")
+    public double getTimeOfFlightDistance() {
+        return timeOfFlight.getRange() / 25.4;
     }
 
     @Logged(name = "Position (in.)")

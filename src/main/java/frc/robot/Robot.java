@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     private final Timer swerveCoastTimer = new Timer();
     
     @Logged(name = "Score Ready")
-    boolean isScoreReady = true;
+    boolean isScoreReady = false;
 
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
@@ -120,14 +120,26 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-        // paddle2.onTrue(elevator.setPosition(Positions.L1));
-        // if (isScoreReady) paddle2.onTrue(Commands.parallel(updateControllerState(), Routines.scoreCoralLevelOne(elevator, intake)));
-        // else paddle2.onTrue(Commands.parallel(updateControllerState(), elevator.setPosition(Positions.L1)));
-        paddle2.and(() -> isScoreReady).onTrue(Routines.scoreCoralLevelOne(elevator, intake).alongWith(updateControllerState())).onFalse(elevator.setPosition(Positions.L1));
-        paddle1.and(() -> isScoreReady).onTrue(Routines.scoreCoralLevelTwo(elevator, intake).alongWith(updateControllerState())).onFalse(elevator.setPosition(Positions.L2));
-        xboxController.rightTrigger().and(() -> isScoreReady).onTrue(Routines.scoreCoralLevelThree(elevator, intake).alongWith(updateControllerState())).onFalse(elevator.setPosition(Positions.L3));
-        xboxController.rightBumper().and(() -> isScoreReady).onTrue(Routines.scoreCoralLevelFour(elevator, intake).alongWith(updateControllerState())).onFalse(elevator.setPosition(Positions.L4));
-        
+        paddle2.onTrue(doubleButtonPress(
+            Routines.scoreCoralLevelOne(elevator, intake).withName("Scoring L1"), 
+            elevator.setPosition(Positions.L1).withName("Interpolating L1")
+        ));
+
+        paddle1.onTrue(doubleButtonPress(
+            Routines.scoreCoralLevelTwo(elevator, intake).withName("Scoring L2"), 
+            elevator.setPosition(Positions.L2).withName("Interpolating L2")
+        ));
+
+        xboxController.rightTrigger().onTrue(doubleButtonPress(
+            Routines.scoreCoralLevelThree(elevator, intake).withName("Scoring L3"), 
+            elevator.setPosition(Positions.L3).withName("Interpolating L3")
+        ));
+
+        xboxController.rightBumper().onTrue(doubleButtonPress(
+            Routines.scoreCoralLevelFour(elevator, intake).withName("Scoring L4"), 
+            elevator.setPosition(Positions.L4).withName("Interpolating L4")
+        ));
+
         // paddle1.onTrue(elevator.setPosition(Positions.L2));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
@@ -203,8 +215,17 @@ public class Robot extends TimedRobot {
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
 
-    private Command updateControllerState() {
-        return Commands.runOnce(() -> isScoreReady = !isScoreReady, new Subsystem[0]);
+    public Command doubleButtonPress(WrapperCommand onTrue, WrapperCommand onFalse) {
+        return Commands.runOnce(() -> {
+            if (isScoreReady) {
+                onTrue.schedule();
+                isScoreReady = false;
+            }
+            else {
+                onFalse.schedule();
+                isScoreReady = true;
+            }
+        });
     }
 
     @Override

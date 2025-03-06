@@ -186,6 +186,8 @@ public class Constants {
 
         public static final Distance intakeLowHeight = Inches.of(20);
 
+        public static final Distance maxLinearDistance = Inches.of(5.5);
+
     }  
 
     public static class IntakeK { // TODO: Confirm voltages and detection range

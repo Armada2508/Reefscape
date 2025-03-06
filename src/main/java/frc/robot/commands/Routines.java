@@ -34,11 +34,8 @@ public class Routines {
     }
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
-        return elevator.setPosition(Positions.INTAKE)
-        .andThen(
-            intake.coralIntake(),
-            elevator.setPosition(Positions.STOW)
-        ).withName("Intake Coral Routine");
+        return intake.coralIntake().andThen(elevator.setPosition(Positions.STOW))
+        .withName("Intake Coral Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L1</STRONG> branch.
@@ -46,11 +43,8 @@ public class Routines {
      * @param intake
      */
     public static Command scoreCoralLevelOne(Elevator elevator, Intake intake) {
-        return elevator.setPosition(Positions.L1)
-        .andThen(intake
-        .scoreLevelOne(),
-            elevator.setPosition(Positions.STOW)
-        ).withName("Score Coral L1 Routine");
+        return intake.scoreLevelOne().andThen(elevator.setPosition(Positions.STOW))
+        .withName("Score Coral L1 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L2</STRONG> branch.
@@ -58,11 +52,8 @@ public class Routines {
      * @param intake
      */
     public static Command scoreCoralLevelTwo(Elevator elevator, Intake intake) {
-        return elevator.setPosition(Positions.L2)
-        .andThen(
-            intake.scoreLevelTwoThree(),
-            elevator.setPosition(Positions.STOW)
-        ).withName("Score Coral L2 Routine");
+        return intake.scoreLevelTwoThree().andThen(elevator.setPosition(Positions.STOW))
+        .withName("Score Coral L2 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L3</STRONG> branch.
@@ -70,11 +61,8 @@ public class Routines {
      * @param intake
      */
     public static Command scoreCoralLevelThree(Elevator elevator, Intake intake) {
-        return elevator.setPosition(Positions.L3)
-        .andThen(
-            intake.scoreLevelTwoThree(),
-            elevator.setPosition(Positions.STOW)
-        ).withName("Score Coral L3 Routine");
+        return intake.scoreLevelTwoThree().andThen(elevator.setPosition(Positions.STOW))
+        .withName("Score Coral L3 Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an L4 branch.
@@ -82,11 +70,8 @@ public class Routines {
      * @param intake
      */
     public static Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
-        return elevator.setPosition(Positions.L4)
-        .andThen(
-            intake.scoreLevelFour(),
-            elevator.setPosition(Positions.STOW)
-        ).withName("Score Coral L4 Routine");
+        return intake.scoreLevelFour().andThen(elevator.setPosition(Positions.STOW))
+        .withName("Score Coral L4 Routine");
     }
     
     /**
