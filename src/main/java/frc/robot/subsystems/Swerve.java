@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -43,6 +44,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SwerveK;
@@ -193,26 +195,28 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     /**
      * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
-     * @param endPose Final pose to end the robot at
+     * @param targetPoseSupplier Supplier of the target pose
      * @return Command to drive along the constructed path
      */
-    public Command driveToPoseCommand(Pose2d endPose) {
-        // TODO: Add the deferred in here because it's necessary to make it easy to switch between the two 
-        PathPlannerPath path = new PathPlannerPath(
-            PathPlannerPath.waypointsFromPoses(getPose(), endPose), 
-            new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
-            null, 
-            new GoalEndState(MetersPerSecond.zero(), endPose.getRotation()));
-        return new FollowPathCommand(
-            path, 
-            this::getPose, 
-            this::getRobotVelocity, 
-            (speeds, feedforward) -> setChassisSpeeds(speeds),
-            pathPlannerController, 
-            SwerveK.robotConfig,
-            () -> false, 
-            this 
-        ).until(overridePathFollowing).withName("Drive to Pose");
+    public Command driveToPoseCommand(Supplier<Pose2d> targetPoseSupplier) {
+        return Commands.defer(() -> {
+            Pose2d targetPose = targetPoseSupplier.get();
+            PathPlannerPath path = new PathPlannerPath(
+                PathPlannerPath.waypointsFromPoses(getPose(), targetPose), 
+                new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
+                null, 
+                new GoalEndState(MetersPerSecond.zero(), targetPose.getRotation()));
+            return new FollowPathCommand(
+                path, 
+                this::getPose, 
+                this::getRobotVelocity, 
+                (speeds, feedforward) -> setChassisSpeeds(speeds),
+                pathPlannerController, 
+                SwerveK.robotConfig,
+                () -> false, 
+                this 
+            ).until(overridePathFollowing);
+        }, Set.of(this)).withName("Drive to Pose");
     }
 
     // PID Alignment
@@ -225,6 +229,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return The command
      */
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
+        // TODO: Remove testing code
         Field2d field = new Field2d();
         SmartDashboard.putData(field);
         return runOnce(() -> {
