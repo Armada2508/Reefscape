@@ -34,17 +34,6 @@ public class Intake extends SubsystemBase {
     public Intake() {
         configSparkMax();
         timeOfFlight.setRangingMode(RangingMode.Short, 24);
-        setDefaultCommand(run(() -> { // TODO: Finalize + move into another branch
-            if (isSensorTripped()) {
-                // var volts = Volts.of(v.getAsDouble());
-                // System.out.println("Do stuff " + volts);
-                // sparkMaxLeft.setVoltage(volts);
-                // sparkMaxRight.setVoltage(volts);
-            }
-            else {
-                stop();
-            }
-        }).withName("Hold Coral"));
     }
 
     private void configSparkMax() {
