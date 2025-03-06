@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
     @Logged(name = "Elevator")
     private final Elevator elevator = new Elevator();
     @Logged(name = "Intake")
-    private final Intake intake = new Intake();
+    private final Intake intake = new Intake(() -> swerve.getRobotVelocity().omegaRadiansPerSecond);
     @Logged(name = "Algae")
     private final Algae algae = new Algae();
     // private final Climb climb = new Climb();

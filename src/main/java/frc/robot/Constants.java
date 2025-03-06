@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -63,6 +64,7 @@ public class Constants {
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
+        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(0); //! Find this
         public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
 
         // Path Constraints
@@ -183,6 +185,8 @@ public class Constants {
         public static final Distance coralDetectionRange = Inches.of(4);
 
         public static final int currentLimit = 20; // Amps
+
+        public static final double holdVoltageAtMaxSpeed = 1;
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
         public static final Time intakeAfterTrip = Seconds.of(0.25);
