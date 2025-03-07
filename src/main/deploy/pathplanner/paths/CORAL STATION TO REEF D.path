@@ -12,7 +12,7 @@
         "y": 2.0554999999999994
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Low Coral Station Blue"
     },
     {
       "anchor": {
@@ -21,11 +21,11 @@
       },
       "prevControl": {
         "x": 2.457,
-        "y": 1.5094999999999992
+        "y": 1.509499999999999
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef-D"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.93141717813753
+    "rotation": 60.53133588589834
   },
   "reversed": false,
   "folder": null,
