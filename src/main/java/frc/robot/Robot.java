@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.urcl.URCL;
@@ -22,6 +23,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -116,6 +118,10 @@ public class Robot extends TimedRobot {
             },
             true, true
         ).withName("Swerve Drive Field Oriented");
+    }
+
+    private DoubleSupplier getAccelLimit(double limit, Supplier<Distance> height) {
+        return () -> limit * (2 * height.get());
     }
 
     private void configureBindings() {

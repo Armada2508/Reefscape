@@ -109,6 +109,7 @@ public class Constants {
         // Larger number = faster rate of change, limit is in units of (units)/second. In this case the joystick [-1, 1].
         public static final Pair<Double, Double> translationAccelLimits = Pair.of(1.25, 2.0); 
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
+        public static final double elevatorAccelScaling = 2;
 
         public static final double driveSpeedModifier = 0.7;
         public static final double rotationSpeedModifier = 1;
