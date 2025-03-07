@@ -120,7 +120,7 @@ public class Constants {
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final Current currentSpike = Amps.of(0); // TODO: Find current spike threshold and spike time
+        public static final Current currentSpike = Amps.of(20); // TODO: Find current spike threshold and spike time
         public static final double spikeTime = 0.25;
 
         // Feedfoward and feedback gains
