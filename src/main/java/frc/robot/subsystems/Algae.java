@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -53,7 +54,7 @@ public class Algae extends SubsystemBase {
             .maxAcceleration(AlgaeK.maxAcceleration.in(RotationsPerSecondPerSecond))
             .allowedClosedLoopError(AlgaeK.allowableError.in(Rotations));
         sparkMax.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        // setDefaultCommand(setVoltage(Volts.of(-0.25)).repeatedly());
+        setDefaultCommand(setVoltage(Volts.of(-0.25)).repeatedly());
     }
 
     private Command setPosition(Angle position) {

@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Millimeters;
-import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.DoubleSupplier;
 
@@ -46,6 +45,7 @@ public class Intake extends SubsystemBase {
                 stop();
             }
         }).withName("Hold Coral"));
+
     }
 
     private void configSparkMax() {

@@ -28,6 +28,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -38,13 +39,13 @@ import edu.wpi.first.units.LinearAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.lib.util.DynamicSlewRateLimiter;
 import frc.robot.lib.util.Encoder;
 
 public class Constants {
@@ -99,15 +100,15 @@ public class Constants {
         public static final double leftJoystickDeadband = 0.07;
         public static final double rightJoystickDeadband = 0.07;
 
-        public static final double overrideThreshold = leftJoystickDeadband * 1.5;
+        public static final double overrideThreshold = 0.15;
     }
 
     public static class DriveK {
-        public static final DynamicSlewRateLimiter translationalYLimiter = new DynamicSlewRateLimiter(1.25, 2); // Larger number = faster rate of change
-        public static final DynamicSlewRateLimiter translationalXLimiter = new DynamicSlewRateLimiter(1.25, 2);
-        public static final DynamicSlewRateLimiter rotationalLimiter = new DynamicSlewRateLimiter(1, 2);
+        // Larger number = faster rate of change, limit is in units of (units)/second. In this case the joystick [-1, 1].
+        public static final Pair<Double, Double> translationAccelLimits = Pair.of(1.25, 2.0); 
+        public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
 
-        public static final double driveSpeedModifier = 0.7                                                                                         ;
+        public static final double driveSpeedModifier = 0.7;
         public static final double rotationSpeedModifier = 1;
     }
 
@@ -119,6 +120,8 @@ public class Constants {
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
+        public static final Current currentSpike = Amps.of(0); // TODO: Find current spike threshold and spike time
+        public static final double spikeTime = 0.25;
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
@@ -158,7 +161,7 @@ public class Constants {
         public enum Positions {
             L1(Inches.of(22)),
             L2(Inches.of(30.875)),
-            L3(Inches.of(46.1875)),
+            L3(Inches.of(46.6875)),
             L4(Inches.of(71.5)),
             ALGAE_LOW(Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29)), // Not Found
@@ -190,7 +193,7 @@ public class Constants {
 
     }  
 
-    public static class IntakeK { // TODO: Confirm voltages and detection range
+    public static class IntakeK {
         public static final int sparkMaxLeftID = 2; 
         public static final int sparkMaxRightID = 3; 
         public static final int timeOfFlightId = 0; 
@@ -200,7 +203,7 @@ public class Constants {
         public static final int currentLimit = 20; // Amps
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
-        public static final Time intakeAfterTrip = Seconds.of(0.125);
+        public static final Time intakeAfterTrip = Seconds.of(0.25);
 
         public static final Voltage levelOneVolts = Volts.of(-7.5);
         public static final Time levelOneWait = Seconds.of(0.04);
@@ -210,7 +213,7 @@ public class Constants {
         public static final Voltage levelFourVolts = Volts.of(-5);
     }
 
-    public static class AlgaeK { // TODO: Tune everything
+    public static class AlgaeK {
         public static final int sparkMaxID = 1;
         public static final double gearRatio = 47.045881;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
@@ -232,8 +235,8 @@ public class Constants {
     public static class VisionK { // TODO: Find transform and standard deviations
         public static final String frontCameraName = "ArducamFront";
         public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(4.087), Inches.of(-9.5), Inches.of(26.09), new Rotation3d(Degrees.of(0), Degrees.of(15), Degrees.of(0)));
-        public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-14.5), Inches.of(-7), Inches.of(7.5), new Rotation3d(Degrees.of(0), Degrees.of(15), Degrees.of(180)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(4.087), Inches.of(-9.5), Inches.of(26.09), new Rotation3d(Degrees.zero(), Degrees.of(15), Degrees.zero()));
+        public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(0.927), Inches.of(-9.5), Inches.of(24.027), new Rotation3d(Degrees.zero(), Degrees.of(-15), Degrees.of(180)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);
@@ -254,8 +257,8 @@ public class Constants {
         public static final Voltage climbVoltage = Volts.of(2);
         
         public static final Angle maxAngle = Degrees.of(90);
-        public static final Angle minAngle = Degrees.of(0);
-        public static final Angle allowableError = Degrees.of(1);
+        public static final Angle minAngle = Degrees.zero();
+        public static final Angle allowableError = Degrees.one();
 
         // Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);

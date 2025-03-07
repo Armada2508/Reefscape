@@ -111,7 +111,7 @@ public class Routines {
                 return swerve.driveToPoseCommand(
                         reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
                         reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-                        reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
+                        reefPose.getRotation().plus(Rotation2d.k180deg)
                 ); 
             },
             Set.of(swerve)
@@ -130,7 +130,7 @@ public class Routines {
                 return swerve.driveToPoseCommand(
                         reefPose.getMeasureX().plus(reefOffset.getMeasureX()),
                         reefPose.getMeasureY().plus(reefOffset.getMeasureY()),
-                        reefPose.getRotation().plus(Rotation2d.fromDegrees(180))
+                        reefPose.getRotation().plus(Rotation2d.k180deg)
                 ); 
             },
             Set.of(swerve)
@@ -149,7 +149,7 @@ public class Routines {
                 return swerve.driveToPoseCommand(            
                         stationPose.getMeasureX().plus(stationOffset.getMeasureX()),
                         stationPose.getMeasureY().plus(stationOffset.getMeasureY()),
-                        stationPose.getRotation().plus(Rotation2d.fromDegrees(180))
+                        stationPose.getRotation().plus(Rotation2d.k180deg)
                 );
             }, 
             Set.of(swerve)

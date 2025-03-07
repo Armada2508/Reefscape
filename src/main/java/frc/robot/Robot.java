@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +19,7 @@ import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.DataLog;
@@ -38,13 +38,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
-import frc.robot.Constants.ElevatorK.Positions;
+import frc.robot.Constants.DriveK;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
+import frc.robot.lib.util.DriveUtil;
+import frc.robot.lib.util.DynamicSlewRateLimiter;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
@@ -85,23 +87,39 @@ public class Robot extends TimedRobot {
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
         // SmartDashboard.putData(new PowerDistribution()); // TODO: Wait until we get a new PDH
-        swerve.setDefaultCommand(swerve.teleopDriveCommand(() -> -xboxController.getLeftY(), () -> -xboxController.getLeftX(), () -> -xboxController.getRightX()));
+        swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
     }
 
-    private void logGitConstants() {
-        var table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Git");
-        table.getEntry("Project Name").setString(GitConstants.MAVEN_NAME);
-        table.getEntry("Build Date").setString(GitConstants.BUILD_DATE);
-        table.getEntry("Git SHA").setString(GitConstants.GIT_SHA);
-        table.getEntry("Git Date").setString(GitConstants.GIT_DATE);
-        table.getEntry("Git Branch").setString(GitConstants.GIT_BRANCH);
-        switch (GitConstants.DIRTY) {
-          case 0 -> table.getEntry("Git Dirty").setString("All changes committed");
-          case 1 -> table.getEntry("Git Dirty").setString("Uncommitted changes");
-          default -> table.getEntry("Git Dirty").setString("Unknown");
-        }
+    public Command teleopDriveCommand() {
+        DynamicSlewRateLimiter translationXLimiter = new DynamicSlewRateLimiter(DriveK.translationAccelLimits.getFirst(), DriveK.translationAccelLimits.getSecond());
+        DynamicSlewRateLimiter translationYLimiter = new DynamicSlewRateLimiter(DriveK.translationAccelLimits.getFirst(), DriveK.translationAccelLimits.getSecond());
+        DynamicSlewRateLimiter rotationLimiter = new DynamicSlewRateLimiter(DriveK.rotationAccelLimits.getFirst(), DriveK.rotationAccelLimits.getSecond());
+        return swerve.driveCommand(
+            () -> {
+                double val = MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband);
+                val = translationXLimiter.calculate(val);
+                val = DriveUtil.squareKeepSign(val);
+                val *= DriveK.driveSpeedModifier;
+                return val;
+            }, 
+            () -> {
+                double val = MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband);
+                val = translationYLimiter.calculate(val);
+                val = DriveUtil.squareKeepSign(val);
+                val *= DriveK.driveSpeedModifier;
+                return val; 
+            },  
+            () -> {
+                double val = MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband);
+                val = rotationLimiter.calculate(val);
+                val = DriveUtil.squareKeepSign(val);
+                val *= DriveK.rotationSpeedModifier;
+                return val; 
+            },
+            true, true
+        ).withName("Swerve Drive Field Oriented");
     }
 
     private void configureBindings() {
@@ -111,14 +129,16 @@ public class Robot extends TimedRobot {
         Trigger paddle4 = xboxController.rightStick();
         // Testing
         // xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
-        xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop).withName("Elevator Down"));
+        // xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop).withName("Elevator Down"));
         xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Up"));
         xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Down"));
+        // xboxController.a().onTrue(swerve.alignToPosePID(Field.blueReefA));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
+
 
         paddle2.onTrue(doubleButtonPress(
             Routines.scoreCoralLevelOne(elevator, intake).withName("Scoring L1"), 
@@ -139,7 +159,6 @@ public class Robot extends TimedRobot {
             Routines.scoreCoralLevelFour(elevator, intake).withName("Scoring L4"), 
             elevator.setPosition(Positions.L4).withName("Interpolating L4")
         ));
-
         // paddle1.onTrue(elevator.setPosition(Positions.L2));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
@@ -149,9 +168,9 @@ public class Robot extends TimedRobot {
         // xboxController.povDown().onTrue(intake.scoreLevelFour());
         // xboxController.leftTrigger().onTrue(intake.coralIntake());
 
-        paddle4.onTrue(algae.loweredPosition());
-        paddle3.onTrue(algae.algaePosition());
-        xboxController.leftTrigger().onTrue(algae.zero());
+        // paddle4.onTrue(algae.loweredPosition());
+        // paddle3.onTrue(algae.algaePosition());
+        // xboxController.leftTrigger().onTrue(algae.zero());
 
         // xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
         // xboxController.povUp().onTrue(elevator.setPosition(Positions.INTAKE));
@@ -162,6 +181,8 @@ public class Robot extends TimedRobot {
         // xboxController.povDown().onTrue(algae.algaePosition());
         // xboxController.povRight().onTrue(algae.zero());
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
+
+        /// Real Bindings ///
 
         // Reset forward direction for field relative
         xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
@@ -179,10 +200,10 @@ public class Robot extends TimedRobot {
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
         // Reef Levels
-        // paddle2.onTrue(elevator.setPosition(Positions.L1));
-        // paddle1.onTrue(elevator.setPosition(Positions.L2));
-        // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
-        // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
+        paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
+        paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
+        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
+        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
 
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
@@ -211,6 +232,7 @@ public class Robot extends TimedRobot {
         // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
 
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
@@ -288,6 +310,20 @@ public class Robot extends TimedRobot {
             Angle flippedAngle = angle.gte(Degrees.zero()) ? angle.minus(Constants.halfTurn) : angle.plus(Constants.halfTurn);
             return onRedAlliance() ? flippedAngle : angle;
         };
+    }
+
+    private void logGitConstants() {
+        var table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Git");
+        table.getEntry("Project Name").setString(GitConstants.MAVEN_NAME);
+        table.getEntry("Build Date").setString(GitConstants.BUILD_DATE);
+        table.getEntry("Git SHA").setString(GitConstants.GIT_SHA);
+        table.getEntry("Git Date").setString(GitConstants.GIT_DATE);
+        table.getEntry("Git Branch").setString(GitConstants.GIT_BRANCH);
+        switch (GitConstants.DIRTY) {
+          case 0 -> table.getEntry("Git Dirty").setString("All changes committed");
+          case 1 -> table.getEntry("Git Dirty").setString("Uncommitted changes");
+          default -> table.getEntry("Git Dirty").setString("Unknown");
+        }
     }
 
     @Logged(name = "RobotController/Battery Voltage (V)")

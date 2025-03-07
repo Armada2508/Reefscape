@@ -20,6 +20,7 @@ import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -38,10 +39,20 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
     private boolean zeroed = false;
+    private final Debouncer debouncer = new Debouncer(ElevatorK.spikeTime);
 
     public Elevator() {
         configTalons();
         configMotionMagic(ElevatorK.maxVelocity, ElevatorK.maxAcceleration);
+    }
+
+    @Override
+    public void periodic() {
+        if (debouncer.calculate(talon.getSupplyCurrent().getValue().gte(ElevatorK.currentSpike))) {
+            Command current = getCurrentCommand();
+            if (current != null) current.cancel();
+            stop();
+        }
     }
 
     private void configTalons() {
@@ -183,15 +194,11 @@ public class Elevator extends SubsystemBase {
             .withName("Zero");
     }
 
-    // public Command zeroManual() {
-    //     return runOnce(() -> talon.setPosition(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)));
-    // }
-
     @Logged(name = "Current Command")
     public String getCurrentCommandName() {
         var cmd = getCurrentCommand();
         if (cmd == null) return "None";
         return cmd.getName();
     }
-    
+
 }

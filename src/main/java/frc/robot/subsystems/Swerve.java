@@ -27,13 +27,13 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -43,12 +43,9 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ControllerK;
-import frc.robot.Constants.DriveK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
-import frc.robot.lib.util.DriveUtil;
 import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
@@ -330,6 +327,15 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         swerveDrive.setMotorIdleMode(true);
     }
 
+    public Command faceWheelsForward() {
+        return run(() -> {
+            SwerveModuleState state = new SwerveModuleState();
+            for (var module : swerveDrive.getModules()) {
+                module.setDesiredState(state, true, 0);
+            }
+        }).finallyDo(this::stop).withName("Face Forward");
+    }
+
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return sysIdRoutine.quasistatic(direction);
     }
@@ -340,37 +346,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     public Command characterizeDriveWheelDiameter() {
         return new DriveWheelCharacterization(this);
-    }
-
-    /**
-     * Returns the command used for teleop driving with swerve
-     * @param x forwards and backwards
-     * @param y left and right
-     * @param turn turning
-     * @return the command
-     */
-    public Command teleopDriveCommand(DoubleSupplier x, DoubleSupplier y, DoubleSupplier turn) {
-        return driveCommand(
-            () -> {
-                double val = MathUtil.applyDeadband(x.getAsDouble(), ControllerK.leftJoystickDeadband);
-                val = DriveK.translationalXLimiter.calculate(val);
-                val = DriveUtil.squareKeepSign(val);
-                return val * DriveK.driveSpeedModifier;
-            }, 
-            () -> {
-                double val = MathUtil.applyDeadband(y.getAsDouble(), ControllerK.leftJoystickDeadband);
-                val = DriveK.translationalYLimiter.calculate(val);
-                val = DriveUtil.squareKeepSign(val);
-                return val * DriveK.driveSpeedModifier;
-            },  
-            () -> {
-                double val = MathUtil.applyDeadband(turn.getAsDouble(), ControllerK.rightJoystickDeadband);
-                val = DriveK.rotationalLimiter.calculate(val);
-                val = DriveUtil.squareKeepSign(val);
-                return val * DriveK.rotationSpeedModifier;
-            },
-            true, true
-        ).withName("Swerve Drive Field Oriented");
     }
 
 }
