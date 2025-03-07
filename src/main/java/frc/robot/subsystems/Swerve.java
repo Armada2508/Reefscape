@@ -33,6 +33,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -52,7 +53,6 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-@SuppressWarnings("unused")
 @Logged
 public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
 
@@ -220,7 +220,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             SwerveK.robotConfig,
             () -> false, 
             this 
-        ).until(overridePathPlanner);
+        ).until(overridePathPlanner).withName("Drive to Pose");
     }
 
     /**
@@ -317,6 +317,23 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public void zeroGyro() {
         swerveDrive.zeroGyro();
+    }
+
+    public void setCoastMode() {
+        swerveDrive.setMotorIdleMode(false);
+    }
+
+    public void setBrakeMode() {
+        swerveDrive.setMotorIdleMode(true);
+    }
+
+    public Command faceWheelsForward() {
+        return run(() -> {
+            SwerveModuleState state = new SwerveModuleState();
+            for (var module : swerveDrive.getModules()) {
+                module.setDesiredState(state, true, 0);
+            }
+        }).finallyDo(this::stop).withName("Face Forward");
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

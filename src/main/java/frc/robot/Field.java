@@ -16,7 +16,7 @@ public class Field {
     //^  X is left and right from origin, Y is top to bottom
 
     // Blue bottom corner is the origin
-    public static final Pose2d origin = new Pose2d();
+    public static final Pose2d origin = Pose2d.kZero;
 
     // Field
     public static final Distance fieldLength = Inches.of(690.875);
@@ -25,31 +25,31 @@ public class Field {
     // Reef
     public static final Translation2d blueReefCenter = new Translation2d(Inches.of(176.2768), Inches.of(158.4991));
 
-    public static final Pose2d blueReefB = new Pose2d(new Translation2d(Inches.of(143.531), Inches.of(152.03)), Rotation2d.fromDegrees(180));
+    public static final Pose2d blueReefB = new Pose2d(new Translation2d(Inches.of(143.531), Inches.of(152.03)), Rotation2d.k180deg);
     public static final Pose2d blueReefL = new Pose2d(blueReefB.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(120));
     public static final Pose2d blueReefJ = new Pose2d(blueReefL.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(60));
-    public static final Pose2d blueReefH = new Pose2d(blueReefJ.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(0));
+    public static final Pose2d blueReefH = new Pose2d(blueReefJ.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.kZero);
     public static final Pose2d blueReefF = new Pose2d(blueReefH.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(-60));
     public static final Pose2d blueReefD = new Pose2d(blueReefF.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(-120));
 
-    public static final Pose2d blueReefA = new Pose2d(Inches.of(143.531), Inches.of(164.95), Rotation2d.fromDegrees(180));
+    public static final Pose2d blueReefA = new Pose2d(Inches.of(143.531), Inches.of(164.95), Rotation2d.k180deg);
     public static final Pose2d blueReefK = new Pose2d(blueReefA.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(120));
     public static final Pose2d blueReefI = new Pose2d(blueReefK.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(60));
-    public static final Pose2d blueReefG = new Pose2d(blueReefI.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(0));
+    public static final Pose2d blueReefG = new Pose2d(blueReefI.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.kZero);
     public static final Pose2d blueReefE = new Pose2d(blueReefG.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(-60));
     public static final Pose2d blueReefC = new Pose2d(blueReefE.getTranslation().rotateAround(blueReefCenter, Rotation2d.fromDegrees(-60)), Rotation2d.fromDegrees(-120));
 
-    public static final Pose2d redReefA = new Pose2d(fieldLength.minus(blueReefA.getMeasureX()), blueReefA.getMeasureY(), Rotation2d.fromDegrees(0));
+    public static final Pose2d redReefA = new Pose2d(fieldLength.minus(blueReefA.getMeasureX()), blueReefA.getMeasureY(), Rotation2d.kZero);
     public static final Pose2d redReefK = new Pose2d(fieldLength.minus(blueReefK.getMeasureX()), blueReefK.getMeasureY(), Rotation2d.fromDegrees(60));
     public static final Pose2d redReefI = new Pose2d(fieldLength.minus(blueReefI.getMeasureX()), blueReefI.getMeasureY(), Rotation2d.fromDegrees(120));
-    public static final Pose2d redReefG = new Pose2d(fieldLength.minus(blueReefG.getMeasureX()), blueReefG.getMeasureY(), Rotation2d.fromDegrees(180));
+    public static final Pose2d redReefG = new Pose2d(fieldLength.minus(blueReefG.getMeasureX()), blueReefG.getMeasureY(), Rotation2d.k180deg);
     public static final Pose2d redReefE = new Pose2d(fieldLength.minus(blueReefE.getMeasureX()), blueReefE.getMeasureY(), Rotation2d.fromDegrees(-120));
     public static final Pose2d redReefC = new Pose2d(fieldLength.minus(blueReefC.getMeasureX()), blueReefC.getMeasureY(), Rotation2d.fromDegrees(-60));
 
-    public static final Pose2d redReefB = new Pose2d(fieldLength.minus(blueReefB.getMeasureX()), blueReefB.getMeasureY(), Rotation2d.fromDegrees(0));
+    public static final Pose2d redReefB = new Pose2d(fieldLength.minus(blueReefB.getMeasureX()), blueReefB.getMeasureY(), Rotation2d.kZero);
     public static final Pose2d redReefL = new Pose2d(fieldLength.minus(blueReefL.getMeasureX()), blueReefL.getMeasureY(), Rotation2d.fromDegrees(60));
     public static final Pose2d redReefJ = new Pose2d(fieldLength.minus(blueReefJ.getMeasureX()), blueReefJ.getMeasureY(), Rotation2d.fromDegrees(120));
-    public static final Pose2d redReefH = new Pose2d(fieldLength.minus(blueReefH.getMeasureX()), blueReefH.getMeasureY(), Rotation2d.fromDegrees(180));
+    public static final Pose2d redReefH = new Pose2d(fieldLength.minus(blueReefH.getMeasureX()), blueReefH.getMeasureY(), Rotation2d.k180deg);
     public static final Pose2d redReefF = new Pose2d(fieldLength.minus(blueReefF.getMeasureX()), blueReefF.getMeasureY(), Rotation2d.fromDegrees(-120));
     public static final Pose2d redReefD = new Pose2d(fieldLength.minus(blueReefD.getMeasureX()), blueReefD.getMeasureY(), Rotation2d.fromDegrees(-60));
 
@@ -70,13 +70,13 @@ public class Field {
     public static final Distance algaeHighHeight = levelThreeHeight.minus(Inches.of(6.25));
     
     // Barge
-    public static final Pose2d blueCageTop = new Pose2d(Inches.of(345.4375), Inches.of(285.875), Rotation2d.fromDegrees(180));
-    public static final Pose2d blueCageMid = new Pose2d(Inches.of(345.4375), Inches.of(242.875), Rotation2d.fromDegrees(180));
-    public static final Pose2d blueCageLow = new Pose2d(Inches.of(345.4375), Inches.of(200), Rotation2d.fromDegrees(180));
+    public static final Pose2d blueCageTop = new Pose2d(Inches.of(345.4375), Inches.of(285.875), Rotation2d.k180deg);
+    public static final Pose2d blueCageMid = new Pose2d(Inches.of(345.4375), Inches.of(242.875), Rotation2d.k180deg);
+    public static final Pose2d blueCageLow = new Pose2d(Inches.of(345.4375), Inches.of(200), Rotation2d.k180deg);
 
-    public static final Pose2d redCageTop = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageTop.getMeasureY()), Rotation2d.fromDegrees(0));
-    public static final Pose2d redCageMid = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageMid.getMeasureY()), Rotation2d.fromDegrees(0));
-    public static final Pose2d redCageLow = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.fromDegrees(0));
+    public static final Pose2d redCageTop = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageTop.getMeasureY()), Rotation2d.kZero);
+    public static final Pose2d redCageMid = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageMid.getMeasureY()), Rotation2d.kZero);
+    public static final Pose2d redCageLow = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.kZero);
 
     // Coral Station
     public static final Pose2d blueStationLow = new Pose2d(Inches.of(32.875), Inches.of(25.573), Rotation2d.fromDegrees(55));
@@ -94,7 +94,7 @@ public class Field {
 
     // Processor
     //^ processor location is on the edge of the arena carpet rather then the exact middle of the structure
-    public static final Translation2d blueProcessor = new Translation2d(Inches.of(0), Inches.of(235.7255));
+    public static final Translation2d blueProcessor = new Translation2d(Inches.zero(), Inches.of(235.7255));
     public static final Translation2d redProcessor = new Translation2d(fieldWidth, fieldLength.minus(blueProcessor.getMeasureY()));
 
     // Hi! Welcome to introspection :) https://www.oracle.com/technical-resources/articles/java/javareflection.html
