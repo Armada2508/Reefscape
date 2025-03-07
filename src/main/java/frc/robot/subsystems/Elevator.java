@@ -43,7 +43,8 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         if (debouncer.calculate(talon.getSupplyCurrent().getValue().gte(ElevatorK.currentSpike))) {
-            getCurrentCommand().cancel();
+            Command current = getCurrentCommand();
+            if (current != null) current.cancel();
             stop();
         }
     }
