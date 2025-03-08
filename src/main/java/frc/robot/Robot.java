@@ -42,6 +42,7 @@ import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
+import frc.robot.commands.Routines.ReefSide;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.lib.util.DriveUtil;
@@ -59,9 +60,9 @@ public class Robot extends TimedRobot {
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     @Logged(name = "Swerve")
     private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
-        xboxController.getLeftX() > ControllerK.overrideThreshold
-        || xboxController.getLeftY() > ControllerK.overrideThreshold
-        || xboxController.getRightX() > ControllerK.overrideThreshold);
+        Math.abs(xboxController.getLeftX()) > ControllerK.overrideThreshold
+        || Math.abs(xboxController.getLeftY()) > ControllerK.overrideThreshold
+        || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
     @Logged(name = "Elevator")
     private final Elevator elevator = new Elevator();
     @Logged(name = "Intake")
@@ -170,9 +171,9 @@ public class Robot extends TimedRobot {
         xboxController.a().onTrue(Routines.stow(elevator, intake, algae));
 
         // Alignment
-        // xboxController.x().onTrue(Routines.alignToLeftReef(swerve));
-        // xboxController.b().onTrue(Routines.alignToRightReef(swerve));
-        // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
+        xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
+        xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
+        xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
 
         // Intake
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));

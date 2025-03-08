@@ -104,7 +104,7 @@ public class Constants {
         public static final double leftJoystickDeadband = 0.07;
         public static final double rightJoystickDeadband = 0.07;
 
-        public static final double overrideThreshold = 0.2;
+        public static final double overrideThreshold = 0.25;
     }
 
     public static class DriveK {

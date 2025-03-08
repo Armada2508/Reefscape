@@ -244,6 +244,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             setChassisSpeeds(targetSpeeds);
 
             System.out.println(targetSpeeds);
+            SmartDashboard.putBoolean("Override", overridePathFollowing.getAsBoolean());
             SmartDashboard.putNumber("Distance", getPose().getTranslation().getDistance(targetPose.getTranslation()));
         })).until(() -> 
             (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.minimumTranslationError.in(Meters)
