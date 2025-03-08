@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.510608552631579,
-        "y": 7.171299342105263
+        "x": 1.151,
+        "y": 1.058
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3233299207501865,
-        "y": 7.054834164408455
+        "x": 1.9992330212052374,
+        "y": 1.587623207324825
       },
       "isLocked": false,
-      "linkedName": "Top Coral Station Blue"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.14177093358999,
-        "y": 4.185466794995188
+        "x": 3.12975,
+        "y": 3.8495
       },
       "prevControl": {
-        "x": 2.4762243345709374,
-        "y": 4.410520823809919
+        "x": 2.12975,
+        "y": 3.8495
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef-A"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 125.66
+    "rotation": -125.22
   },
   "useDefaultConstraints": true
 }
