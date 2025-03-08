@@ -12,16 +12,16 @@
         "y": 6.786890082767375
       },
       "isLocked": false,
-      "linkedName": "Coral Station Blue"
+      "linkedName": "Top Coral Station Blue"
     },
     {
       "anchor": {
-        "x": 3.973766447368421,
-        "y": 5.256578947368421
+        "x": 3.974,
+        "y": 5.257
       },
       "prevControl": {
-        "x": 3.117798907868014,
-        "y": 6.392805101002015
+        "x": 3.1180324604995935,
+        "y": 6.393226153633593
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,7 +55,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.62370000000001
+    "rotation": 125.66
   },
   "useDefaultConstraints": true
 }
