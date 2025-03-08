@@ -64,7 +64,7 @@ public class Constants {
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
-        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(11.847341036647236); //! Find this
+        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477); //! Find this
         public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
 
         // Path Constraints

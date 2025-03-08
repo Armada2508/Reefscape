@@ -39,7 +39,9 @@ public class Intake extends SubsystemBase {
         timeOfFlight.setRangingMode(RangingMode.Short, 24);
         setDefaultCommand(run(() -> {
             if (isSensorTripped()) {
-                double volts = MathUtil.interpolate(0, IntakeK.holdVoltageAtMaxSpeed, angularVelocity.getAsDouble() / SwerveK.maxAngularVelocity.in(RadiansPerSecond));
+                double volts = MathUtil.interpolate(0, IntakeK.holdVoltageAtMaxSpeed, 
+                    Math.abs(angularVelocity.getAsDouble()) / SwerveK.maxAngularVelocity.in(RadiansPerSecond)
+                );
                 sparkMaxLeft.setVoltage(volts);
                 sparkMaxRight.setVoltage(volts);
             }
