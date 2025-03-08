@@ -42,6 +42,7 @@ import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
+import frc.robot.commands.Routines.Cage;
 import frc.robot.commands.Routines.ReefSide;
 import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
@@ -87,6 +88,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
+        swerve.resetOdometry(Field.blueCageMid);
     }
 
     public Command teleopDriveCommand() {
@@ -191,7 +193,7 @@ public class Robot extends TimedRobot {
 
         // Climb
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
-        // xboxController.povDown().onTrue(Routines.alignToMidCage(swerve).andThen(climb.deepclimb())); // Still needs to work for any cage
+        xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
         // xboxController.povRight().onTrue(climb.deepclimb()); // Incase auto-alignment fails
 
         // xboxController.leftTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationTop.getRotation().getDegrees() + 180))));

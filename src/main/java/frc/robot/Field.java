@@ -56,8 +56,8 @@ public class Field {
     public static final List<Pose2d> blueReefListLeft = List.of(blueReefA, blueReefC, blueReefE, blueReefG, blueReefI, blueReefK);
     public static final List<Pose2d> blueReefListRight = List.of(blueReefB, blueReefD, blueReefF, blueReefH, blueReefJ, blueReefL);
 
-    public static final List<Pose2d> redReefListLeft = List.of(redReefA, redReefC, redReefE, redReefG, redReefI, redReefK);
-    public static final List<Pose2d> redReefListRight = List.of(redReefB, redReefD, redReefF, redReefH, redReefJ, redReefL);
+    public static final List<Pose2d> redReefListRight = List.of(redReefA, redReefC, redReefE, redReefG, redReefI, redReefK);
+    public static final List<Pose2d> redReefListLeft = List.of(redReefB, redReefD, redReefF, redReefH, redReefJ, redReefL);
 
     // Reef Coral
     public static final Distance levelOneHeight = Inches.of(18);
