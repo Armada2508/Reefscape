@@ -41,8 +41,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -198,7 +196,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @param targetPoseSupplier Supplier of the target pose
      * @return Command to drive along the constructed path
      */
-    public Command driveToPoseCommand(Supplier<Pose2d> targetPoseSupplier) {
+    public Command alignToPosePP(Supplier<Pose2d> targetPoseSupplier) {
         return Commands.defer(() -> {
             Pose2d targetPose = targetPoseSupplier.get();
             PathPlannerPath path = new PathPlannerPath(
@@ -216,7 +214,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
                 () -> false, 
                 this 
             ).until(overridePathFollowing);
-        }, Set.of(this)).withName("Drive to Pose");
+        }, Set.of(this)).withName("PP Align");
     }
 
     // PID Alignment
@@ -229,23 +227,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return The command
      */
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
-        // TODO: Remove testing code
-        Field2d field = new Field2d();
-        SmartDashboard.putData(field);
         return runOnce(() -> {
             pathPlannerController.reset(getPose(), getRobotVelocity());
             targetPose = targetPoseSupplier.get();
             targetState = new PathPlannerTrajectoryState();
             targetState.pose = targetPose;
-
-            field.getObject("Testing").setPose(targetPose);
         }).andThen(run(() -> {
             ChassisSpeeds targetSpeeds = pathPlannerController.calculateRobotRelativeSpeeds(getPose(), targetState);
             setChassisSpeeds(targetSpeeds);
-
-            System.out.println(targetSpeeds);
-            SmartDashboard.putBoolean("Override", overridePathFollowing.getAsBoolean());
-            SmartDashboard.putNumber("Distance", getPose().getTranslation().getDistance(targetPose.getTranslation()));
         })).until(() -> 
             (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.minimumTranslationError.in(Meters)
             && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.minimumRotationError.in(Degrees))
