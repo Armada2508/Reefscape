@@ -237,10 +237,14 @@ public class Constants {
 
         // Positions/Angles/Voltage
         public static final Voltage climbVoltage = Volts.of(2);
+        public static final Voltage zeroingVoltage = Volts.of(-1);
         
         public static final Angle maxAngle = Degrees.of(90);
         public static final Angle minAngle = Degrees.zero();
         public static final Angle allowableError = Degrees.one();
+
+        public static final Current homingSpike = Amps.of(2);
+        public static final Time homingTime = Seconds.of(0.25);
 
         // Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
@@ -253,14 +257,11 @@ public class Constants {
         public static final double gearRatio = 100;
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         
-        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs() // Forward limit
+        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(maxAngle);
-        
-        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() // Reverse limit
-            .withReverseLimitEnable(true)
-            .withReverseLimitAutosetPositionEnable(true)
-            .withReverseLimitAutosetPositionValue(minAngle);
+            .withForwardSoftLimitThreshold(maxAngle)
+            .withReverseSoftLimitEnable(true)
+            .withReverseSoftLimitThreshold(minAngle);
     }
     
 }
