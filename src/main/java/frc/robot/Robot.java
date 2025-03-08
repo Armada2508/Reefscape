@@ -23,7 +23,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -91,9 +90,9 @@ public class Robot extends TimedRobot {
     }
 
     public Command teleopDriveCommand() {
-        DynamicSlewRateLimiter translationXLimiter = new DynamicSlewRateLimiter(DriveK.translationAccelLimits.getFirst(), DriveK.translationAccelLimits.getSecond());
-        DynamicSlewRateLimiter translationYLimiter = new DynamicSlewRateLimiter(DriveK.translationAccelLimits.getFirst(), DriveK.translationAccelLimits.getSecond());
-        DynamicSlewRateLimiter rotationLimiter = new DynamicSlewRateLimiter(DriveK.rotationAccelLimits.getFirst(), DriveK.rotationAccelLimits.getSecond());
+        DynamicSlewRateLimiter translationXLimiter = new DynamicSlewRateLimiter(getAccelLimit(DriveK.translationAccelLimits.getFirst()), getAccelLimit(DriveK.translationAccelLimits.getSecond()));
+        DynamicSlewRateLimiter translationYLimiter = new DynamicSlewRateLimiter(getAccelLimit(DriveK.translationAccelLimits.getFirst()), getAccelLimit(DriveK.translationAccelLimits.getSecond()));
+        DynamicSlewRateLimiter rotationLimiter = new DynamicSlewRateLimiter(getAccelLimit(DriveK.rotationAccelLimits.getFirst()), getAccelLimit(DriveK.rotationAccelLimits.getSecond()));
         return swerve.driveCommand(
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband);
@@ -120,8 +119,8 @@ public class Robot extends TimedRobot {
         ).withName("Swerve Drive Field Oriented");
     }
 
-    private DoubleSupplier getAccelLimit(double limit, Supplier<Distance> height) {
-        return () -> limit * (2 * height.get());
+    private DoubleSupplier getAccelLimit(double limit) {
+        return () -> limit * DriveK.elevatorAccelTransformer.calculate(elevator.getPositionInches());
     }
 
     private void configureBindings() {
