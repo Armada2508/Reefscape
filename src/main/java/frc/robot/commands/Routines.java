@@ -34,7 +34,8 @@ public class Routines {
     }
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
-        return intake.coralIntake().andThen(elevator.setPosition(Positions.STOW))
+        return elevator.setPosition(Positions.INTAKE).withDeadline(intake.coralIntake())
+        .andThen(elevator.setPosition(Positions.STOW))
         .withName("Intake Coral Routine");
     }
     /**

@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
@@ -74,8 +75,11 @@ public class Robot extends TimedRobot {
     private final SendableChooser<Command> autoChooser;
     private final Timer swerveCoastTimer = new Timer();
     
-    @Logged(name = "Score Ready")
-    boolean isScoreReady = false;
+    // BooleanHolder isL1ScoreReady = new BooleanHolder();
+    // BooleanHolder isL2ScoreReady = new BooleanHolder();
+    // BooleanHolder isL3ScoreReady = new BooleanHolder();
+    // BooleanHolder isL4ScoreReady = new BooleanHolder();
+
 
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
@@ -91,6 +95,14 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
+        // isL1ScoreReady.held = false;
+        // isL2ScoreReady.held = false;
+        // isL3ScoreReady.held = false;
+        // isL4ScoreReady.held = false;
+        // SmartDashboard.putBoolean("L1 Score Ready", isL1ScoreReady.held);
+        // SmartDashboard.putBoolean("L2 Score Ready", isL2ScoreReady.held);
+        // SmartDashboard.putBoolean("L3 Score Ready", isL3ScoreReady.held);
+        // SmartDashboard.putBoolean("L4 Score Ready", isL4ScoreReady.held);
     }
 
     public Command teleopDriveCommand() {
@@ -140,25 +152,29 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-
+        
         paddle2.onTrue(doubleButtonPress(
             Routines.scoreCoralLevelOne(elevator, intake).withName("Scoring L1"), 
-            elevator.setPosition(Positions.L1).withName("Interpolating L1")
+            elevator.setPosition(Positions.L1).withName("Interpolating L1"),
+            Positions.L1
         ));
 
         paddle1.onTrue(doubleButtonPress(
             Routines.scoreCoralLevelTwo(elevator, intake).withName("Scoring L2"), 
-            elevator.setPosition(Positions.L2).withName("Interpolating L2")
+            elevator.setPosition(Positions.L2).withName("Interpolating L2"),
+            Positions.L2
         ));
 
         xboxController.rightTrigger().onTrue(doubleButtonPress(
             Routines.scoreCoralLevelThree(elevator, intake).withName("Scoring L3"), 
-            elevator.setPosition(Positions.L3).withName("Interpolating L3")
+            elevator.setPosition(Positions.L3).withName("Interpolating L3"),
+            Positions.L3
         ));
 
         xboxController.rightBumper().onTrue(doubleButtonPress(
             Routines.scoreCoralLevelFour(elevator, intake).withName("Scoring L4"), 
-            elevator.setPosition(Positions.L4).withName("Interpolating L4")
+            elevator.setPosition(Positions.L4).withName("Interpolating L4"),
+            Positions.L4
         ));
         // paddle1.onTrue(elevator.setPosition(Positions.L2));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
@@ -201,10 +217,10 @@ public class Robot extends TimedRobot {
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
         // Reef Levels
-        paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
-        paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
-        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
-        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
+        // paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
+        // paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
+        // xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
+        // xboxController.rightBumper().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
 
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
@@ -238,18 +254,24 @@ public class Robot extends TimedRobot {
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
 
-    public Command doubleButtonPress(WrapperCommand onTrue, WrapperCommand onFalse) {
+    ElevatorK.Positions current = Positions.STOW;
+
+    public Command doubleButtonPress(WrapperCommand onTrue, WrapperCommand onFalse, ElevatorK.Positions newPos) {
         return Commands.runOnce(() -> {
-            if (isScoreReady) {
+            if (current == newPos) { // Scoring
                 onTrue.schedule();
-                isScoreReady = false;
+                current = Positions.STOW; // Ready to take a new position
+                // conditional.held = false;
             }
-            else {
+            else { // Going to height
                 onFalse.schedule();
-                isScoreReady = true;
+                current = newPos;
+                // conditional.held = true;
             }
         });
     }
+
+
 
     @Override
     public void robotPeriodic() {
@@ -340,7 +362,10 @@ public class Robot extends TimedRobot {
     @Logged(name = "RobotController/RIO Current (A)")
     public double getRIOCurrent() {
         return RobotController.getInputCurrent();
-    }
-    
-    
+    }   
+}
+
+@Logged
+class BooleanHolder {
+    boolean held;
 }
