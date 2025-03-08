@@ -82,7 +82,6 @@ public class Robot extends TimedRobot {
         DriverStation.startDataLog(dataLog); // DataLog
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
-        // SmartDashboard.putData(new PowerDistribution()); // TODO: Wait until we get a new PDH
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
