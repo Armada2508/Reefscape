@@ -96,21 +96,21 @@ public class Robot extends TimedRobot {
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband);
                 val = translationXLimiter.calculate(val);
-                val = DriveUtil.powKeepSign(val, 1.5);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
                 val *= DriveK.driveSpeedModifier;
                 return val;
             }, 
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband);
                 val = translationYLimiter.calculate(val);
-                val = DriveUtil.powKeepSign(val, 1.5);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
                 val *= DriveK.driveSpeedModifier;
                 return val; 
             },  
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband);
                 val = rotationLimiter.calculate(val);
-                val = DriveUtil.powKeepSign(val, 1.5);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
                 val *= DriveK.rotationSpeedModifier;
                 return val; 
             },
