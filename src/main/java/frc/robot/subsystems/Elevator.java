@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -43,7 +44,7 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (debouncer.calculate(talon.getSupplyCurrent().getValue().gte(ElevatorK.currentSpike))) {
+        if (debouncer.calculate(talon.getSupplyCurrent().getValue().abs(Amps) > ElevatorK.currentSpike.in(Amps))) {
             Command current = getCurrentCommand();
             if (current != null) current.cancel();
             stop();
