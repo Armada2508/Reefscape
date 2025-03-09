@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Millimeters;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.function.DoubleSupplier;
 
@@ -15,12 +15,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
-import frc.robot.lib.logging.LogUtil;
+import frc.robot.Constants.SwerveK;
 import frc.robot.lib.util.Util;
 
 public class Intake extends SubsystemBase {
@@ -30,15 +31,17 @@ public class Intake extends SubsystemBase {
     @Logged(name = "Time of Flight")
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(IntakeK.timeOfFlightId);
 
-    DoubleSupplier v = LogUtil.getTunableDouble("Intake Hold (V)", 0.375);
-
-    public Intake() {
+    /**
+     * @param angularVelocity Supplier of the robot's angular velocity in radians per second
+     */
+    public Intake(DoubleSupplier angularVelocity) {
         configSparkMax();
         timeOfFlight.setRangingMode(RangingMode.Short, 24);
         setDefaultCommand(run(() -> {
             if (isSensorTripped()) {
-                var volts = Volts.of(v.getAsDouble());
-                // System.out.println("Do stuff " + volts);
+                double volts = MathUtil.interpolate(0, IntakeK.holdVoltageAtMaxSpeed, 
+                    Math.abs(angularVelocity.getAsDouble()) / SwerveK.maxAngularVelocity.in(RadiansPerSecond)
+                );
                 sparkMaxLeft.setVoltage(volts);
                 sparkMaxRight.setVoltage(volts);
             }
@@ -46,7 +49,6 @@ public class Intake extends SubsystemBase {
                 stop();
             }
         }).withName("Hold Coral"));
-
     }
 
     private void configSparkMax() {
