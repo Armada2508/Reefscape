@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.urcl.URCL;
@@ -65,7 +66,7 @@ public class Robot extends TimedRobot {
     @Logged(name = "Elevator")
     private final Elevator elevator = new Elevator();
     @Logged(name = "Intake")
-    private final Intake intake = new Intake();
+    private final Intake intake = new Intake(() -> swerve.getRobotVelocity().omegaRadiansPerSecond);
     @Logged(name = "Algae")
     private final Algae algae = new Algae();
     // private final Climb climb = new Climb();
@@ -88,9 +89,9 @@ public class Robot extends TimedRobot {
     }
 
     public Command teleopDriveCommand() {
-        DynamicSlewRateLimiter translationXLimiter = new DynamicSlewRateLimiter(DriveK.translationAccelLimits.getFirst(), DriveK.translationAccelLimits.getSecond());
-        DynamicSlewRateLimiter translationYLimiter = new DynamicSlewRateLimiter(DriveK.translationAccelLimits.getFirst(), DriveK.translationAccelLimits.getSecond());
-        DynamicSlewRateLimiter rotationLimiter = new DynamicSlewRateLimiter(DriveK.rotationAccelLimits.getFirst(), DriveK.rotationAccelLimits.getSecond());
+        DynamicSlewRateLimiter translationXLimiter = new DynamicSlewRateLimiter(getAccelLimit(DriveK.translationAccelLimits.getFirst()), getAccelLimit(DriveK.translationAccelLimits.getSecond()));
+        DynamicSlewRateLimiter translationYLimiter = new DynamicSlewRateLimiter(getAccelLimit(DriveK.translationAccelLimits.getFirst()), getAccelLimit(DriveK.translationAccelLimits.getSecond()));
+        DynamicSlewRateLimiter rotationLimiter = new DynamicSlewRateLimiter(getAccelLimit(DriveK.rotationAccelLimits.getFirst()), getAccelLimit(DriveK.rotationAccelLimits.getSecond()));
         return swerve.driveCommand(
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband);
@@ -115,6 +116,10 @@ public class Robot extends TimedRobot {
             },
             true, true
         ).withName("Swerve Drive Field Oriented");
+    }
+
+    private DoubleSupplier getAccelLimit(double limit) {
+        return () -> limit * DriveK.elevatorAccelTransformer.calculate(elevator.getPositionInches());
     }
 
     private void configureBindings() {
