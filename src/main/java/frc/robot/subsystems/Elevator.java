@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -20,7 +21,6 @@ import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -39,7 +39,6 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
     private boolean zeroed = false;
-    private final Debouncer debouncer = new Debouncer(ElevatorK.spikeTime);
 
     public Elevator() {
         configTalons();
@@ -48,10 +47,11 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (debouncer.calculate(talon.getSupplyCurrent().getValue().gte(ElevatorK.currentSpike))) {
+        if (talon.getTorqueCurrent().getValue().abs(Amps) > ElevatorK.currentSpike.in(Amps)) {
             Command current = getCurrentCommand();
             if (current != null) current.cancel();
             stop();
+            System.out.println("Stopping ELEVATOR because of CURRENT SPIKE!");
         }
     }
 

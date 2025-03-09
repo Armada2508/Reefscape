@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8527351961086227,
-        "y": 6.786890082767375
+        "x": 1.7770834118384444,
+        "y": 6.451604267006183
       },
       "isLocked": false,
-      "linkedName": "Coral Station Blue"
+      "linkedName": "Top Coral Station Blue"
     },
     {
       "anchor": {
-        "x": 3.973766447368421,
-        "y": 5.256578947368421
+        "x": 3.974,
+        "y": 5.257
       },
       "prevControl": {
-        "x": 3.117798907868014,
-        "y": 6.392805101002015
+        "x": 3.186213419846617,
+        "y": 5.797923117231441
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,8 +40,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 3.75,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -55,7 +55,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.62370000000001
+    "rotation": 125.66
   },
   "useDefaultConstraints": true
 }

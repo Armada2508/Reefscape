@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -63,6 +64,7 @@ public class Constants {
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
+        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477); //! Find this
         public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
 
         // Path Constraints
@@ -107,9 +109,12 @@ public class Constants {
         // Larger number = faster rate of change, limit is in units of (units)/second. In this case the joystick [-1, 1].
         public static final Pair<Double, Double> translationAccelLimits = Pair.of(1.25, 2.0); 
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
+        public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
+        public static final RangeTransformer elevatorAccelTransformer = new RangeTransformer(ElevatorK.minHeight.in(Inches), ElevatorK.maxHeight.in(Inches), 1, elevatorAccelScaling, true);
 
-        public static final double driveSpeedModifier = 0.7;
+        public static final double driveSpeedModifier = 1;
         public static final double rotationSpeedModifier = 1;
+        public static final double exponentialControl = 1.5;
     }
 
     public static class ElevatorK {
@@ -120,8 +125,7 @@ public class Constants {
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final Current currentSpike = Amps.of(20); // TODO: Find current spike threshold and spike time
-        public static final double spikeTime = 0.25;
+        public static final Current currentSpike = Amps.of(30);
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
@@ -202,6 +206,8 @@ public class Constants {
 
         public static final int currentLimit = 20; // Amps
 
+        public static final double holdVoltageAtMaxSpeed = 1;
+
         public static final Voltage coralIntakeVolts = Volts.of(12);
         public static final Time intakeAfterTrip = Seconds.of(0.25);
 
@@ -255,10 +261,14 @@ public class Constants {
 
         // Positions/Angles/Voltage
         public static final Voltage climbVoltage = Volts.of(2);
+        public static final Voltage zeroingVoltage = Volts.of(-1);
         
         public static final Angle maxAngle = Degrees.of(90);
         public static final Angle minAngle = Degrees.zero();
         public static final Angle allowableError = Degrees.one();
+
+        public static final Current homingSpike = Amps.of(2);
+        public static final Time homingTime = Seconds.of(0.25);
 
         // Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
@@ -271,14 +281,11 @@ public class Constants {
         public static final double gearRatio = 100;
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         
-        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs() // Forward limit
+        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(maxAngle);
-        
-        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() // Reverse limit
-            .withReverseLimitEnable(true)
-            .withReverseLimitAutosetPositionEnable(true)
-            .withReverseLimitAutosetPositionValue(minAngle);
+            .withForwardSoftLimitThreshold(maxAngle)
+            .withReverseSoftLimitEnable(true)
+            .withReverseSoftLimitThreshold(minAngle);
     }
     
 }

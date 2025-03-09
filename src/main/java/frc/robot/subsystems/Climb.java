@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -9,9 +10,9 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -26,6 +27,7 @@ public class Climb extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ClimbK.talonID);
     private final TalonFX talonFollow = new TalonFX(ClimbK.talonFollowID);
+    private final Debouncer homingDebouncer = new Debouncer(ClimbK.homingTime.in(Seconds));
     private boolean isZeroed = false;
 
     public Climb() {
@@ -36,7 +38,6 @@ public class Climb extends SubsystemBase {
     private void configTalons() {
         Util.factoryReset(talon, talonFollow);
         Util.brakeMode(talon, talonFollow);
-        talon.getConfigurator().apply(ClimbK.hardLimitSwitchConfigs);
         talon.getConfigurator().apply(ClimbK.softLimitConfigs);
         talon.getConfigurator().apply(ClimbK.gearRatioConfig);
         talon.getConfigurator().apply(ClimbK.pidconfig);
@@ -87,21 +88,16 @@ public class Climb extends SubsystemBase {
     }
 
     /** 
-     * Runs the climber motors back to the limit switch and zeroes them
+     * Runs the climber motors back to the hard stop and zeroes them
      */
     public Command zero() {
-        return setVoltage(ClimbK.climbVoltage.unaryMinus())
-        .andThen(
-            runOnce(() -> talonFollow.setControl(new VoltageOut(ClimbK.climbVoltage.unaryMinus()))),
-            Commands.parallel(
-                Commands.waitUntil(() -> talon.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround)).finallyDo(this::stop),
-                Commands.waitUntil(() -> talonFollow.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround).finallyDo(() -> talonFollow.setControl(new NeutralOut()))
-            )
-        .andThen(() -> isZeroed = true)
-        .finallyDo(() -> {
-            talonFollow.setControl(new StrictFollower(ClimbK.talonID));
-            stop();
+        return setVoltage(ClimbK.zeroingVoltage)
+        .andThen(Commands.waitUntil(() -> homingDebouncer.calculate(talon.getSupplyCurrent().getValue().gte(ClimbK.homingSpike))))
+        .andThen(() -> { 
+            talon.setPosition(ClimbK.minAngle);
+            isZeroed = true;
         })
+        .finallyDo(this::stop)
         .withName("Zero");
     }
 
