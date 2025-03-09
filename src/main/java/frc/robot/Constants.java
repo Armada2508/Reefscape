@@ -94,6 +94,10 @@ public class Constants {
         public static final Angle angularDeadband = Degrees.of(2);
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
 
+        // PID Alignment End Conditions
+        public static final Distance maximumTranslationError = Inches.of(0.5);
+        public static final Angle maximumRotationError = Degrees.of(2);
+
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }
 
@@ -102,7 +106,7 @@ public class Constants {
         public static final double leftJoystickDeadband = 0.07;
         public static final double rightJoystickDeadband = 0.07;
 
-        public static final double overrideThreshold = 0.15;
+        public static final double overrideThreshold = 0.25;
     }
 
     public static class DriveK {

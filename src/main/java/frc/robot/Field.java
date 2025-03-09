@@ -56,8 +56,8 @@ public class Field {
     public static final List<Pose2d> blueReefListLeft = List.of(blueReefA, blueReefC, blueReefE, blueReefG, blueReefI, blueReefK);
     public static final List<Pose2d> blueReefListRight = List.of(blueReefB, blueReefD, blueReefF, blueReefH, blueReefJ, blueReefL);
 
-    public static final List<Pose2d> redReefListLeft = List.of(redReefA, redReefC, redReefE, redReefG, redReefI, redReefK);
-    public static final List<Pose2d> redReefListRight = List.of(redReefB, redReefD, redReefF, redReefH, redReefJ, redReefL);
+    public static final List<Pose2d> redReefListRight = List.of(redReefA, redReefC, redReefE, redReefG, redReefI, redReefK);
+    public static final List<Pose2d> redReefListLeft = List.of(redReefB, redReefD, redReefF, redReefH, redReefJ, redReefL);
 
     // Reef Coral
     public static final Distance levelOneHeight = Inches.of(18);
@@ -96,6 +96,34 @@ public class Field {
     //^ processor location is on the edge of the arena carpet rather then the exact middle of the structure
     public static final Translation2d blueProcessor = new Translation2d(Inches.zero(), Inches.of(235.7255));
     public static final Translation2d redProcessor = new Translation2d(fieldWidth, fieldLength.minus(blueProcessor.getMeasureY()));
+
+    public enum ReefSide {
+        RIGHT(Field.blueReefListRight, Field.redReefListRight),
+        LEFT(Field.blueReefListLeft, Field.redReefListLeft);
+
+        public final List<Pose2d> blueReef;
+        public final List<Pose2d> redReef;
+        
+        private ReefSide(List<Pose2d> blueReef, List<Pose2d> redReef) {
+            // The passed in lists should already be immutable
+            this.blueReef = blueReef;
+            this.redReef = redReef;
+        }
+    }
+
+    public enum Cage {
+        TOP(Field.blueCageTop, Field.redCageTop),
+        MIDDLE(Field.blueCageMid, Field.redCageMid),
+        BOTTOM(Field.blueCageLow, Field.redCageLow);
+
+        public final Pose2d bluePose;
+        public final Pose2d redPose;
+
+        private Cage(Pose2d bluePose, Pose2d redPose) {
+            this.bluePose = bluePose;
+            this.redPose = redPose;
+        }
+    }
 
     // Hi! Welcome to introspection :) https://www.oracle.com/technical-resources/articles/java/javareflection.html
     /**
