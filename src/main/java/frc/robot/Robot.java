@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
     // private final Climb climb = new Climb();
     private final SendableChooser<Command> autoChooser;
     private final Timer swerveCoastTimer = new Timer();
+    @Logged(name = "State")
     private ElevatorK.Positions state = Positions.STOW;
     
     // BooleanHolder isL1ScoreReady = new BooleanHolder();
@@ -268,7 +269,7 @@ public class Robot extends TimedRobot {
                 elevator.setPosition(newState).schedule();
                 state = newState;
             }
-        });
+        }).withName("Switch State");
     }
 
     @Override
