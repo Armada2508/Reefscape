@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "score coral"
+            "name": "Score L4"
           }
         },
         {
@@ -31,13 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CORAL STATION to REEF A"
+            "pathName": "CORAL STATION to REEF L"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "score coral"
+            "name": "Score L4"
           }
         }
       ]
