@@ -2,8 +2,6 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Inches;
 
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Field;
+import frc.robot.Field.Cage;
+import frc.robot.Field.ReefSide;
 import frc.robot.Robot;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Climb;
@@ -148,34 +148,6 @@ public class Routines {
      */
     public static Command alignToCage(Cage cage, Swerve swerve) {
         return swerve.alignToPosePID(() -> Robot.onRedAlliance() ? cage.redPose : cage.bluePose).withName("Align " + cage + " Cage");
-    }
-
-    public enum ReefSide {
-        RIGHT(Field.blueReefListRight, Field.redReefListRight),
-        LEFT(Field.blueReefListLeft, Field.redReefListLeft);
-
-        public final List<Pose2d> blueReef;
-        public final List<Pose2d> redReef;
-        
-        private ReefSide(List<Pose2d> blueReef, List<Pose2d> redReef) {
-            // The passed in lists should already be immutable
-            this.blueReef = blueReef;
-            this.redReef = redReef;
-        }
-    }
-
-    public enum Cage {
-        TOP(Field.blueCageTop, Field.redCageTop),
-        MIDDLE(Field.blueCageMid, Field.redCageMid),
-        BOTTOM(Field.blueCageLow, Field.redCageLow);
-
-        public final Pose2d bluePose;
-        public final Pose2d redPose;
-
-        private Cage(Pose2d bluePose, Pose2d redPose) {
-            this.bluePose = bluePose;
-            this.redPose = redPose;
-        }
     }
 
     /**

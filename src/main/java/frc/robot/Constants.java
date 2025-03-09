@@ -93,8 +93,8 @@ public class Constants {
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
 
         // PID Alignment End Conditions
-        public static final Distance minimumTranslationError = Inches.of(0.5);
-        public static final Angle minimumRotationError = Degrees.of(2);
+        public static final Distance maximumTranslationError = Inches.of(0.5);
+        public static final Angle maximumRotationError = Degrees.of(2);
 
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }

@@ -236,8 +236,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             ChassisSpeeds targetSpeeds = pathPlannerController.calculateRobotRelativeSpeeds(getPose(), targetState);
             setChassisSpeeds(targetSpeeds);
         })).until(() -> 
-            (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.minimumTranslationError.in(Meters)
-            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.minimumRotationError.in(Degrees))
+            (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
+            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees))
             || overridePathFollowing.getAsBoolean()
         ).finallyDo(this::stop).withName("PID Align");
     }

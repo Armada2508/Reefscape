@@ -97,6 +97,34 @@ public class Field {
     public static final Translation2d blueProcessor = new Translation2d(Inches.zero(), Inches.of(235.7255));
     public static final Translation2d redProcessor = new Translation2d(fieldWidth, fieldLength.minus(blueProcessor.getMeasureY()));
 
+    public enum ReefSide {
+        RIGHT(Field.blueReefListRight, Field.redReefListRight),
+        LEFT(Field.blueReefListLeft, Field.redReefListLeft);
+
+        public final List<Pose2d> blueReef;
+        public final List<Pose2d> redReef;
+        
+        private ReefSide(List<Pose2d> blueReef, List<Pose2d> redReef) {
+            // The passed in lists should already be immutable
+            this.blueReef = blueReef;
+            this.redReef = redReef;
+        }
+    }
+
+    public enum Cage {
+        TOP(Field.blueCageTop, Field.redCageTop),
+        MIDDLE(Field.blueCageMid, Field.redCageMid),
+        BOTTOM(Field.blueCageLow, Field.redCageLow);
+
+        public final Pose2d bluePose;
+        public final Pose2d redPose;
+
+        private Cage(Pose2d bluePose, Pose2d redPose) {
+            this.bluePose = bluePose;
+            this.redPose = redPose;
+        }
+    }
+
     // Hi! Welcome to introspection :) https://www.oracle.com/technical-resources/articles/java/javareflection.html
     /**
      * For testing purposes only, call me to dump all Pose2d field constants onto network tables under /Field
