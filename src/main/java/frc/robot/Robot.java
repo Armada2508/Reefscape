@@ -76,12 +76,6 @@ public class Robot extends TimedRobot {
     private final Timer swerveCoastTimer = new Timer();
     @Logged(name = "State")
     private ElevatorK.Positions state = Positions.STOW;
-    
-    // BooleanHolder isL1ScoreReady = new BooleanHolder();
-    // BooleanHolder isL2ScoreReady = new BooleanHolder();
-    // BooleanHolder isL3ScoreReady = new BooleanHolder();
-    // BooleanHolder isL4ScoreReady = new BooleanHolder();
-
 
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
@@ -96,14 +90,6 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
-        // isL1ScoreReady.held = false;
-        // isL2ScoreReady.held = false;
-        // isL3ScoreReady.held = false;
-        // isL4ScoreReady.held = false;
-        // SmartDashboard.putBoolean("L1 Score Ready", isL1ScoreReady.held);
-        // SmartDashboard.putBoolean("L2 Score Ready", isL2ScoreReady.held);
-        // SmartDashboard.putBoolean("L3 Score Ready", isL3ScoreReady.held);
-        // SmartDashboard.putBoolean("L4 Score Ready", isL4ScoreReady.held);
     }
 
     public Command teleopDriveCommand() {
@@ -362,9 +348,4 @@ public class Robot extends TimedRobot {
     public double getRIOCurrent() {
         return RobotController.getInputCurrent();
     }   
-}
-
-@Logged
-class BooleanHolder {
-    boolean held;
 }
