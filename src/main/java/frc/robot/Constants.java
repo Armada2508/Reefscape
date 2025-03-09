@@ -112,7 +112,7 @@ public class Constants {
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
         public static final RangeTransformer elevatorAccelTransformer = new RangeTransformer(ElevatorK.minHeight.in(Inches), ElevatorK.maxHeight.in(Inches), 1, elevatorAccelScaling, true);
 
-        public static final double driveSpeedModifier = 0.7;
+        public static final double driveSpeedModifier = 1;
         public static final double rotationSpeedModifier = 1;
     }
 
