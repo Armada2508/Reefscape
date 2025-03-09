@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
@@ -75,6 +74,7 @@ public class Robot extends TimedRobot {
     // private final Climb climb = new Climb();
     private final SendableChooser<Command> autoChooser;
     private final Timer swerveCoastTimer = new Timer();
+    private ElevatorK.Positions state = Positions.STOW;
     
     // BooleanHolder isL1ScoreReady = new BooleanHolder();
     // BooleanHolder isL2ScoreReady = new BooleanHolder();
@@ -156,29 +156,24 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-        
-        paddle2.onTrue(doubleButtonPress(
-            Routines.scoreCoralLevelOne(elevator, intake).withName("Scoring L1"), 
-            elevator.setPosition(Positions.L1).withName("Interpolating L1"),
-            Positions.L1
+        paddle2.onTrue(switchStateOrAction(
+            Positions.L1,
+            Routines.scoreCoralLevelOne(elevator, intake)
         ));
 
-        paddle1.onTrue(doubleButtonPress(
-            Routines.scoreCoralLevelTwo(elevator, intake).withName("Scoring L2"), 
-            elevator.setPosition(Positions.L2).withName("Interpolating L2"),
-            Positions.L2
+        paddle1.onTrue(switchStateOrAction(
+            Positions.L2,
+            Routines.scoreCoralLevelTwo(elevator, intake)
         ));
 
-        xboxController.rightTrigger().onTrue(doubleButtonPress(
-            Routines.scoreCoralLevelThree(elevator, intake).withName("Scoring L3"), 
-            elevator.setPosition(Positions.L3).withName("Interpolating L3"),
-            Positions.L3
+        xboxController.rightTrigger().onTrue(switchStateOrAction(
+            Positions.L3,
+            Routines.scoreCoralLevelThree(elevator, intake)
         ));
 
-        xboxController.rightBumper().onTrue(doubleButtonPress(
-            Routines.scoreCoralLevelFour(elevator, intake).withName("Scoring L4"), 
-            elevator.setPosition(Positions.L4).withName("Interpolating L4"),
-            Positions.L4
+        xboxController.rightBumper().onTrue(switchStateOrAction(
+            Positions.L4,
+            Routines.scoreCoralLevelFour(elevator, intake)
         ));
         // paddle1.onTrue(elevator.setPosition(Positions.L2));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
@@ -258,24 +253,23 @@ public class Robot extends TimedRobot {
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
 
-    ElevatorK.Positions current = Positions.STOW;
-
-    public Command doubleButtonPress(WrapperCommand onTrue, WrapperCommand onFalse, ElevatorK.Positions newPos) {
+    /**
+     * Puts the robot into newState and performs action if the robot is already in the specified state
+     * @param newState new state to put the robot in
+     * @param action to perform when robot is in specified state
+     */
+    private Command switchStateOrAction(ElevatorK.Positions newState, Command action) {
         return Commands.runOnce(() -> {
-            if (current == newPos) { // Scoring
-                onTrue.schedule();
-                current = Positions.STOW; // Ready to take a new position
-                // conditional.held = false;
+            if (state == newState) {
+                action.schedule();
+                state = Positions.STOW; // Ready to take a new position
             }
-            else { // Going to height
-                onFalse.schedule();
-                current = newPos;
-                // conditional.held = true;
+            else {
+                elevator.setPosition(newState).schedule();
+                state = newState;
             }
         });
     }
-
-
 
     @Override
     public void robotPeriodic() {
