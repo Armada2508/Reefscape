@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -17,7 +16,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -35,7 +33,6 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private boolean zeroed = false;
-    private final Debouncer debouncer = new Debouncer(ElevatorK.spikeTime.in(Seconds));
 
     public Elevator() {
         configTalons();
@@ -44,7 +41,7 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (debouncer.calculate(talon.getSupplyCurrent().getValue().abs(Amps) > ElevatorK.currentSpike.in(Amps))) {
+        if (talon.getTorqueCurrent().getValue().abs(Amps) > ElevatorK.currentSpike.in(Amps)) {
             Command current = getCurrentCommand();
             if (current != null) current.cancel();
             stop();
