@@ -91,7 +91,7 @@ public class Elevator extends SubsystemBase {
             .withName("Set Position " + height); 
     }
 
-    public Command setChangingPosition(Supplier<Distance> height) {
+    public Command setDynamicPosition(Supplier<Distance> height) {
         MotionMagicVoltage request = new MotionMagicVoltage(0);
         return Commands.either(
             run(() -> talon.setControl(request.withPosition(Encoder.linearToAngular(height.get().div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)))),
@@ -101,37 +101,25 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
-     * Sets the position of the elevator to a distance of height using the enum Positions within this classes constants file.
+     * Sets the position of the elevator to a distance of height using the enum Positions within this class's constants file.
      * @param position position of the elevator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
         return switch (position) {
-            case L1 -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.L1LowHeight, position.level, position))
-                       .withName("Set Position " + position);
-            case L2 -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.L2LowHeight, position.level, position))
-                       .withName("Set Position " + position);
-            case L3 -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.L3LowHeight, position.level, position))
-                       .withName("Set Position " + position);
-            case L4 -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.L4LowHeight, position.level, position))
-                       .withName("Set Position " + position);
-            case ALGAE_LOW -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.algaeLowLowHeight, position.level, position))
-                              .withName("Set Position " + position);
-            case ALGAE_HIGH -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.algaeHighLowHeight, position.level, position))
-                               .withName("Set Position " + position);
-            case INTAKE -> setChangingPosition(() -> getInterpolatedDistance(ElevatorK.intakeLowHeight, position.level, position))
-                           .withName("Set Position " + position);
-            case STOW -> setPosition(ElevatorK.Positions.STOW.level)
-                         .withName("Set Position " + position);
-            default -> throw new IllegalArgumentException("Invalid position by some magic of the gods");
+            case L1, L2, L3, L4, ALGAE_LOW, ALGAE_HIGH, INTAKE -> 
+                setDynamicPosition(() -> getInterpolatedDistance(position.close, position.far))
+                .withName("Set Position " + position);
+            case STOW -> setPosition(ElevatorK.Positions.STOW.close)
+                .withName("Set Position " + position);
+            default -> throw new IllegalArgumentException("Invalid Position: " + position);
         };
     }
 
-    //! This currently only works for intaking at the coral station instead of scoring at the reef
-    public Distance getInterpolatedDistance (Distance lowDistance, Distance highDistance, ElevatorK.Positions position) {
+    private Distance getInterpolatedDistance(Distance lowDistance, Distance highDistance) {
         Distance interpolatedDistance = Millimeters.of(MathUtil.interpolate(
             lowDistance.in(Millimeters), 
             highDistance.in(Millimeters), 
-            timeOfFlight.getRange() + ElevatorK.timeOfFlightOffset.in(Millimeters) / ElevatorK.maxLinearDistance.in(Millimeters)
+            (timeOfFlight.getRange() + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
         ));
         return interpolatedDistance;
     }
