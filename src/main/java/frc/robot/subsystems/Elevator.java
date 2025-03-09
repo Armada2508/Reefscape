@@ -107,7 +107,7 @@ public class Elevator extends SubsystemBase {
     public Command setPosition(ElevatorK.Positions position) {
         return switch (position) {
             case L1, L2, L3, L4, ALGAE_LOW, ALGAE_HIGH, INTAKE -> 
-                setDynamicPosition(() -> getInterpolatedDistance(position.close, position.far))
+                setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far))
                 .withName("Set Interpolating Position " + position);
             case STOW -> setPosition(ElevatorK.Positions.STOW.close)
                 .withName("Set Position " + position);
@@ -115,13 +115,13 @@ public class Elevator extends SubsystemBase {
         };
     }
 
-    private Distance getInterpolatedDistance(Distance lowDistance, Distance highDistance) {
-        Distance interpolatedDistance = Millimeters.of(MathUtil.interpolate(
-            lowDistance.in(Millimeters), 
-            highDistance.in(Millimeters), 
+    private Distance getInterpolatedHeight(Distance closeHeight, Distance farHeight) {
+        Distance interpolatedHeight = Millimeters.of(MathUtil.interpolate(
+            closeHeight.in(Millimeters), 
+            farHeight.in(Millimeters), 
             (timeOfFlight.getRange() + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
         ));
-        return interpolatedDistance;
+        return interpolatedHeight;
     }
 
     /**
