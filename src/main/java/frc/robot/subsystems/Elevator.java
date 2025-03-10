@@ -5,7 +5,10 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Rotations;
+
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -14,8 +17,10 @@ import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
+import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -32,6 +37,7 @@ public class Elevator extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
+    private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
     private boolean zeroed = false;
 
     public Elevator() {
@@ -85,12 +91,37 @@ public class Elevator extends SubsystemBase {
             .withName("Set Position " + height); 
     }
 
+    public Command setDynamicPosition(Supplier<Distance> height) {
+        MotionMagicVoltage request = new MotionMagicVoltage(0);
+        return Commands.either(
+            run(() -> talon.setControl(request.withPosition(Encoder.linearToAngular(height.get().div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)))),
+            Commands.print("Elevator not zeroed"),
+            () -> zeroed)
+            .withName("Set Position " + height); 
+    }
+
     /**
-     * Sets the position of the elevator to a distance of height using the enum Positions within this classes constants file.
+     * Sets the position of the elevator to a distance of height using the enum Positions within this class's constants file.
      * @param position position of the elevator to move to
      */
     public Command setPosition(ElevatorK.Positions position) {
-        return setPosition(position.level).withName("Set Position " + position);
+        return switch (position) {
+            case L1, L2, L3, L4, ALGAE_LOW, ALGAE_HIGH, INTAKE -> 
+                setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far))
+                .withName("Set Interpolating Position " + position);
+            case STOW -> setPosition(ElevatorK.Positions.STOW.close)
+                .withName("Set Position " + position);
+            default -> throw new IllegalArgumentException("Invalid Position: " + position);
+        };
+    }
+
+    private Distance getInterpolatedHeight(Distance closeHeight, Distance farHeight) {
+        Distance interpolatedHeight = Millimeters.of(MathUtil.interpolate(
+            closeHeight.in(Millimeters), 
+            farHeight.in(Millimeters), 
+            (timeOfFlight.getRange() + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
+        ));
+        return interpolatedHeight;
     }
 
     /**
@@ -99,6 +130,11 @@ public class Elevator extends SubsystemBase {
      */
     public Distance getPosition() {
         return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
+    }
+
+    @Logged(name = "TOF Reading (in.)")
+    public double getTimeOfFlightDistance() {
+        return timeOfFlight.getRange() / 25.4;
     }
 
     @Logged(name = "Position (in.)")
