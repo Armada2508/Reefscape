@@ -5,11 +5,13 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.filter.Debouncer;
@@ -38,6 +40,7 @@ public class Climb extends SubsystemBase {
     private void configTalons() {
         Util.factoryReset(talon, talonFollow);
         Util.brakeMode(talon, talonFollow);
+        talon.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
         talon.getConfigurator().apply(ClimbK.softLimitConfigs);
         talon.getConfigurator().apply(ClimbK.gearRatioConfig);
         talon.getConfigurator().apply(ClimbK.pidconfig);

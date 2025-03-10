@@ -112,8 +112,9 @@ public class Constants {
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
         public static final RangeTransformer elevatorAccelTransformer = new RangeTransformer(ElevatorK.minHeight.in(Inches), ElevatorK.maxHeight.in(Inches), 1, elevatorAccelScaling, true);
 
-        public static final double driveSpeedModifier = 0.7;
+        public static final double driveSpeedModifier = 1;
         public static final double rotationSpeedModifier = 1;
+        public static final double exponentialControl = 1.5;
     }
 
     public static class ElevatorK {
@@ -123,8 +124,7 @@ public class Constants {
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final Current currentSpike = Amps.of(20); // TODO: Find current spike threshold and spike time
-        public static final double spikeTime = 0.25;
+        public static final Current currentSpike = Amps.of(30);
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
@@ -220,10 +220,11 @@ public class Constants {
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(45);
     }
 
-    public static class VisionK { // TODO: Find transform and standard deviations
+    public static class VisionK {
+        // Back Camera not used rn
         public static final String frontCameraName = "ArducamFront";
         public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(4.087), Inches.of(-9.5), Inches.of(26.09), new Rotation3d(Degrees.zero(), Degrees.of(15), Degrees.zero()));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(0.502), Inches.of(-1.242), Inches.of(29.224), new Rotation3d(Degrees.of(7.5), Degrees.of(35), Degrees.zero()));
         public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(0.927), Inches.of(-9.5), Inches.of(24.027), new Rotation3d(Degrees.zero(), Degrees.of(-15), Degrees.of(180)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);

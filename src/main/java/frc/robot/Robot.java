@@ -48,6 +48,7 @@ import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
 import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -69,7 +70,8 @@ public class Robot extends TimedRobot {
     private final Intake intake = new Intake(() -> swerve.getRobotVelocity().omegaRadiansPerSecond);
     @Logged(name = "Algae")
     private final Algae algae = new Algae();
-    // private final Climb climb = new Climb();
+    @Logged(name = "Climb")
+    private final Climb climb = new Climb();
     private final SendableChooser<Command> autoChooser;
     private final Timer swerveCoastTimer = new Timer();
     
@@ -96,21 +98,21 @@ public class Robot extends TimedRobot {
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband);
                 val = translationXLimiter.calculate(val);
-                val = DriveUtil.squareKeepSign(val);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
                 val *= DriveK.driveSpeedModifier;
                 return val;
             }, 
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband);
                 val = translationYLimiter.calculate(val);
-                val = DriveUtil.squareKeepSign(val);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
                 val *= DriveK.driveSpeedModifier;
                 return val; 
             },  
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband);
                 val = rotationLimiter.calculate(val);
-                val = DriveUtil.squareKeepSign(val);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
                 val *= DriveK.rotationSpeedModifier;
                 return val; 
             },
