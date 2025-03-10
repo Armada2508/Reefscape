@@ -16,25 +16,38 @@
     },
     {
       "anchor": {
-        "x": 5.27475,
-        "y": 5.077999999999999
+        "x": 4.962909836065574,
+        "y": 5.25373975409836
       },
       "prevControl": {
-        "x": 3.3150000000000004,
-        "y": 6.413749999999999
+        "x": 3.0031598360655742,
+        "y": 6.58948975409836
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef-I"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "stow elevator",
+      "waypointRelativePos": 0.14789081885855998,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "raise elevator to L4",
+      "waypointRelativePos": 0.7136476426798976,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.75,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

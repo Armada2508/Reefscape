@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.0438289473684215,
-        "y": 5.982440789473684
+        "x": 4.740812591508052,
+        "y": 5.733748169838946
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 7.171299342105263
       },
       "prevControl": {
-        "x": 1.2643275064538033,
-        "y": 7.214260327819982
+        "x": 1.2730786186931533,
+        "y": 7.249270686092699
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,15 +33,21 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
-      "waypointRelativePos": 1.0,
+      "name": "stow elevator",
+      "waypointRelativePos": 0.17369727047146793,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "raise elevator to intake",
+      "waypointRelativePos": 0.5766749379652611,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.75,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

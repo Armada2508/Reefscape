@@ -31,10 +31,23 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "stow elevator",
+      "waypointRelativePos": 0.17369727047145372,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "raise elevator to L4",
+      "waypointRelativePos": 0.6084367245657528,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.75,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
