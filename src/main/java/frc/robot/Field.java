@@ -89,7 +89,7 @@ public class Field {
     public static final List<Pose2d> redCoralStationList = List.of(redStationLow, redStationTop);
 
     // Offsets
-    public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(6));
+    public static final Distance reefOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(2));
     public static final Distance stationOffsetDistance = SwerveK.driveBaseLength.div(2).plus(Inches.of(2));
 
     // Processor
@@ -108,11 +108,21 @@ public class Field {
             if (field.getType().equals(Pose2d.class)) {
                 try {
                     table.getStructTopic(field.getName(), Pose2d.struct).publish().accept((Pose2d) field.get(null));
+                    if (field.getName().contains("blueReef")) {
+                        table.getStructTopic(field.getName() + " Offset", Pose2d.struct)
+                            .publish()
+                            .accept(getPoseWithNormalOffset((Pose2d) field.get(null), reefOffsetDistance));
+                    }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     e.printStackTrace();
                 };
             }
         }
+    }
+
+    public static Pose2d getPoseWithNormalOffset(Pose2d pose, Distance offset) {
+        Translation2d normalOffset = new Translation2d(offset, Inches.zero()).rotateBy(pose.getRotation());
+        return new Pose2d(pose.getTranslation().plus(normalOffset), pose.getRotation());
     }
 
 }
