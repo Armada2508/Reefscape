@@ -41,6 +41,8 @@ import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
+import frc.robot.Field.Cage;
+import frc.robot.Field.ReefSide;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
@@ -61,9 +63,9 @@ public class Robot extends TimedRobot {
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     @Logged(name = "Swerve")
     private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
-        xboxController.getLeftX() > ControllerK.overrideThreshold
-        || xboxController.getLeftY() > ControllerK.overrideThreshold
-        || xboxController.getRightX() > ControllerK.overrideThreshold);
+        Math.abs(xboxController.getLeftX()) > ControllerK.overrideThreshold
+        || Math.abs(xboxController.getLeftY()) > ControllerK.overrideThreshold
+        || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
     @Logged(name = "Elevator")
     private final Elevator elevator = new Elevator();
     @Logged(name = "Intake")
@@ -176,9 +178,9 @@ public class Robot extends TimedRobot {
         xboxController.a().onTrue(Routines.stow(elevator, intake, algae));
 
         // Alignment
-        // xboxController.x().onTrue(Routines.alignToLeftReef(swerve));
-        // xboxController.b().onTrue(Routines.alignToRightReef(swerve));
-        // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
+        xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
+        xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
+        xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
 
         // Intake
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
@@ -196,7 +198,7 @@ public class Robot extends TimedRobot {
 
         // Climb
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
-        // xboxController.povDown().onTrue(Routines.alignToMidCage(swerve).andThen(climb.deepclimb())); // Still needs to work for any cage
+        xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
         // xboxController.povRight().onTrue(climb.deepclimb()); // Incase auto-alignment fails
 
         // xboxController.leftTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationTop.getRotation().getDegrees() + 180))));
