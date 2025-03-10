@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
         logGitConstants();
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
-        autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
+        autoChooser = Autos.initPathPlanner(swerve, elevator, intake, algae);
     }
 
     public Command teleopDriveCommand() {

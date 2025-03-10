@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7770834118384444,
-        "y": 6.451604267006183
+        "x": 2.092528639983814,
+        "y": 6.117120123793929
       },
       "isLocked": false,
       "linkedName": "Top Coral Station Blue"
@@ -20,8 +20,8 @@
         "y": 5.257
       },
       "prevControl": {
-        "x": 3.186213419846617,
-        "y": 5.797923117231441
+        "x": 2.7228872408314952,
+        "y": 5.523711944584061
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,15 +33,21 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
-      "waypointRelativePos": 1.0,
+      "name": "stow elevator",
+      "waypointRelativePos": 0.12208436724565536,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "raise elevator to L4",
+      "waypointRelativePos": 0.7295285359801452,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.75,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

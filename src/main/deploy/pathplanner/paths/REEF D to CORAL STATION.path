@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.932,
-        "y": 2.736
+        "x": 3.9877499999999997,
+        "y": 2.7965
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.6787500000000004,
-        "y": 2.3967499999999995
+        "x": 3.7345,
+        "y": 2.4572499999999993
       },
       "isLocked": false,
       "linkedName": "Reef-D"
@@ -31,10 +31,23 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "stow elevator",
+      "waypointRelativePos": 0.22729528535979804,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "raise elevator to intake",
+      "waypointRelativePos": 0.5786600496277884,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.75,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

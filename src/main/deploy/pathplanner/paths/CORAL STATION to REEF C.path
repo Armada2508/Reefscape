@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2520019831207447,
-        "y": 2.612034314959086
+        "x": 2.303467730663591,
+        "y": 2.827051638243865
       },
       "isLocked": false,
       "linkedName": "Low Coral Station Blue"
     },
     {
       "anchor": {
-        "x": 3.9877499999999997,
-        "y": 2.7965
+        "x": 3.668237704918033,
+        "y": 3.0120389344262293
       },
       "prevControl": {
-        "x": 2.7272094197292613,
-        "y": 2.4159351823478294
+        "x": 2.3792087512835898,
+        "y": 2.2221599933270686
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef-D"
+      "linkedName": "Reef-C"
     }
   ],
   "rotationTargets": [],
@@ -34,13 +34,13 @@
   "eventMarkers": [
     {
       "name": "stow elevator",
-      "waypointRelativePos": 0.1121588089329986,
+      "waypointRelativePos": 0.13995037220843753,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "raise elevator to L4",
-      "waypointRelativePos": 0.634243176178657,
+      "waypointRelativePos": 0.596526054590572,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -55,7 +55,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 60.53133588589834
+    "rotation": 59.65675111576046
   },
   "reversed": false,
   "folder": null,

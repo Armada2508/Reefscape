@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MID STARTING LINE to REEF F"
+            "pathName": "STARTING LINE to REEF I"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "score coral"
+            "name": "score L4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "REEF F TO CORAL STATION"
+            "pathName": "REEF I to CORAL STATION"
           }
         },
         {
@@ -31,19 +31,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CORAL STATION TO REEF D"
+            "pathName": "CORAL STATION to REEF K"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "score coral"
+            "name": "score L4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "REEF D to CORAL STATION"
+            "pathName": "REEF K TO CORAL STATION"
           }
         },
         {
@@ -55,19 +55,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CORAL STATION TO REEF B"
+            "pathName": "CORAL STATION to REEF L"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "score coral"
+            "name": "score L4"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
