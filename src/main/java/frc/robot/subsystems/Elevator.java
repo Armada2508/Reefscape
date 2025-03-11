@@ -40,7 +40,7 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
-    private final LinearFilter filter = LinearFilter.movingAverage(12);
+    private final LinearFilter filter = LinearFilter.movingAverage(ElevatorK.averageSamples);
     private boolean zeroed = false;
 
     public Elevator() {

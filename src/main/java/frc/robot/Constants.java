@@ -188,6 +188,7 @@ public class Constants {
         // TODO: Find these values
         public static final Distance timeOfFlightOffset = Inches.of(-13.8);
         public static final Distance maxLinearDistance = Inches.of(5.5);
+        public static final int averageSamples = 12;
     }  
 
     public static class IntakeK {
