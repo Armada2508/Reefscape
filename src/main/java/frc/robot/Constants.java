@@ -124,6 +124,7 @@ public class Constants {
     public static class ElevatorK {
         public static final int talonID = 8;
         public static final int talonFollowID = 9;
+        public static final int tofID = 1;
         public static final double gearRatio = 12.75;
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
@@ -166,21 +167,28 @@ public class Constants {
             .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
         public enum Positions {
-            L1(Inches.of(22)),
-            L2(Inches.of(30.875)),
-            L3(Inches.of(46.6875)),
-            L4(Inches.of(71.5)),
-            ALGAE_LOW(Inches.of(29)), // Not Found
-            ALGAE_HIGH(Inches.of(29)), // Not Found
-            INTAKE(Inches.of(31.5)),
-            STOW(ElevatorK.minHeight);
+            L1(Inches.of(22), Inches.of(26)),
+            L2(Inches.of(30.875), Inches.of(35)),
+            L3(Inches.of(46.6875), Inches.of(50)),
+            L4(Inches.of(71.5), Inches.of(74)),
+            ALGAE_LOW(Inches.of(29), Inches.of(29)), // Not Found
+            ALGAE_HIGH(Inches.of(29), Inches.of(29)), // Not Found
+            INTAKE(Inches.of(31.5), Inches.of(27)),
+            STOW(ElevatorK.minHeight, ElevatorK.minHeight);
     
-            public final Distance level;
+            public final Distance close, far;
     
-            private Positions(Distance position) {
-                this.level = position;
+            private Positions(Distance close, Distance far) {
+                this.close = close;
+                this.far = far;
             }
         }
+
+        // Linear Interpolation
+        // TODO: Find these values
+        public static final Distance timeOfFlightOffset = Inches.of(-13.8);
+        public static final Distance maxLinearDistance = Inches.of(5.5);
+        public static final int averageSamples = 12;
     }  
 
     public static class IntakeK {

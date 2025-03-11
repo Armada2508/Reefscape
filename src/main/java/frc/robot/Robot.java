@@ -39,6 +39,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.Constants.ElevatorK;
+import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Field.Cage;
@@ -76,7 +78,9 @@ public class Robot extends TimedRobot {
     private final Climb climb = new Climb();
     private final SendableChooser<Command> autoChooser;
     private final Timer swerveCoastTimer = new Timer();
-    
+    @Logged(name = "State")
+    private ElevatorK.Positions state = Positions.STOW;
+
     public Robot() {
         DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -143,7 +147,25 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
 
-        // paddle2.onTrue(elevator.setPosition(Positions.L1));
+        paddle2.onTrue(switchStateOrAction(
+            Positions.L1,
+            Routines.scoreCoralLevelOne(elevator, intake)
+        ));
+
+        paddle1.onTrue(switchStateOrAction(
+            Positions.L2,
+            Routines.scoreCoralLevelTwo(elevator, intake)
+        ));
+
+        xboxController.rightTrigger().onTrue(switchStateOrAction(
+            Positions.L3,
+            Routines.scoreCoralLevelThree(elevator, intake)
+        ));
+
+        xboxController.rightBumper().onTrue(switchStateOrAction(
+            Positions.L4,
+            Routines.scoreCoralLevelFour(elevator, intake)
+        ));
         // paddle1.onTrue(elevator.setPosition(Positions.L2));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
@@ -151,7 +173,6 @@ public class Robot extends TimedRobot {
         // xboxController.povUp().onTrue(intake.scoreLevelOne());
         // xboxController.povRight().onTrue(intake.scoreLevelTwoThree());
         // xboxController.povDown().onTrue(intake.scoreLevelFour());
-        // xboxController.povLeft().onTrue(elevator.setPosition(Positions.ALGAE_HIGH));
         // xboxController.leftTrigger().onTrue(intake.coralIntake());
 
         // paddle4.onTrue(algae.loweredPosition());
@@ -175,21 +196,21 @@ public class Robot extends TimedRobot {
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
-        xboxController.a().onTrue(Routines.stow(elevator, intake, algae));
+        xboxController.a().onTrue(Routines.stow(elevator, intake, algae).alongWith(Commands.runOnce(() -> state = Positions.STOW)));
 
         // Alignment
         xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
         xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
-        xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
+        // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
 
         // Intake
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
         // Reef Levels
-        paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
-        paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
-        xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
-        xboxController.rightBumper().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
+        // paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
+        // paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
+        // xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
+        // xboxController.rightBumper().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
 
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
@@ -222,7 +243,25 @@ public class Robot extends TimedRobot {
 
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
-    
+
+    /**
+     * Puts the robot into newState and performs action if the robot is already in the specified state
+     * @param newState new state to put the robot in
+     * @param action to perform when robot is in specified state
+     */
+    private Command switchStateOrAction(ElevatorK.Positions newState, Command action) {
+        return Commands.runOnce(() -> {
+            if (state == newState) {
+                action.schedule();
+                state = Positions.STOW; // Ready to take a new position
+            }
+            else {
+                elevator.setPosition(newState).schedule();
+                state = newState;
+            }
+        }).withName("Switch State");
+    }
+
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
@@ -312,7 +351,5 @@ public class Robot extends TimedRobot {
     @Logged(name = "RobotController/RIO Current (A)")
     public double getRIOCurrent() {
         return RobotController.getInputCurrent();
-    }
-    
-    
+    }   
 }
