@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -18,6 +19,8 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,6 +33,7 @@ public class Climb extends SubsystemBase {
     private final TalonFX talon = new TalonFX(ClimbK.talonID);
     private final TalonFX talonFollow = new TalonFX(ClimbK.talonFollowID);
     private final Debouncer homingDebouncer = new Debouncer(ClimbK.homingTime.in(Seconds));
+    private final Servo servo = new Servo(ClimbK.servoID);
     private boolean isZeroed = false;
 
     public Climb() {
@@ -67,6 +71,9 @@ public class Climb extends SubsystemBase {
      * Climbs the deep cage using voltage
      */
      public Command deepclimb() {
+        servo.set(1);
+        servo.setAngle(ClimbK.servoActiveAngle.in(Degree));
+        SmartDashboard.putNumber("Servo Angle", servo.get());
         return Commands.either(
             setVoltage(ClimbK.climbVoltage)
             .andThen(Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError))),
@@ -79,6 +86,8 @@ public class Climb extends SubsystemBase {
      * Climbs the deep cage using motion magic
      */
     public Command deepClimbMotionMagic() {
+        servo.set(1);
+        servo.setAngle(ClimbK.servoActiveAngle.in(Degree));
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.maxAngle);
         return Commands.either(
             Commands.runOnce(() -> talon.setControl(request))
@@ -118,6 +127,8 @@ public class Climb extends SubsystemBase {
      */
     public void stop() {
         talon.setControl(new NeutralOut());
+        servo.set(0.5);
+        servo.setAngle(ClimbK.servoInactiveAngle.in(Degree));
     }
 
     @Logged(name = "Current Command")

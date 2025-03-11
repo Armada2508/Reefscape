@@ -254,6 +254,8 @@ public class Constants {
         public static final int talonID = 10;
         public static final int talonFollowID = 11;
 
+        public static final int servoID = 1;
+
         // Positions/Angles/Voltage
         public static final Voltage climbVoltage = Volts.of(2);
         public static final Voltage zeroingVoltage = Volts.of(-1);
@@ -265,6 +267,8 @@ public class Constants {
         public static final Current homingSpike = Amps.of(2);
         public static final Time homingTime = Seconds.of(0.25);
 
+        public static final Angle servoActiveAngle = Degrees.of(90);
+        public static final Angle servoInactiveAngle = Degrees.of(0);
         // Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); 
