@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -21,6 +22,7 @@ import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -38,6 +40,7 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
+    private final LinearFilter filter = LinearFilter.movingAverage(12);
     private boolean zeroed = false;
 
     public Elevator() {
@@ -91,10 +94,14 @@ public class Elevator extends SubsystemBase {
             .withName("Set Position " + height); 
     }
 
-    public Command setDynamicPosition(Supplier<Distance> height) {
+    public Command setDynamicPosition(Supplier<Optional<Distance>> height) {
         MotionMagicVoltage request = new MotionMagicVoltage(0);
         return Commands.either(
-            run(() -> talon.setControl(request.withPosition(Encoder.linearToAngular(height.get().div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)))),
+            run(() -> {
+                height.get().ifPresent((h) -> {
+                    talon.setControl(request.withPosition(Encoder.linearToAngular(h.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter)));
+                });
+            }),
             Commands.print("Elevator not zeroed"),
             () -> zeroed)
             .withName("Set Position " + height); 
@@ -115,13 +122,14 @@ public class Elevator extends SubsystemBase {
         };
     }
 
-    private Distance getInterpolatedHeight(Distance closeHeight, Distance farHeight) {
+    private Optional<Distance> getInterpolatedHeight(Distance closeHeight, Distance farHeight) {
+        if (!timeOfFlight.isRangeValid()) return Optional.empty();
         Distance interpolatedHeight = Millimeters.of(MathUtil.interpolate(
             closeHeight.in(Millimeters), 
             farHeight.in(Millimeters), 
-            (timeOfFlight.getRange() + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
+            (filter.calculate(timeOfFlight.getRange()) + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
         ));
-        return interpolatedHeight;
+        return Optional.of(interpolatedHeight);
     }
 
     /**
@@ -135,6 +143,10 @@ public class Elevator extends SubsystemBase {
     @Logged(name = "TOF Reading (in.)")
     public double getTimeOfFlightDistance() {
         return timeOfFlight.getRange() / 25.4;
+    }
+
+    public boolean isTOFValid() {
+        return timeOfFlight.isRangeValid();
     }
 
     @Logged(name = "Position (in.)")
