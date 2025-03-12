@@ -210,6 +210,17 @@ public class Vision extends SubsystemBase {
         return Units.metersToInches(backLatestResult.getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
     }
 
+    /**
+     * Returns the normal distance to the best tag in inches from the front camera (Camera Frame) or -1 if no tag is seen
+     */
+    @Logged(name = "Robot Normal Distance to Front Best Tag")
+    public double robotToFrontTag() {
+        if (!canSeeTagFront()) return -1;
+        return Units.metersToInches(
+            Pose3d.kZero.transformBy(frontLatestResult.getBestTarget().getBestCameraToTarget().inverse()).transformBy(VisionK.robotToFrontCamera.inverse()).getTranslation().toTranslation2d().getNorm()
+        );
+    }
+
     // This is your poor man's type alias, allows me to shorten the type and reference it by using VisionResults instead of List<Pair<EstimatedRobotPose, Matrix<N3, N1>>>
     public record VisionResults(List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> results){}
 

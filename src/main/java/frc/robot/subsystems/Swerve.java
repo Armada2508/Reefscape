@@ -22,6 +22,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -191,6 +192,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         .withName("Swerve Turn");
     }
 
+    @SuppressWarnings("unused")
+    private Pose2d pathPlannerTarget = Pose2d.kZero;
+
     /**
      * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
      * @param targetPoseSupplier Supplier of the target pose
@@ -199,6 +203,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public Command alignToPosePP(Supplier<Pose2d> targetPoseSupplier) {
         return Commands.defer(() -> {
             Pose2d targetPose = targetPoseSupplier.get();
+            pathPlannerTarget = targetPose;
             PathPlannerPath path = new PathPlannerPath(
                 PathPlannerPath.waypointsFromPoses(getPose(), targetPose), 
                 new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
@@ -220,6 +225,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     // PID Alignment
     private Pose2d targetPose;
     private PathPlannerTrajectoryState targetState;
+    private final PPHolonomicDriveController pidController = new PPHolonomicDriveController(new PIDConstants(1, 0, 0), new PIDConstants(3, 0, 0));
 
     /**
      * Command to drive the robot to another position without creating a path
@@ -228,12 +234,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
         return runOnce(() -> {
-            pathPlannerController.reset(getPose(), getRobotVelocity());
+            pidController.reset(getPose(), getRobotVelocity());
             targetPose = targetPoseSupplier.get();
             targetState = new PathPlannerTrajectoryState();
             targetState.pose = targetPose;
         }).andThen(run(() -> {
-            ChassisSpeeds targetSpeeds = pathPlannerController.calculateRobotRelativeSpeeds(getPose(), targetState);
+            ChassisSpeeds targetSpeeds = pidController.calculateRobotRelativeSpeeds(getPose(), targetState);
             setChassisSpeeds(targetSpeeds);
         })).until(() -> 
             (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)

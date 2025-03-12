@@ -5,11 +5,9 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -43,7 +41,6 @@ import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
-import frc.robot.Field.Cage;
 import frc.robot.Field.ReefSide;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
@@ -138,34 +135,15 @@ public class Robot extends TimedRobot {
         // Testing
         // xboxController.y().whileTrue(elevator.setVoltage(Volts.of(1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop));
         // xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop).withName("Elevator Down"));
-        xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Up"));
-        xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Down"));
+        // xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Up"));
+        // xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Down"));
         // xboxController.a().onTrue(swerve.alignToPosePID(Field.blueReefA));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
         // xboxController.back().onTrue(elevator.zeroManual());
-
-        paddle2.onTrue(switchStateOrAction(
-            Positions.L1,
-            Routines.scoreCoralLevelOne(elevator, intake)
-        ));
-
-        paddle1.onTrue(switchStateOrAction(
-            Positions.L2,
-            Routines.scoreCoralLevelTwo(elevator, intake)
-        ));
-
-        xboxController.rightTrigger().onTrue(switchStateOrAction(
-            Positions.L3,
-            Routines.scoreCoralLevelThree(elevator, intake)
-        ));
-
-        xboxController.rightBumper().onTrue(switchStateOrAction(
-            Positions.L4,
-            Routines.scoreCoralLevelFour(elevator, intake)
-        ));
+        
         // paddle1.onTrue(elevator.setPosition(Positions.L2));
         // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
@@ -207,11 +185,25 @@ public class Robot extends TimedRobot {
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
 
         // Reef Levels
-        // paddle2.onTrue(Routines.scoreCoralLevelOne(elevator, intake));
-        // paddle1.onTrue(Routines.scoreCoralLevelTwo(elevator, intake));
-        // xboxController.rightTrigger().onTrue(Routines.scoreCoralLevelThree(elevator, intake));
-        // xboxController.rightBumper().onTrue(Routines.scoreCoralLevelFour(elevator, intake));
+        paddle2.onTrue(switchStateOrAction(
+            Positions.L1,
+            Routines.scoreCoralLevelOne(elevator, intake)
+        ));
+        paddle1.onTrue(switchStateOrAction(
+            Positions.L2,
+            Routines.scoreCoralLevelTwo(elevator, intake)
+        ));
 
+        xboxController.rightTrigger().onTrue(switchStateOrAction(
+            Positions.L3,
+            Routines.scoreCoralLevelThree(elevator, intake)
+        ));
+
+        xboxController.rightBumper().onTrue(switchStateOrAction(
+            Positions.L4,
+            Routines.scoreCoralLevelFour(elevator, intake)
+        ));
+        
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
         // paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
@@ -219,7 +211,7 @@ public class Robot extends TimedRobot {
 
         // Climb
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
-        xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
+        // xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
         // xboxController.povRight().onTrue(climb.deepclimb()); // Incase auto-alignment fails
 
         // xboxController.leftTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationTop.getRotation().getDegrees() + 180))));
@@ -234,11 +226,11 @@ public class Robot extends TimedRobot {
         // SysID
         // xboxController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
         // xboxController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
-        // xboxController.y().whileTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // paddle2.whileTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         // xboxController.a().whileTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
         // xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
 
         // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());

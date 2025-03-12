@@ -74,9 +74,9 @@ public class Constants {
         public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(270); 
 
         // Drive Feedforward
-        public static final double kS = 0.10431;
-        public static final double kV = 2.0967;
-        public static final double kA = 0.055428;
+        public static final double kS = 0.23118;
+        public static final double kV = 2.1701;
+        public static final double kA = 0.15136;
 
         // PathPlanner
         public static final PIDConstants translationConstants = new PIDConstants(5, 0, 0);
@@ -173,7 +173,7 @@ public class Constants {
             L4(Inches.of(71.5), Inches.of(74)),
             ALGAE_LOW(Inches.of(29), Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29), Inches.of(29)), // Not Found
-            INTAKE(Inches.of(31.5), Inches.of(27)),
+            INTAKE(Inches.of(32.5), Inches.of(30)),
             STOW(ElevatorK.minHeight, ElevatorK.minHeight);
     
             public final Distance close, far;
@@ -185,9 +185,8 @@ public class Constants {
         }
 
         // Linear Interpolation
-        // TODO: Find these values
         public static final Distance timeOfFlightOffset = Inches.of(-13.8);
-        public static final Distance maxLinearDistance = Inches.of(5.5);
+        public static final Distance maxLinearDistance = Inches.of(4.5);
         public static final int averageSamples = 12;
     }  
 
@@ -202,7 +201,7 @@ public class Constants {
 
         public static final double holdVoltageAtMaxSpeed = 1;
 
-        public static final Voltage coralIntakeVolts = Volts.of(12);
+        public static final Voltage coralIntakeVolts = Volts.of(0);
         public static final Time intakeAfterTrip = Seconds.of(0.25);
 
         public static final Voltage levelOneVolts = Volts.of(-7.5);
@@ -235,8 +234,8 @@ public class Constants {
     public static class VisionK {
         // Back Camera not used rn
         public static final String frontCameraName = "ArducamFront";
-        public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(0.502), Inches.of(-1.242), Inches.of(29.224), new Rotation3d(Degrees.of(7.5), Degrees.of(35), Degrees.zero()));
+        public static final String backCameraName = "ArducamBack"; // 7.5, 34.77, 5.22
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-1), Inches.of(29.224), new Rotation3d(Degrees.of(11.5), Degrees.of(30.75), Degrees.of(5)));
         public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(0.927), Inches.of(-9.5), Inches.of(24.027), new Rotation3d(Degrees.zero(), Degrees.of(-15), Degrees.of(180)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
