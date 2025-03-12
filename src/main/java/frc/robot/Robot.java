@@ -276,7 +276,7 @@ public class Robot extends TimedRobot {
                 swerve.resetOdometry(pose);
             }
         }
-        selected.schedule();
+        selected.alongWith(algae.zero()).schedule();
     }
 
     @Override

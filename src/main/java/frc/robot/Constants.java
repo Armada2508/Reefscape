@@ -256,14 +256,16 @@ public class Constants {
         public static final int talonID = 10;
         public static final int talonFollowID = 11;
 
-        public static final int servoID = 1;
+        public static final int servoLID = 0;
+        public static final int servoRID = 1;
 
         // Positions/Angles/Voltage
         public static final Voltage climbVoltage = Volts.of(2);
+        public static final Voltage prepVoltage = Volts.of(-2);
         public static final Voltage zeroingVoltage = Volts.of(-1);
         
-        public static final Angle maxAngle = Degrees.of(90);
-        public static final Angle minAngle = Degrees.zero();
+        public static final Angle maxAngle = Degrees.of(45);
+        public static final Angle minAngle = Degrees.of(-45);
         public static final Angle allowableError = Degrees.one();
 
         public static final Current homingSpike = Amps.of(2);

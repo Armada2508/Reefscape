@@ -14,7 +14,6 @@ import frc.robot.Field.Cage;
 import frc.robot.Field.ReefSide;
 import frc.robot.Robot;
 import frc.robot.subsystems.Algae;
-import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -136,10 +135,9 @@ public class Routines {
      * Zeros all subsystems that need to be zeroed
      * @return
      */
-    public static Command zeroAll(Algae algae, Climb climb) {
+    public static Command zeroAll(Algae algae) {
         return Commands.parallel(
-            algae.zero(),
-            climb.zero()
+            algae.zero()
         ).withName("Zero Everything");
     }
 
