@@ -173,7 +173,7 @@ public class Constants {
             L4(Inches.of(71.5), Inches.of(74)),
             ALGAE_LOW(Inches.of(29), Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29), Inches.of(29)), // Not Found
-            INTAKE(Inches.of(32.5), Inches.of(30)),
+            INTAKE(Inches.of(32.5), Inches.of(27)),
             STOW(ElevatorK.minHeight, ElevatorK.minHeight);
     
             public final Distance close, far;
@@ -201,12 +201,13 @@ public class Constants {
 
         public static final double holdVoltageAtMaxSpeed = 1;
 
-        public static final Voltage coralIntakeVolts = Volts.of(0);
+        public static final Voltage coralIntakeVolts = Volts.of(12);
         public static final Time intakeAfterTrip = Seconds.of(0.25);
 
         public static final Voltage levelOneVolts = Volts.of(-7.5);
         public static final Time levelOneWait = Seconds.of(0.04);
         public static final Voltage levelOneReverseVolts = Volts.of(5.5);
+        public static final Time levelOneSecondWait = Seconds.of(0.5);
 
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
         public static final Voltage levelFourVolts = Volts.of(-5);

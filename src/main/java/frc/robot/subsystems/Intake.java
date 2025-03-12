@@ -134,7 +134,8 @@ public class Intake extends SubsystemBase {
         })
         .andThen(
             Commands.waitTime(IntakeK.levelOneWait),
-            runOnce(() -> sparkMaxRight.setVoltage(IntakeK.levelOneReverseVolts))
+            runOnce(() -> sparkMaxRight.setVoltage(IntakeK.levelOneReverseVolts)),
+            Commands.waitTime(IntakeK.levelOneSecondWait)
         )
         .finallyDo(this::stop)
         .withName("Score Level One");
