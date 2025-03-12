@@ -22,7 +22,6 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -67,7 +66,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX backRight;
     private final SysIdRoutine sysIdRoutine; 
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
-    private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
+    private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
     private boolean initializedOdometryFromVision = false;
     private final BooleanSupplier overridePathFollowing;
@@ -225,7 +224,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     // PID Alignment
     private Pose2d targetPose;
     private PathPlannerTrajectoryState targetState;
-    private final PPHolonomicDriveController pidController = new PPHolonomicDriveController(new PIDConstants(1, 0, 0), new PIDConstants(3, 0, 0));
+    private final PPHolonomicDriveController pidController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
 
     /**
      * Command to drive the robot to another position without creating a path

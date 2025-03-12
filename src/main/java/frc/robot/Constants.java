@@ -79,8 +79,8 @@ public class Constants {
         public static final double kA = 0.15136;
 
         // PathPlanner
-        public static final PIDConstants translationConstants = new PIDConstants(5, 0, 0);
-        public static final PIDConstants rotationConstants = new PIDConstants(5, 0, 0);
+        public static final PIDConstants ppTranslationConstants = new PIDConstants(5, 0, 0);
+        public static final PIDConstants ppRotationConstants = new PIDConstants(5, 0, 0);
         public static RobotConfig robotConfig; static {
             try {
                 robotConfig = RobotConfig.fromGUISettings();
@@ -94,7 +94,9 @@ public class Constants {
         public static final Angle angularDeadband = Degrees.of(2);
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
 
-        // PID Alignment End Conditions
+        // PID Alignment
+        public static final PIDConstants translationConstants = new PIDConstants(1, 0, 0);
+        public static final PIDConstants rotationConstants = new PIDConstants(3, 0, 0);
         public static final Distance maximumTranslationError = Inches.of(0.5);
         public static final Angle maximumRotationError = Degrees.of(2);
 
