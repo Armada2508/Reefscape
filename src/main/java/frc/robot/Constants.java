@@ -256,16 +256,16 @@ public class Constants {
         public static final int talonID = 10;
         public static final int talonFollowID = 11;
 
-        public static final int servoLID = 0;
-        public static final int servoRID = 1;
+        public static final int servoRID = 0;
+        public static final int servoLID = 1;
 
         // Positions/Angles/Voltage
-        public static final Voltage climbVoltage = Volts.of(2);
-        public static final Voltage prepVoltage = Volts.of(-2);
+        public static final Voltage climbVoltage = Volts.of(-3.5);
+        public static final Voltage prepVoltage = Volts.of(1);
         public static final Voltage zeroingVoltage = Volts.of(-1);
         
         public static final Angle maxAngle = Degrees.of(45);
-        public static final Angle minAngle = Degrees.of(-45);
+        public static final Angle minAngle = Degrees.of(-70);
         public static final Angle allowableError = Degrees.one();
 
         public static final Current homingSpike = Amps.of(2);
@@ -281,7 +281,7 @@ public class Constants {
         public static final double kD = 0;
 
         public static final Slot0Configs pidconfig = new Slot0Configs().withKD(kD).withKP(kP);
-        public static final double gearRatio = 100;
+        public static final double gearRatio = 64;
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         
         public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()

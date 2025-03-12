@@ -41,12 +41,12 @@ public class Climb extends SubsystemBase {
 
     private void configTalons() {
         Util.factoryReset(talon, talonFollow);
-        Util.brakeMode(talon, talonFollow);
         talon.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
         talon.getConfigurator().apply(ClimbK.softLimitConfigs);
         talon.getConfigurator().apply(ClimbK.gearRatioConfig);
         talon.getConfigurator().apply(ClimbK.pidconfig);
         talonFollow.setControl(new StrictFollower(ClimbK.talonID));
+        Util.brakeMode(talon, talonFollow);
     }
 
     private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
@@ -56,14 +56,14 @@ public class Climb extends SubsystemBase {
         talon.getConfigurator().apply(motionMagicConfigs);
     }
 
-    private void servoCoast() {
-        servoL.setAngle(180);
-        servoR.setAngle(180);
+    public void servoCoast() {
+        // servoL.set(0);
+        servoR.set(0);
     }
 
-    private void servoRatchet() {
-        servoL.setAngle(0);
-        servoR.setAngle(0);
+    public void servoRatchet() {
+        // servoL.set(1);
+        servoR.set(0.25);
     }
 
     /**
@@ -81,8 +81,8 @@ public class Climb extends SubsystemBase {
      public Command climb() {
         return runOnce(() -> servoRatchet())
             .andThen(
-                Commands.waitUntil(() -> talon.getFault_ForwardSoftLimit().getValue()),
-                setVoltage(ClimbK.climbVoltage)
+                setVoltage(ClimbK.climbVoltage),
+                Commands.waitUntil(() -> talon.getFault_ForwardSoftLimit().getValue())
             )
             .withName("Deep Climb");
     }
