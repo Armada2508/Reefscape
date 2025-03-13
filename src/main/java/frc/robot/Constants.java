@@ -146,7 +146,7 @@ public class Constants {
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(5.925);
         public static final Distance maxHeight = Inches.of(74.25);
-        public static final Distance armThresholdHeight = Inches.of(30); // height that is safe to move algae arm w/o hitting robot
+        public static final Distance armThresholdHeight = Inches.of(25); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.125);
 
         // Configs

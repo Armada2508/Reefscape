@@ -88,7 +88,8 @@ public class Elevator extends SubsystemBase {
         MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(height.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
         return Commands.either(
             runOnce(() -> talon.setControl(request))
-                .andThen(Commands.waitUntil(() -> getPosition().isNear(height, ElevatorK.allowableError))),
+                .andThen(Commands.waitUntil(() -> getPosition().isNear(height, ElevatorK.allowableError)))
+                .withTimeout(2),
             Commands.print("Elevator not zeroed"),
             () -> zeroed)
             .withName("Set Position " + height); 
@@ -113,10 +114,10 @@ public class Elevator extends SubsystemBase {
      */
     public Command setPosition(ElevatorK.Positions position) {
         return switch (position) {
-            case L1, L2, L3, L4, ALGAE_LOW, ALGAE_HIGH, INTAKE -> 
+            case L1, L2, L3, L4, INTAKE -> 
                 setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far))
                 .withName("Set Interpolating Position " + position);
-            case STOW -> setPosition(ElevatorK.Positions.STOW.close)
+            case STOW, ALGAE_LOW, ALGAE_HIGH -> setPosition(ElevatorK.Positions.STOW.close)
                 .withName("Set Position " + position);
             default -> throw new IllegalArgumentException("Invalid Position: " + position);
         };
