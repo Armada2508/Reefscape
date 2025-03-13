@@ -23,7 +23,7 @@ public class Autos {
     public static SendableChooser<Command> initPathPlanner(Swerve swerve, Elevator elevator, Intake intake, Algae algae) {
         FollowPathCommand.warmupCommand().schedule();
 
-        NamedCommands.registerCommand("intake coral", Routines.intakeCoral(elevator, intake));
+        new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake).alongWith(Commands.print("INTAKING CORAL COMD")));
         NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));
         NamedCommands.registerCommand("score L2", Routines.scoreCoralLevelTwo(elevator, intake));
         NamedCommands.registerCommand("score L3", Routines.scoreCoralLevelThree(elevator, intake));

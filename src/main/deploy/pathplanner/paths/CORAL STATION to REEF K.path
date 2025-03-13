@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "raise elevator to L4",
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.25,
       "endWaypointRelativePos": null,
       "command": null
     },

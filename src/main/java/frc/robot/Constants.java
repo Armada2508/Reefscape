@@ -140,8 +140,8 @@ public class Constants {
         public static final double kP = 6; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
 
-        public static final LinearVelocity maxVelocity = InchesPerSecond.of(35);
-        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(46);
+        public static final LinearVelocity maxVelocity = InchesPerSecond.of(60);
+        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(120);
 
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(5.925);

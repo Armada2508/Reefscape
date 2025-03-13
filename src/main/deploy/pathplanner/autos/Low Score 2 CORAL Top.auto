@@ -21,6 +21,18 @@
           "data": {
             "pathName": "REEF I to CORAL STATION"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CORAL STATION to REEF K"
+          }
         }
       ]
     }
