@@ -31,6 +31,7 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -70,6 +71,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
     private boolean initializedOdometryFromVision = false;
     private final BooleanSupplier overridePathFollowing;
+    private final Debouncer debouncer = new Debouncer(0.25);
 
     public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
         this.overridePathFollowing = overridePathFollowing;
@@ -217,7 +219,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
                 SwerveK.robotConfig,
                 () -> false, 
                 this 
-            ).until(overridePathFollowing);
+            ).until(() -> debouncer.calculate(overridePathFollowing.getAsBoolean()))
+            .finallyDo(this::stop);
         }, Set.of(this)).withName("PP Align");
     }
 
@@ -243,7 +246,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         })).until(() -> 
             (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
             && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees))
-            || overridePathFollowing.getAsBoolean()
+            || debouncer.calculate(overridePathFollowing.getAsBoolean())
         ).finallyDo(this::stop).withName("PID Align");
     }
 

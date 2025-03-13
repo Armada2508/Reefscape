@@ -97,7 +97,8 @@ public class Algae extends SubsystemBase {
      * @return A command to put the arm in stow position
      */
     public Command stow() {
-        return setPosition(AlgaeK.stowPosition).withName("Stow");
+        // return setPosition(AlgaeK.stowPosition).withName("Stow");
+        return setVoltage(Volts.of(-0.5));
 
     }
 

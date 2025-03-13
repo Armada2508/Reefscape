@@ -41,7 +41,6 @@ import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
-import frc.robot.Field.ReefSide;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
@@ -142,6 +141,8 @@ public class Robot extends TimedRobot {
         // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
         // xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
         // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
+        // xboxController.povLeft().onTrue(elevator.setPosition(Positions.INTAKE));
+        // xboxController.povRight().onTrue(intake.coralIntake());
         // xboxController.back().onTrue(elevator.zeroManual());
         
         // paddle1.onTrue(elevator.setPosition(Positions.L2));
@@ -174,15 +175,15 @@ public class Robot extends TimedRobot {
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
-        xboxController.a().onTrue(Routines.stow(elevator, intake, algae).alongWith(Commands.runOnce(() -> state = Positions.STOW)));
+        xboxController.a().onTrue(Routines.stow(elevator, intake, algae, climb).alongWith(Commands.runOnce(() -> state = Positions.STOW)));
 
         // Alignment
-        xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
-        xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
+        // xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
+        // xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
         // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
 
         // Intake
-        xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake));
+        xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake).alongWith(Commands.runOnce(() -> state = Positions.STOW)));
 
         // Reef Levels
         paddle2.onTrue(switchStateOrAction(
@@ -212,8 +213,9 @@ public class Robot extends TimedRobot {
         // Climb
         xboxController.povUp().onTrue(climb.prep());
         xboxController.povDown().onTrue(climb.climb());
-        xboxController.povRight().onTrue(climb.runOnce(climb::servoCoast));
-        xboxController.povLeft().onTrue(climb.runOnce(climb::servoRatchet));
+        xboxController.povRight().onTrue(climb.servoCoast());
+        xboxController.povLeft().onTrue(climb.servoRatchet());
+
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
         // xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
         // xboxController.povRight().onTrue(climb.deepclimb()); // Incase auto-alignment fails

@@ -108,7 +108,7 @@ public class Constants {
         public static final double leftJoystickDeadband = 0.07;
         public static final double rightJoystickDeadband = 0.07;
 
-        public static final double overrideThreshold = 0.25;
+        public static final double overrideThreshold = 0.07;
     }
 
     public static class DriveK {
@@ -119,7 +119,7 @@ public class Constants {
         public static final RangeTransformer elevatorAccelTransformer = new RangeTransformer(ElevatorK.minHeight.in(Inches), ElevatorK.maxHeight.in(Inches), 1, elevatorAccelScaling, true);
 
         public static final double driveSpeedModifier = 1;
-        public static final double rotationSpeedModifier = 1;
+        public static final double rotationSpeedModifier = 0.8;
         public static final double exponentialControl = 1.5;
     }
 
@@ -170,12 +170,12 @@ public class Constants {
 
         public enum Positions {
             L1(Inches.of(22), Inches.of(26)),
-            L2(Inches.of(30.875), Inches.of(35)),
-            L3(Inches.of(46.6875), Inches.of(50)),
+            L2(Inches.of(30.375), Inches.of(35)),
+            L3(Inches.of(46.1875), Inches.of(50)),
             L4(Inches.of(71.5), Inches.of(74)),
             ALGAE_LOW(Inches.of(29), Inches.of(29)), // Not Found
             ALGAE_HIGH(Inches.of(29), Inches.of(29)), // Not Found
-            INTAKE(Inches.of(32.5), Inches.of(27)),
+            INTAKE(Inches.of(32), Inches.of(25.75)),
             STOW(ElevatorK.minHeight, ElevatorK.minHeight);
     
             public final Distance close, far;
@@ -189,7 +189,7 @@ public class Constants {
         // Linear Interpolation
         public static final Distance timeOfFlightOffset = Inches.of(-13.8);
         public static final Distance maxLinearDistance = Inches.of(4.5);
-        public static final int averageSamples = 12;
+        public static final int averageSamples = 25;
     }  
 
     public static class IntakeK {
@@ -264,7 +264,7 @@ public class Constants {
         public static final Voltage prepVoltage = Volts.of(1);
         public static final Voltage zeroingVoltage = Volts.of(-1);
         
-        public static final Angle maxAngle = Degrees.of(45);
+        public static final Angle maxAngle = Degrees.of(80);
         public static final Angle minAngle = Degrees.of(-70);
         public static final Angle allowableError = Degrees.one();
 
@@ -273,6 +273,7 @@ public class Constants {
 
         public static final Angle servoActiveAngle = Degrees.of(90);
         public static final Angle servoInactiveAngle = Degrees.of(0);
+
         // Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); 
@@ -289,6 +290,9 @@ public class Constants {
             .withForwardSoftLimitThreshold(maxAngle)
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(minAngle);
+
+        // Bang bang
+        public static final Angle bangBangSetpoint = Degrees.of(0);
     }
-    
+
 }

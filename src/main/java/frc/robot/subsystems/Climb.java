@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -13,6 +16,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -32,11 +36,13 @@ public class Climb extends SubsystemBase {
     private final Debouncer homingDebouncer = new Debouncer(ClimbK.homingTime.in(Seconds));
     private final Servo servoL = new Servo(ClimbK.servoLID);
     private final Servo servoR = new Servo(ClimbK.servoRID);
+    private final BangBangController bangBang = new BangBangController(ClimbK.allowableError.in(Degree));
     private boolean isZeroed = false;
 
     public Climb() {
         configMotionMagic(ClimbK.maxVelocity, ClimbK.maxAcceleration); 
         configTalons();
+        bangBang.setSetpoint(ClimbK.bangBangSetpoint.in(Degrees));
     } 
 
     private void configTalons() {
@@ -56,14 +62,18 @@ public class Climb extends SubsystemBase {
         talon.getConfigurator().apply(motionMagicConfigs);
     }
 
-    public void servoCoast() {
-        // servoL.set(0);
-        servoR.set(0);
+    public Command servoCoast() {
+        return runOnce(() -> {
+            servoL.set(0.25);
+            servoR.set(0);
+        }).andThen(Commands.waitSeconds(0.25)).withName("Servo Coast");
     }
 
-    public void servoRatchet() {
-        // servoL.set(1);
-        servoR.set(0.25);
+    public Command servoRatchet() {
+        return runOnce(() -> {
+            servoL.set(0);
+            servoR.set(0.25);
+        }).andThen(Commands.waitSeconds(0.25)).withName("Servo Ratchet");
     }
 
     /**
@@ -79,10 +89,10 @@ public class Climb extends SubsystemBase {
      * Climbs the deep cage using voltage
      */
      public Command climb() {
-        return runOnce(() -> servoRatchet())
+        return servoRatchet()
             .andThen(
                 setVoltage(ClimbK.climbVoltage),
-                Commands.waitUntil(() -> talon.getFault_ForwardSoftLimit().getValue())
+                Commands.waitUntil(() -> talon.getFault_ReverseSoftLimit().getValue())
             )
             .withName("Deep Climb");
     }
@@ -91,13 +101,26 @@ public class Climb extends SubsystemBase {
      * Preps the arm for climbing
      */
     public Command prep() {
-        return runOnce(() -> servoCoast())
+        return servoCoast()
             .andThen(
                 setVoltage(ClimbK.prepVoltage),
-                Commands.waitUntil(() -> talon.getFault_ReverseSoftLimit().getValue())
+                Commands.waitUntil(() -> talon.getFault_ForwardSoftLimit().getValue())
             )
             .finallyDo(this::stop)
             .withName("Prep Climb");
+    }
+
+    public double getPositionDegrees() {
+        return talon.getPosition().getValue().in(Degrees);
+    }
+
+    public Command stow() {
+        VoltageOut request = new VoltageOut(Volts.of(1));
+        return servoCoast().andThen(run(() -> {
+            double v = bangBang.calculate(getPositionDegrees()) == 1 ? 1 : -1;
+            talon.setControl(request.withOutput(v));
+        })).until(() -> bangBang.atSetpoint())
+        .finallyDo(this::stop).withName("Stow");
     }
     
     /**

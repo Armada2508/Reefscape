@@ -14,6 +14,7 @@ import frc.robot.Field.Cage;
 import frc.robot.Field.ReefSide;
 import frc.robot.Robot;
 import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -23,11 +24,12 @@ public class Routines {
     // Prevent this class from being instantiated
     private Routines() {}
 
-    public static Command stow(Elevator elevator, Intake intake, Algae algae) {
+    public static Command stow(Elevator elevator, Intake intake, Algae algae, Climb climb) {
         return elevator.setPosition(Positions.STOW)
         .alongWith(
             intake.runOnce(intake::stop),
-            algae.stow()
+            algae.stow(),
+            climb.stow()
         )
         .withName("Stow Routine");
     }
