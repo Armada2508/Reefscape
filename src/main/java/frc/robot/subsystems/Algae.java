@@ -16,12 +16,15 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeK;
+import frc.robot.Robot;
 
 public class Algae extends SubsystemBase {
 
@@ -48,6 +51,7 @@ public class Algae extends SubsystemBase {
             .forwardSoftLimitEnabled(true);
         config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .outputRange(-0.2, 0.2)
             .pid(AlgaeK.kP, 0, AlgaeK.kD)
             .maxMotion
             .maxVelocity(AlgaeK.maxVelocity.in(RotationsPerSecond))
@@ -57,9 +61,27 @@ public class Algae extends SubsystemBase {
         setDefaultCommand(setVoltage(Volts.of(-0.25)).repeatedly());
     }
 
+    private TrapezoidProfile.State targetState;
+    private final TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
+        AlgaeK.maxVelocity.in(RotationsPerSecond), AlgaeK.maxAcceleration.in(RotationsPerSecondPerSecond)
+    ));
+
+    @Override
+    public void periodic() {
+        if (!zeroed || targetState == null) return;
+        State currentState = new State(sparkMax.getEncoder().getPosition(), sparkMax.getEncoder().getVelocity());
+        State state = profile.calculate(Robot.kDefaultPeriod, currentState, targetState);
+        if (getAngle().isNear(Rotations.of(targetState.position), AlgaeK.allowableError)) {
+            sparkMax.stopMotor();
+        }
+        else {
+            sparkMax.getClosedLoopController().setReference(state.position, ControlType.kPosition);
+        }
+    }
+
     private Command setPosition(Angle position) {
         return Commands.either(
-            runOnce(() -> sparkMax.getClosedLoopController().setReference(position.in(Rotations), ControlType.kPosition))
+            runOnce(() -> targetState = new State(position.in(Rotations), 0))
             .andThen(Commands.waitUntil(() -> getAngle().isNear(position, AlgaeK.allowableError))), 
             Commands.print("Algae not zeroed!"), 
             () -> zeroed
@@ -122,6 +144,7 @@ public class Algae extends SubsystemBase {
      */
     public void stop() {
         sparkMax.stopMotor();
+        targetState = null;
     }
 
     /**
