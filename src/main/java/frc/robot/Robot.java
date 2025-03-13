@@ -207,8 +207,8 @@ public class Robot extends TimedRobot {
         ));
         
         // Algae
-        // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
-        // paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
+        paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
+        paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
         // xboxController.leftTrigger().onTrue(algae.loweredPosition());
 
         // Climb
@@ -283,6 +283,7 @@ public class Robot extends TimedRobot {
                 swerve.resetOdometry(pose);
             }
         }
+        CommandScheduler.getInstance().removeComposedCommand(selected);
         selected.alongWith(algae.zero()).withName(selected.getName()).schedule();
     }
 
