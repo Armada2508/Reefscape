@@ -66,14 +66,14 @@ public class Climb extends SubsystemBase {
         return runOnce(() -> {
             servoL.set(0.25);
             servoR.set(0);
-        }).andThen(Commands.waitSeconds(0.25)).withName("Servo Coast");
+        }).andThen(Commands.waitSeconds(0.5)).withName("Servo Coast");
     }
 
     public Command servoRatchet() {
         return runOnce(() -> {
             servoL.set(0);
             servoR.set(0.25);
-        }).andThen(Commands.waitSeconds(0.25)).withName("Servo Ratchet");
+        }).andThen(Commands.waitSeconds(0.5)).withName("Servo Ratchet");
     }
 
     /**
@@ -93,7 +93,7 @@ public class Climb extends SubsystemBase {
             .andThen(
                 setVoltage(ClimbK.climbVoltage),
                 Commands.waitUntil(() -> talon.getFault_ReverseSoftLimit().getValue())
-            )
+            ).finallyDo(this::stop)
             .withName("Deep Climb");
     }
 

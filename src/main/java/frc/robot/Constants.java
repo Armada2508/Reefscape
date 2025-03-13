@@ -131,7 +131,7 @@ public class Constants {
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final Current currentSpike = Amps.of(30);
+        public static final Current currentSpike = Amps.of(1000);
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
@@ -260,12 +260,12 @@ public class Constants {
         public static final int servoLID = 1;
 
         // Positions/Angles/Voltage
-        public static final Voltage climbVoltage = Volts.of(-3.5);
-        public static final Voltage prepVoltage = Volts.of(1);
+        public static final Voltage climbVoltage = Volts.of(-4.5);
+        public static final Voltage prepVoltage = Volts.of(2);
         public static final Voltage zeroingVoltage = Volts.of(-1);
         
         public static final Angle maxAngle = Degrees.of(80);
-        public static final Angle minAngle = Degrees.of(-70);
+        public static final Angle minAngle = Degrees.of(-90);
         public static final Angle allowableError = Degrees.one();
 
         public static final Current homingSpike = Amps.of(2);

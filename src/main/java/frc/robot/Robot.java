@@ -292,6 +292,7 @@ public class Robot extends TimedRobot {
         elevator.stop();
         intake.stop();
         algae.stop();
+        climb.stop();
         swerveCoastTimer.restart();
     }
 
