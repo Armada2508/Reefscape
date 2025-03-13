@@ -51,6 +51,8 @@ public class Climb extends SubsystemBase {
         talon.getConfigurator().apply(ClimbK.softLimitConfigs);
         talon.getConfigurator().apply(ClimbK.gearRatioConfig);
         talon.getConfigurator().apply(ClimbK.pidconfig);
+        talon.getConfigurator().apply(ClimbK.currentConfigs);
+        talonFollow.getConfigurator().apply(ClimbK.currentConfigs);
         talonFollow.setControl(new StrictFollower(ClimbK.talonID));
         Util.brakeMode(talon, talonFollow);
     }
@@ -117,7 +119,9 @@ public class Climb extends SubsystemBase {
     public Command stow() {
         VoltageOut request = new VoltageOut(Volts.of(1));
         return servoCoast().andThen(run(() -> {
+            System.out.println(getPositionDegrees());
             double v = bangBang.calculate(getPositionDegrees()) == 1 ? 1 : -1;
+            System.out.println(v);
             talon.setControl(request.withOutput(v));
         })).until(() -> bangBang.atSetpoint())
         .finallyDo(this::stop).withName("Stow");

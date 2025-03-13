@@ -98,7 +98,7 @@ public class Algae extends SubsystemBase {
      */
     public Command stow() {
         // return setPosition(AlgaeK.stowPosition).withName("Stow");
-        return setVoltage(Volts.of(-0.5));
+        return setVoltage(Volts.of(-0.25));
 
     }
 

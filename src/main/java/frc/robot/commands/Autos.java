@@ -8,7 +8,9 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK.Positions;
+import frc.robot.Constants.IntakeK;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
@@ -25,10 +27,12 @@ public class Autos {
         NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));
         NamedCommands.registerCommand("score L2", Routines.scoreCoralLevelTwo(elevator, intake));
         NamedCommands.registerCommand("score L3", Routines.scoreCoralLevelThree(elevator, intake));
-        NamedCommands.registerCommand("score L4", Routines.scoreCoralLevelFour(elevator, intake));
-        
-        new EventTrigger("raise elevator to intake").onTrue(elevator.setPosition(Positions.INTAKE));
-        new EventTrigger("raise elevator to L4").onTrue(elevator.setPosition(Positions.L4));
+        NamedCommands.registerCommand("wait for score", Commands.waitUntil(() -> !intake.isSensorTripped()).andThen(Commands.waitSeconds(0.25)));
+        NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).andThen(Commands.waitTime(IntakeK.intakeAfterTrip)));
+
+        new EventTrigger("score L4").onTrue(Commands.waitUntil(() -> elevator.nearHeight(Positions.L4.close)).andThen(Routines.scoreCoralLevelFour(elevator, intake)));
+        new EventTrigger("raise elevator to intake").onTrue(elevator.setPosition(Positions.INTAKE.close));
+        new EventTrigger("raise elevator to L4").onTrue(elevator.setPosition(Positions.L4.close));
         new EventTrigger("stow elevator").onTrue(elevator.setPosition(Positions.STOW));
 
         SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Low Score 4 Coral Top");

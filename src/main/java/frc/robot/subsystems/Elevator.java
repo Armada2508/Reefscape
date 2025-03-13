@@ -140,6 +140,10 @@ public class Elevator extends SubsystemBase {
         return Encoder.angularToLinear(talon.getPosition().getValue().times(ElevatorK.stageCount), ElevatorK.sprocketDiameter);
     }
 
+    public boolean nearHeight(Distance height) {
+        return height.isNear(getPosition(), ElevatorK.allowableError);
+    }
+
     @Logged(name = "TOF Reading (in.)")
     public double getTimeOfFlightDistance() {
         return timeOfFlight.getRange() / 25.4;

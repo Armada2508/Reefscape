@@ -260,7 +260,7 @@ public class Constants {
         public static final int servoLID = 1;
 
         // Positions/Angles/Voltage
-        public static final Voltage climbVoltage = Volts.of(-4.5);
+        public static final Voltage climbVoltage = Volts.of(-3.5);
         public static final Voltage prepVoltage = Volts.of(2);
         public static final Voltage zeroingVoltage = Volts.of(-1);
         
@@ -284,6 +284,7 @@ public class Constants {
         public static final Slot0Configs pidconfig = new Slot0Configs().withKD(kD).withKP(kP);
         public static final double gearRatio = 64;
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+        public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs().withStatorCurrentLimit(Amps.of(150)).withStatorCurrentLimitEnable(true);
         
         public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)

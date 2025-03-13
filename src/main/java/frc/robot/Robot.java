@@ -41,6 +41,7 @@ import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
+import frc.robot.Field.ReefSide;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.logging.LogUtil;
@@ -175,11 +176,11 @@ public class Robot extends TimedRobot {
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
-        xboxController.a().onTrue(Routines.stow(elevator, intake, algae, climb).alongWith(Commands.runOnce(() -> state = Positions.STOW)));
+        xboxController.a().onTrue(Routines.stow(elevator, intake, algae, climb).alongWith(Commands.runOnce(() -> state = Positions.STOW)).withName("Stow Everything"));
 
         // Alignment
-        // xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
-        // xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
+        xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
+        xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
         // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
 
         // Intake
@@ -214,7 +215,7 @@ public class Robot extends TimedRobot {
         xboxController.povUp().onTrue(climb.prep());
         xboxController.povDown().onTrue(climb.climb());
         xboxController.povRight().onTrue(climb.servoCoast());
-        xboxController.povLeft().onTrue(climb.servoRatchet());
+        // xboxController.povLeft().onTrue(climb.servoRatchet());
 
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
         // xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
@@ -282,7 +283,7 @@ public class Robot extends TimedRobot {
                 swerve.resetOdometry(pose);
             }
         }
-        selected.alongWith(algae.zero()).schedule();
+        selected.alongWith(algae.zero()).withName(selected.getName()).schedule();
     }
 
     @Override

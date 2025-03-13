@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.6059438280779315,
-        "y": 4.4296544505120785
+        "x": 6.975740131578947,
+        "y": 4.284786184210526
       },
       "isLocked": false,
       "linkedName": "Mid Starting Line"
@@ -20,8 +20,8 @@
         "y": 2.943
       },
       "prevControl": {
-        "x": 5.574001746383717,
-        "y": 3.150107576098777
+        "x": 5.830756578947367,
+        "y": 3.1109375
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,7 +55,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 178.66601684255778
   },
   "useDefaultConstraints": true
 }
