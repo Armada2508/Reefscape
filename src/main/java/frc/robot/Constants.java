@@ -228,10 +228,10 @@ public class Constants {
         public static final Angle stowPosition = Degrees.of(15);
         public static final Angle allowableError = Degrees.of(2);
 
-        public static final double kP = 10;
+        public static final double kP = 230;
         public static final double kD = 0;
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(45);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(45);
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(90);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(90);
     }
 
     public static class VisionK {

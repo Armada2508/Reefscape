@@ -70,11 +70,13 @@ public class Algae extends SubsystemBase {
         if (!zeroed || targetState == null) return;
         State currentState = new State(sparkMax.getEncoder().getPosition(), sparkMax.getEncoder().getVelocity());
         State state = profile.calculate(Robot.kDefaultPeriod, currentState, targetState);
+        SmartDashboard.putNumber("Algae Position", currentState.position * 360);
+        SmartDashboard.putNumber("Algae Target", state.position * 360);
+        SmartDashboard.putNumber("Algae Goal", targetState.position * 360);
         if (getAngle().isNear(Rotations.of(targetState.position), AlgaeK.allowableError)) {
             sparkMax.stopMotor();
         }
         else {
-            SmartDashboard.putNumber("Algae Target", state.position / 360);
             sparkMax.getClosedLoopController().setReference(state.position, ControlType.kPosition);
         }
     }

@@ -169,6 +169,8 @@ public class Robot extends TimedRobot {
         // xboxController.povRight().onTrue(algae.zero());
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
         xboxController.povRight().onTrue(algae.zero());
+        paddle3.onTrue(algae.algaePosition());
+        paddle4.onTrue(algae.loweredPosition());
 
         /// Real Bindings ///
 
@@ -208,8 +210,8 @@ public class Robot extends TimedRobot {
         ));
         
         // Algae
-        paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
-        paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
+        // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
+        // paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
         // xboxController.leftTrigger().onTrue(algae.loweredPosition());
 
         // Climb
