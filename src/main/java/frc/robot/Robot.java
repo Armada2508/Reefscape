@@ -176,6 +176,8 @@ public class Robot extends TimedRobot {
         xboxController.povRight().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
         xboxController.povDown().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1.5, 0, 0, swerve.getPose().getRotation()))));
         xboxController.povLeft().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.leftTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2.5, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.leftTrigger().onTrue(swerve.setP());
 
         /// Real Bindings ///
 

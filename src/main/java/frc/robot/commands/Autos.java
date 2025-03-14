@@ -27,6 +27,7 @@ public class Autos {
         NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));
         NamedCommands.registerCommand("score L2", Routines.scoreCoralLevelTwo(elevator, intake));
         NamedCommands.registerCommand("score L3", Routines.scoreCoralLevelThree(elevator, intake));
+        NamedCommands.registerCommand("raise and score L4", elevator.setPosition(Positions.L4.close).andThen(Routines.scoreCoralLevelFour(elevator, intake)));
         NamedCommands.registerCommand("wait for score", Commands.waitUntil(() -> !intake.isSensorTripped()).andThen(Commands.waitSeconds(0.25)).withName("Wait for score"));
         NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).andThen(Commands.waitTime(IntakeK.intakeAfterTrip)));
 
