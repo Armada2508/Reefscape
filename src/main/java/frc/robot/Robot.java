@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.DataLog;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -168,7 +170,11 @@ public class Robot extends TimedRobot {
         // xboxController.povDown().onTrue(algae.algaePosition());
         // xboxController.povRight().onTrue(algae.zero());
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
-        xboxController.povRight().onTrue(algae.zero());
+        // xboxController.povRight().onTrue(algae.zero());
+        xboxController.povUp().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0.5, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.povRight().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.povDown().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1.5, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.povLeft().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
 
         /// Real Bindings ///
 
@@ -213,8 +219,8 @@ public class Robot extends TimedRobot {
         // xboxController.leftTrigger().onTrue(algae.loweredPosition());
 
         // Climb
-        xboxController.povUp().onTrue(climb.prep());
-        xboxController.povDown().onTrue(climb.climb());
+        // xboxController.povUp().onTrue(climb.prep());
+        // xboxController.povDown().onTrue(climb.climb());
         // xboxController.povRight().onTrue(climb.servoCoast());
         // xboxController.povLeft().onTrue(climb.servoRatchet());
 
@@ -265,12 +271,14 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        SmartDashboard.putString("Running Path", PathPlannerAuto.currentPathName);
         if (isDisabled() && swerveCoastTimer.hasElapsed(SwerveK.coastDisableTime.in(Seconds))) {
             swerveCoastTimer.stop();
             swerveCoastTimer.reset();
             swerve.setCoastMode();
         }
     }
+
 
     @Override
     public void autonomousInit() {
