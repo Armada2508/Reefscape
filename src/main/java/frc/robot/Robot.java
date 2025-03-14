@@ -285,7 +285,7 @@ public class Robot extends TimedRobot {
             }
         }
         CommandScheduler.getInstance().removeComposedCommand(selected);
-        selected.alongWith(algae.zero()).withName(selected.getName()).schedule();
+        selected.alongWith(algae.zero().andThen(algae.stow())).withName(selected.getName()).schedule();
     }
 
     @Override

@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -20,6 +19,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,14 +51,13 @@ public class Algae extends SubsystemBase {
             .forwardSoftLimitEnabled(true);
         config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .outputRange(-0.2, 0.2)
+            .outputRange(-0.5, 0.5)
             .pid(AlgaeK.kP, 0, AlgaeK.kD)
             .maxMotion
             .maxVelocity(AlgaeK.maxVelocity.in(RotationsPerSecond))
             .maxAcceleration(AlgaeK.maxAcceleration.in(RotationsPerSecondPerSecond))
             .allowedClosedLoopError(AlgaeK.allowableError.in(Rotations));
         sparkMax.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        setDefaultCommand(setVoltage(Volts.of(-0.25)).repeatedly());
     }
 
     private TrapezoidProfile.State targetState;
@@ -75,6 +74,7 @@ public class Algae extends SubsystemBase {
             sparkMax.stopMotor();
         }
         else {
+            SmartDashboard.putNumber("Algae Target", state.position / 360);
             sparkMax.getClosedLoopController().setReference(state.position, ControlType.kPosition);
         }
     }
@@ -119,9 +119,7 @@ public class Algae extends SubsystemBase {
      * @return A command to put the arm in stow position
      */
     public Command stow() {
-        // return setPosition(AlgaeK.stowPosition).withName("Stow");
-        return setVoltage(Volts.of(-0.25));
-
+        return setPosition(AlgaeK.stowPosition).withName("Stow");
     }
 
     /**

@@ -117,7 +117,7 @@ public class Elevator extends SubsystemBase {
             case L1, L2, L3, L4, INTAKE -> 
                 setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far))
                 .withName("Set Interpolating Position " + position);
-            case STOW, ALGAE_LOW, ALGAE_HIGH -> setPosition(ElevatorK.Positions.STOW.close)
+            case STOW, ALGAE_LOW, ALGAE_HIGH -> setPosition(position.close)
                 .withName("Set Position " + position);
             default -> throw new IllegalArgumentException("Invalid Position: " + position);
         };
