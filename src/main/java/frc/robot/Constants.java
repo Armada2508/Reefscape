@@ -170,8 +170,8 @@ public class Constants {
 
         public enum Positions {
             L1(Inches.of(22), Inches.of(22)),
-            L2(Inches.of(29.875), Inches.of(29.875)),
-            L3(Inches.of(45.45), Inches.of(45.45)),
+            L2(Inches.of(30.125), Inches.of(30.125)),
+            L3(Inches.of(45.70), Inches.of(45.70)),
             L4(Inches.of(70.625), Inches.of(70.625)),
             ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
             ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
