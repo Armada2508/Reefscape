@@ -24,6 +24,7 @@ public class Autos {
         FollowPathCommand.warmupCommand().schedule();
 
         new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake).alongWith(Commands.print("INTAKING CORAL COMD")));
+        NamedCommands.registerCommand("intake named", Routines.intakeCoral(elevator, intake));
         NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));
         NamedCommands.registerCommand("score L2", Routines.scoreCoralLevelTwo(elevator, intake));
         NamedCommands.registerCommand("score L3", Routines.scoreCoralLevelThree(elevator, intake));
