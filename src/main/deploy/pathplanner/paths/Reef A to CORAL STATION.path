@@ -33,14 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "stow elevator",
-      "waypointRelativePos": 0.17369727047145772,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "raise elevator to intake",
-      "waypointRelativePos": 0.7851116625310169,
+      "name": "intake coral",
+      "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": null
     }

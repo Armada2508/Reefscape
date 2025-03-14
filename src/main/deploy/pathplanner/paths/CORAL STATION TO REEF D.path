@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2520019831207447,
-        "y": 2.612034314959086
+        "x": 2.1117518297634796,
+        "y": 2.76435896157663
       },
       "isLocked": false,
       "linkedName": "Low Coral Station Blue"
@@ -20,8 +20,8 @@
         "y": 2.7965
       },
       "prevControl": {
-        "x": 2.7272094197292613,
-        "y": 2.4159351823478294
+        "x": 2.423653196116299,
+        "y": 2.4746905448573298
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,14 +33,14 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "stow elevator",
-      "waypointRelativePos": 0.1121588089329986,
+      "name": "raise elevator to L4",
+      "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "raise elevator to L4",
-      "waypointRelativePos": 0.634243176178657,
+      "name": "score L4",
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     }

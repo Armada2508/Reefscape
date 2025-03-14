@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.6,
-        "y": 5.08
+        "x": 7.492315573770492,
+        "y": 2.943
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.24,
-        "y": 4.278499999999999
+        "x": 5.765808135014545,
+        "y": 2.633649586848649
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 2.943
       },
       "prevControl": {
-        "x": 6.077245505991676,
-        "y": 3.208941203874875
+        "x": 5.885963114754098,
+        "y": 2.8082479508196716
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,13 @@
   "eventMarkers": [
     {
       "name": "raise elevator to L4",
-      "waypointRelativePos": 0.3364764267990089,
+      "waypointRelativePos": 0.25388251181633936,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "score L4",
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     }
