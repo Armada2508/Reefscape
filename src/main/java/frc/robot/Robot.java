@@ -93,6 +93,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake, algae);
+        // Field.dumpToNT();
     }
 
     public Command teleopDriveCommand() {

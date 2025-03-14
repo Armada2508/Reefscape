@@ -141,6 +141,11 @@ public class Field {
                             .publish()
                             .accept(getPoseWithNormalOffset((Pose2d) field.get(null), reefOffsetDistance));
                     }
+                    if (field.getName().contains("Station")) {
+                        table.getStructTopic(field.getName() + " Offset", Pose2d.struct)
+                            .publish()
+                            .accept(getPoseWithNormalOffset((Pose2d) field.get(null), stationOffsetDistance));
+                    }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     e.printStackTrace();
                 };

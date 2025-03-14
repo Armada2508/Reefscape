@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.304,
-        "y": 2.943
+        "x": 5.26,
+        "y": 3.0
       },
       "prevControl": {
-        "x": 5.885963114754098,
-        "y": 2.8082479508196716
+        "x": 5.841962976765244,
+        "y": 2.8652473548789343
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef-F"
     }
   ],
   "rotationTargets": [],
@@ -55,7 +55,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.48
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": null,
