@@ -95,7 +95,7 @@ public class Constants {
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
 
         // PID Alignment
-        public static final PIDConstants translationConstants = new PIDConstants(1.5, 0, 0);
+        public static final PIDConstants translationConstants = new PIDConstants(2.1, 0, 0);
         public static final PIDConstants rotationConstants = new PIDConstants(3, 0, 0);
         public static final Distance maximumTranslationError = Inches.of(0.25);
         public static final Angle maximumRotationError = Degrees.of(1);
