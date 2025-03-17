@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -49,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
+import frc.robot.lib.logging.LogUtil;
 import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
@@ -373,6 +375,17 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     public Command characterizeDriveWheelDiameter() {
         return new DriveWheelCharacterization(this);
+    }
+
+    private DoubleSupplier p = LogUtil.getTunableDouble("drive p", 3);
+
+    public Command setP() {
+        return runOnce(() -> {
+            for (var module : swerveDrive.getModules()) {
+                var motor = (TalonFXSwerve) module.getDriveMotor();
+                ((TalonFX) motor.getMotor()).getConfigurator().apply(new SlotConfigs().withKP(p.getAsDouble()));
+            }
+        });
     }
 
 }

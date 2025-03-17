@@ -95,10 +95,10 @@ public class Constants {
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
 
         // PID Alignment
-        public static final PIDConstants translationConstants = new PIDConstants(1, 0, 0);
+        public static final PIDConstants translationConstants = new PIDConstants(2.1, 0, 0);
         public static final PIDConstants rotationConstants = new PIDConstants(3, 0, 0);
-        public static final Distance maximumTranslationError = Inches.of(0.5);
-        public static final Angle maximumRotationError = Degrees.of(2);
+        public static final Distance maximumTranslationError = Inches.of(0.25);
+        public static final Angle maximumRotationError = Degrees.of(1);
 
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }
@@ -169,10 +169,10 @@ public class Constants {
             .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
         public enum Positions {
-            L1(Inches.of(22), Inches.of(26)),
-            L2(Inches.of(30.375), Inches.of(35)),
-            L3(Inches.of(46.1875), Inches.of(50)),
-            L4(Inches.of(71.5), Inches.of(74)),
+            L1(Inches.of(22), Inches.of(22)),
+            L2(Inches.of(30.125), Inches.of(30.125)),
+            L3(Inches.of(45.70), Inches.of(45.70)),
+            L4(Inches.of(70.625), Inches.of(70.625)),
             ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
             ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
             INTAKE(Inches.of(32), Inches.of(25.75)),

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.151,
-        "y": 1.058
+        "x": 1.09,
+        "y": 1.01
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.303467730663591,
-        "y": 2.827051638243865
+        "x": 2.2424677306635914,
+        "y": 2.779051638243865
       },
       "isLocked": false,
       "linkedName": "Low Coral Station Blue"
@@ -46,8 +46,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.5,
-    "maxAcceleration": 4.25,
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -61,7 +61,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -125.218
+    "rotation": -125.00000000000001
   },
   "useDefaultConstraints": true
 }

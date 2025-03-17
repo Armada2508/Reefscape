@@ -24,9 +24,11 @@ public class Autos {
         FollowPathCommand.warmupCommand().schedule();
 
         new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake).alongWith(Commands.print("INTAKING CORAL COMD")));
+        NamedCommands.registerCommand("intake named", Routines.intakeCoral(elevator, intake));
         NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));
         NamedCommands.registerCommand("score L2", Routines.scoreCoralLevelTwo(elevator, intake));
         NamedCommands.registerCommand("score L3", Routines.scoreCoralLevelThree(elevator, intake));
+        NamedCommands.registerCommand("raise and score L4", elevator.setPosition(Positions.L4.close).andThen(Routines.scoreCoralLevelFour(elevator, intake)));
         NamedCommands.registerCommand("wait for score", Commands.waitUntil(() -> !intake.isSensorTripped()).andThen(Commands.waitSeconds(0.25)).withName("Wait for score"));
         NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).andThen(Commands.waitTime(IntakeK.intakeAfterTrip)));
 
@@ -35,7 +37,7 @@ public class Autos {
         new EventTrigger("raise elevator to L4").onTrue(elevator.setPosition(Positions.L4.close));
         new EventTrigger("stow elevator").onTrue(elevator.setPosition(Positions.STOW));
 
-        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Low Score 4 Coral Top");
+        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Low Score 2 Coral Top");
         SmartDashboard.putData("Auto Chooser", autoChooser);
         return autoChooser;
     }
