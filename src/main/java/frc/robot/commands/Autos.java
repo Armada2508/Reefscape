@@ -37,7 +37,7 @@ public class Autos {
         new EventTrigger("raise elevator to L4").onTrue(elevator.setPosition(Positions.L4.close));
         new EventTrigger("stow elevator").onTrue(elevator.setPosition(Positions.STOW));
 
-        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Low Score 4 Coral Top");
+        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Low Score 2 Coral Top");
         SmartDashboard.putData("Auto Chooser", autoChooser);
         return autoChooser;
     }
