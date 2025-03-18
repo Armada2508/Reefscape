@@ -119,7 +119,7 @@ public class Constants {
         public static final RangeTransformer elevatorAccelTransformer = new RangeTransformer(ElevatorK.minHeight.in(Inches), ElevatorK.maxHeight.in(Inches), 1, elevatorAccelScaling, true);
 
         public static final double driveSpeedModifier = 1;
-        public static final double rotationSpeedModifier = 0.8;
+        public static final double rotationSpeedModifier = 1;
         public static final double exponentialControl = 1.5;
     }
 
