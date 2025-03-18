@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.05075182976348,
-        "y": 2.7163589615766295
+        "x": 2.3092105263157894,
+        "y": 1.8793585526315792
       },
       "isLocked": false,
       "linkedName": "Low Coral Station Blue"
     },
     {
       "anchor": {
-        "x": 3.98,
-        "y": 2.84
+        "x": 3.982,
+        "y": 2.838
       },
       "prevControl": {
-        "x": 2.4159031961162993,
-        "y": 2.5181905448573296
+        "x": 3.146299342105263,
+        "y": 1.8216282894736844
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,23 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "raise elevator to L4",
+      "waypointRelativePos": 0.33823529411764736,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "score L4",
+      "waypointRelativePos": 0.99,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

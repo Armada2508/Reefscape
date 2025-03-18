@@ -31,8 +31,9 @@ public class Autos {
         NamedCommands.registerCommand("raise and score L4", elevator.setPosition(Positions.L4.close).andThen(Routines.scoreCoralLevelFour(elevator, intake)));
         NamedCommands.registerCommand("wait for score", Commands.waitUntil(() -> !intake.isSensorTripped()).andThen(Commands.waitSeconds(0.25)).withName("Wait for score"));
         NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).andThen(Commands.waitTime(IntakeK.intakeAfterTrip)));
+        NamedCommands.registerCommand("drive to coral", swerve.driveCommand(() -> 0.2, () -> 0, () -> 0, false, true).until(() -> elevator.getTimeOfFlightDistance() < 14.75).withTimeout(2).finallyDo(swerve::stop));
 
-        new EventTrigger("score L4").onTrue(Commands.waitUntil(() -> elevator.nearHeight(Positions.L4.close)).andThen(Routines.scoreCoralLevelFour(elevator, intake)));
+        new EventTrigger("score L4").onTrue(Commands.print("SCORING L4 REAL!!!!!!!!!!!!!!!!!!!!!").andThen(Commands.waitUntil(() -> elevator.nearHeight(Positions.L4.close))).andThen(Routines.scoreCoralLevelFour(elevator, intake)).withName("Auto score L4"));
         new EventTrigger("raise elevator to intake").onTrue(elevator.setPosition(Positions.INTAKE.close));
         new EventTrigger("raise elevator to L4").onTrue(elevator.setPosition(Positions.L4.close));
         new EventTrigger("stow elevator").onTrue(elevator.setPosition(Positions.STOW));

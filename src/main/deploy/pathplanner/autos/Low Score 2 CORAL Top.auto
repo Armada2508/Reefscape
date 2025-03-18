@@ -25,6 +25,12 @@
         {
           "type": "named",
           "data": {
+            "name": "drive to coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "wait for intake"
           }
         },

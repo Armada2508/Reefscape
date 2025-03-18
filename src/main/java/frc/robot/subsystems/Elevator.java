@@ -27,10 +27,12 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorK;
+import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.lib.util.Encoder;
 import frc.robot.lib.util.Util;
 
@@ -56,6 +58,7 @@ public class Elevator extends SubsystemBase {
             stop();
             System.out.println("Stopping ELEVATOR because of CURRENT SPIKE!");
         }
+        SmartDashboard.putBoolean("is near", nearHeight(Positions.L4.close));
     }
 
     private void configTalons() {

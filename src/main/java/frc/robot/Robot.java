@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake, algae);
-        // Field.dumpToNT();
+        Field.dumpToNT();
     }
 
     public Command teleopDriveCommand() {
@@ -249,7 +249,7 @@ public class Robot extends TimedRobot {
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
         // xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
 
-        // xboxController.y().whileTrue(swerve.characterizeDriveWheelDiameter());
+        xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
     }
 
     /**
