@@ -67,7 +67,9 @@ public class Constants {
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
         public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477); //! Find this
-        public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
+        public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
+            .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
 
         // Path Constraints
         public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(6); // Should be just under 3/4 of our max possible speed, arbitrary value
