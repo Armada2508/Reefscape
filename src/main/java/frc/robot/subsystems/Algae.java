@@ -26,10 +26,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeK;
 import frc.robot.Robot;
 
+@Logged
 public class Algae extends SubsystemBase {
 
     private final SparkMax sparkMax = new SparkMax(AlgaeK.sparkMaxID, MotorType.kBrushless);
-    @Logged
+    private final TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
+        AlgaeK.maxVelocity.in(RotationsPerSecond), AlgaeK.maxAcceleration.in(RotationsPerSecondPerSecond)
+    ));
+    private TrapezoidProfile.State targetState;
     private boolean zeroed = false;
 
     public Algae() {
@@ -59,11 +63,6 @@ public class Algae extends SubsystemBase {
             .allowedClosedLoopError(AlgaeK.allowableError.in(Rotations));
         sparkMax.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
-
-    private TrapezoidProfile.State targetState;
-    private final TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
-        AlgaeK.maxVelocity.in(RotationsPerSecond), AlgaeK.maxAcceleration.in(RotationsPerSecondPerSecond)
-    ));
 
     @Override
     public void periodic() {

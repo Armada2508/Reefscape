@@ -17,7 +17,6 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -47,10 +46,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
-import frc.robot.lib.logging.LogUtil;
 import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
@@ -73,7 +72,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
     private boolean initializedOdometryFromVision = false;
     private final BooleanSupplier overridePathFollowing;
-    private final Debouncer debouncer = new Debouncer(0.25);
+    private final Debouncer overrideDebouncer = new Debouncer(ControllerK.overrideTime.in(Seconds));
+    @SuppressWarnings("unused")
+    private Pose2d pathPlannerTarget = Pose2d.kZero; // For logging
+    // PID Alignment
+    private Pose2d targetPose;
+    private PathPlannerTrajectoryState targetState;
+    private final PPHolonomicDriveController pidController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
 
     public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
         this.overridePathFollowing = overridePathFollowing;
@@ -133,14 +138,11 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         }
     }
 
-    /**
-     * Configures PathPlanner
-     */
     private void setupPathPlanner() {
         AutoBuilder.configure(
             this::getPose, 
             this::resetOdometry, 
-            this::getRobotVelocity, 
+            this::getChassisSpeeds, 
             (speeds, feedforward) -> setChassisSpeeds(speeds), 
             pathPlannerController,
             SwerveK.robotConfig,
@@ -195,9 +197,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         .withName("Swerve Turn");
     }
 
-    @SuppressWarnings("unused")
-    private Pose2d pathPlannerTarget = Pose2d.kZero;
-
     /**
      * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
      * @param targetPoseSupplier Supplier of the target pose
@@ -215,21 +214,16 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             return new FollowPathCommand(
                 path, 
                 this::getPose, 
-                this::getRobotVelocity, 
+                this::getChassisSpeeds, 
                 (speeds, feedforward) -> setChassisSpeeds(speeds),
                 pathPlannerController, 
                 SwerveK.robotConfig,
                 () -> false, 
                 this 
-            ).until(() -> debouncer.calculate(overridePathFollowing.getAsBoolean()))
+            ).until(() -> overrideDebouncer.calculate(overridePathFollowing.getAsBoolean()))
             .finallyDo(this::stop);
         }, Set.of(this)).withName("PP Align");
     }
-
-    // PID Alignment
-    private Pose2d targetPose;
-    private PathPlannerTrajectoryState targetState;
-    private final PPHolonomicDriveController pidController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
 
     /**
      * Command to drive the robot to another position without creating a path
@@ -238,7 +232,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
         return runOnce(() -> {
-            pidController.reset(getPose(), getRobotVelocity());
+            pidController.reset(getPose(), getChassisSpeeds());
             targetPose = targetPoseSupplier.get();
             targetState = new PathPlannerTrajectoryState();
             targetState.pose = targetPose;
@@ -248,7 +242,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         })).until(() -> 
             (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
             && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees))
-            || debouncer.calculate(overridePathFollowing.getAsBoolean())
+            || overrideDebouncer.calculate(overridePathFollowing.getAsBoolean())
         ).finallyDo(this::stop).withName("PID Align");
     }
 
@@ -287,7 +281,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * Returns the robot's velocity (x, y, and omega)
      * @return Current velocity of the robot
      */
-    public ChassisSpeeds getRobotVelocity() {
+    public ChassisSpeeds getChassisSpeeds() {
         return swerveDrive.getRobotVelocity();
     }
 
@@ -375,17 +369,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     public Command characterizeDriveWheelDiameter() {
         return new DriveWheelCharacterization(this);
-    }
-
-    private DoubleSupplier p = LogUtil.getTunableDouble("drive p", 3);
-
-    public Command setP() {
-        return runOnce(() -> {
-            for (var module : swerveDrive.getModules()) {
-                var motor = (TalonFXSwerve) module.getDriveMotor();
-                ((TalonFX) motor.getMotor()).getConfigurator().apply(new SlotConfigs().withKP(p.getAsDouble()));
-            }
-        });
     }
 
 }

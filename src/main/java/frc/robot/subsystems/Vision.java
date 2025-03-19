@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
 
+@Logged
 public class Vision extends SubsystemBase {
 
     private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
@@ -217,7 +218,8 @@ public class Vision extends SubsystemBase {
     public double robotToFrontTag() {
         if (!canSeeTagFront()) return -1;
         return Units.metersToInches(
-            Pose3d.kZero.transformBy(frontLatestResult.getBestTarget().getBestCameraToTarget().inverse()).transformBy(VisionK.robotToFrontCamera.inverse()).getTranslation().toTranslation2d().getNorm()
+            Pose3d.kZero.transformBy(frontLatestResult.getBestTarget().getBestCameraToTarget().inverse())
+            .transformBy(VisionK.robotToFrontCamera.inverse()).getTranslation().toTranslation2d().getNorm()
         );
     }
 

@@ -11,21 +11,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "score L4"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "REEF I to CORAL STATION"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intake coral"
           }
         },
         {
@@ -35,33 +23,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "score L4"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "REEF K to CORAL STATION"
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "intake coral"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "CORAL STATION to REEF L"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "score L4"
           }
         }
       ]

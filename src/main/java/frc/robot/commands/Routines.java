@@ -133,14 +133,4 @@ public class Routines {
         return swerve.alignToPosePID(() -> Robot.onRedAlliance() ? cage.redPose : cage.bluePose).withName("Align " + cage + " Cage");
     }
 
-    /**
-     * Zeros all subsystems that need to be zeroed
-     * @return
-     */
-    public static Command zeroAll(Algae algae) {
-        return Commands.parallel(
-            algae.zero()
-        ).withName("Zero Everything");
-    }
-
 }

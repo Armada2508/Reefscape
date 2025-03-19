@@ -24,6 +24,7 @@ import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.lib.util.Util;
 
+@Logged
 public class Intake extends SubsystemBase {
     
     private final SparkMax sparkMaxLeft = new SparkMax(IntakeK.sparkMaxLeftID, MotorType.kBrushless);
