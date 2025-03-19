@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
     @Logged(name = "Elevator")
     private final Elevator elevator = new Elevator();
     @Logged(name = "Intake")
-    private final Intake intake = new Intake(() -> swerve.getRobotVelocity().omegaRadiansPerSecond);
+    private final Intake intake = new Intake(() -> swerve.getChassisSpeeds().omegaRadiansPerSecond);
     @Logged(name = "Algae")
     private final Algae algae = new Algae();
     @Logged(name = "Climb")
@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake, algae);
-        Field.dumpToNT();
+        Field.dumpToNT(); //? Comment out for comp
     }
 
     public Command teleopDriveCommand() {
@@ -273,14 +273,13 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        SmartDashboard.putString("Running Path", PathPlannerAuto.currentPathName);
+        if (isAutonomous()) SmartDashboard.putString("Running Path", PathPlannerAuto.currentPathName);
         if (isDisabled() && swerveCoastTimer.hasElapsed(SwerveK.coastDisableTime.in(Seconds))) {
             swerveCoastTimer.stop();
             swerveCoastTimer.reset();
             swerve.setCoastMode();
         }
     }
-
 
     @Override
     public void autonomousInit() {

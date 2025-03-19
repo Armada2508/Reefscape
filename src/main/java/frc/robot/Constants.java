@@ -22,9 +22,11 @@ import org.json.simple.parser.ParseException;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
@@ -98,7 +100,7 @@ public class Constants {
         public static final PIDConstants translationConstants = new PIDConstants(2.1, 0, 0);
         public static final PIDConstants rotationConstants = new PIDConstants(3, 0, 0);
         public static final Distance maximumTranslationError = Inches.of(0.25);
-        public static final Angle maximumRotationError = Degrees.of(1);
+        public static final Angle maximumRotationError = Degrees.of(0.5);
 
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }
@@ -108,7 +110,9 @@ public class Constants {
         public static final double leftJoystickDeadband = 0.07;
         public static final double rightJoystickDeadband = 0.07;
 
+        // Teleop Alignment Overriding
         public static final double overrideThreshold = 0.07;
+        public static final Time overrideTime = Seconds.of(0.25);
     }
 
     public static class DriveK {
@@ -131,7 +135,7 @@ public class Constants {
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final Current currentSpike = Amps.of(1000);
+        public static final Current currentSpike = Amps.of(30);
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
@@ -236,8 +240,8 @@ public class Constants {
 
     public static class VisionK {
         // Back Camera not used rn
-        public static final String frontCameraName = "ArducamFront";
-        public static final String backCameraName = "ArducamBack"; // 7.5, 34.77, 5.22
+        public static final String frontCameraName = "ArducamFront"; // 7.5, 34.77, 5.22
+        public static final String backCameraName = "ArducamBack"; 
         public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-1), Inches.of(29.224), new Rotation3d(Degrees.of(11.5), Degrees.of(30.75), Degrees.of(5)));
         public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(0.927), Inches.of(-9.5), Inches.of(24.027), new Rotation3d(Degrees.zero(), Degrees.of(-15), Degrees.of(180)));
         // Acceptable height of pose estimation to consider it a valid pose
@@ -252,27 +256,22 @@ public class Constants {
     }
 
     public static class ClimbK { // TODO: Tune everything
-        // Motors
         public static final int talonID = 10;
         public static final int talonFollowID = 11;
-
         public static final int servoRID = 0;
         public static final int servoLID = 1;
 
-        // Positions/Angles/Voltage
         public static final Voltage climbVoltage = Volts.of(-3.5);
         public static final Voltage prepVoltage = Volts.of(2);
-        public static final Voltage zeroingVoltage = Volts.of(-1);
         
         public static final Angle maxAngle = Degrees.of(80);
         public static final Angle minAngle = Degrees.of(-90);
         public static final Angle allowableError = Degrees.one();
+        public static final Angle stowAngle = Degrees.zero();
 
-        public static final Current homingSpike = Amps.of(2);
-        public static final Time homingTime = Seconds.of(0.25);
-
-        public static final Angle servoActiveAngle = Degrees.of(90);
-        public static final Angle servoInactiveAngle = Degrees.of(0);
+        public static final double servoMin = 0;
+        public static final double servoMax = 0.25;
+        public static final Time servoAcutateTime = Seconds.of(0.5);
 
         // Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
@@ -280,9 +279,10 @@ public class Constants {
         
         public static final double kP = 0;
         public static final double kD = 0;
-
-        public static final Slot0Configs pidconfig = new Slot0Configs().withKD(kD).withKP(kP);
         public static final double gearRatio = 64;
+
+        public static final MotorOutputConfigs outputConfigs = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+        public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD);
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs().withStatorCurrentLimit(Amps.of(150)).withStatorCurrentLimitEnable(true);
         
@@ -291,9 +291,6 @@ public class Constants {
             .withForwardSoftLimitThreshold(maxAngle)
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(minAngle);
-
-        // Bang bang
-        public static final Angle bangBangSetpoint = Degrees.of(0);
     }
 
 }
