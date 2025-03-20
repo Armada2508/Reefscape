@@ -42,6 +42,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -244,6 +245,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees))
             || overrideDebouncer.calculate(overridePathFollowing.getAsBoolean())
         ).finallyDo(this::stop).withName("PID Align");
+    }
+
+    public Command setDriveVoltage(Voltage volts) {
+        return run(() -> {
+            for (var module : swerveDrive.getModules()) {
+            var motor = (TalonFXSwerve) module.getDriveMotor();
+            ((TalonFX) motor.getMotor()).setControl(new VoltageOut(volts));
+        }}).finallyDo(this::stop);
     }
 
     /**

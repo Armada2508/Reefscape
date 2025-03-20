@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Map;
 import java.util.function.DoubleSupplier;
@@ -248,9 +249,10 @@ public class Robot extends TimedRobot {
         // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
+        xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
 
-        xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
+        // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
+        xboxController.povDown().whileTrue(swerve.setDriveVoltage(Volts.of(3)));
     }
 
     /**
