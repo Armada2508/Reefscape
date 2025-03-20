@@ -95,6 +95,22 @@ public class Elevator extends SubsystemBase {
             .withName("Set Position " + height); 
     }
 
+    /**
+     * Sets the position of the elevator to a distance of height using the enum Positions within this class's constants file.
+     * @param position position of the elevator to move to
+     */
+    public Command setPosition(ElevatorK.Positions position) {
+        setPosition(position.close).withName("Setting to default Position " + position);
+        return switch (position) {
+            case L1, L2, L3, L4, INTAKE -> 
+                setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far))
+                .withName("Set Interpolating Position " + position);
+            case STOW, ALGAE_LOW, ALGAE_HIGH -> setPosition(position.close)
+                .withName("Set Position " + position);
+            default -> throw new IllegalArgumentException("Invalid Position: " + position);
+        };
+    }
+
     public Command setDynamicPosition(Supplier<Optional<Distance>> height) {
         MotionMagicVoltage request = new MotionMagicVoltage(0);
         return Commands.either(
@@ -106,21 +122,6 @@ public class Elevator extends SubsystemBase {
             Commands.print("Elevator not zeroed"),
             () -> zeroed)
             .withName("Set Position " + height); 
-    }
-
-    /**
-     * Sets the position of the elevator to a distance of height using the enum Positions within this class's constants file.
-     * @param position position of the elevator to move to
-     */
-    public Command setPosition(ElevatorK.Positions position) {
-        return switch (position) {
-            case L1, L2, L3, L4, INTAKE -> 
-                setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far))
-                .withName("Set Interpolating Position " + position);
-            case STOW, ALGAE_LOW, ALGAE_HIGH -> setPosition(position.close)
-                .withName("Set Position " + position);
-            default -> throw new IllegalArgumentException("Invalid Position: " + position);
-        };
     }
 
     private Optional<Distance> getInterpolatedHeight(Distance closeHeight, Distance farHeight) {

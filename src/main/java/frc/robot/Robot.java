@@ -193,7 +193,7 @@ public class Robot extends TimedRobot {
         xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
         xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
         // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
-
+        
         // Intake
         xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake).alongWith(Commands.runOnce(() -> state = Positions.STOW)));
 
