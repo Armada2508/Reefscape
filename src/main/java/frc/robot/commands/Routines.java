@@ -25,7 +25,7 @@ public class Routines {
     private Routines() {}
 
     public static Command stow(Elevator elevator, Intake intake, Algae algae, Climb climb) {
-        return elevator.setPosition(Positions.STOW)
+        return elevator.setPositionCommand(Positions.STOW)
         .alongWith(
             intake.runOnce(intake::stop),
             algae.stow(),
@@ -35,8 +35,8 @@ public class Routines {
     }
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
-        return elevator.setPosition(Positions.INTAKE).withDeadline(intake.coralIntake())
-        .andThen(elevator.setPosition(Positions.STOW))
+        return elevator.setPositionCommand(Positions.INTAKE).withDeadline(intake.coralIntake())
+        .andThen(elevator.setPositionCommand(Positions.STOW))
         .withName("Intake Coral Routine");
     }
     /**
@@ -45,7 +45,7 @@ public class Routines {
      * @param intake
      */
     public static Command scoreCoralLevelOne(Elevator elevator, Intake intake) {
-        return intake.scoreLevelOne().andThen(elevator.setPosition(Positions.STOW))
+        return intake.scoreLevelOne().andThen(elevator.setPositionCommand(Positions.STOW))
         .withName("Score Coral L1 Routine");
     }
     /**
@@ -54,7 +54,7 @@ public class Routines {
      * @param intake
      */
     public static Command scoreCoralLevelTwo(Elevator elevator, Intake intake) {
-        return intake.scoreLevelTwoThree().andThen(elevator.setPosition(Positions.STOW))
+        return intake.scoreLevelTwoThree().andThen(elevator.setPositionCommand(Positions.STOW))
         .withName("Score Coral L2 Routine");
     }
     /**
@@ -63,7 +63,7 @@ public class Routines {
      * @param intake
      */
     public static Command scoreCoralLevelThree(Elevator elevator, Intake intake) {
-        return intake.scoreLevelTwoThree().andThen(elevator.setPosition(Positions.STOW))
+        return intake.scoreLevelTwoThree().andThen(elevator.setPositionCommand(Positions.STOW))
         .withName("Score Coral L3 Routine");
     }
     /**
@@ -72,7 +72,7 @@ public class Routines {
      * @param intake
      */
     public static Command scoreCoralLevelFour(Elevator elevator, Intake intake) {
-        return intake.scoreLevelFour().andThen(elevator.setPosition(Positions.STOW))
+        return intake.scoreLevelFour().andThen(elevator.setPositionCommand(Positions.STOW))
         .withName("Score Coral L4 Routine");
     }
     
@@ -82,7 +82,7 @@ public class Routines {
      * @return
      */
     public static Command algaeLowPosition(Elevator elevator, Algae algae) {
-        return elevator.setPosition(Positions.ALGAE_LOW)
+        return elevator.setPositionCommand(Positions.ALGAE_LOW)
         .alongWith(
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
             .andThen(algae.loweredPosition())
@@ -94,7 +94,7 @@ public class Routines {
      * @return
      */
     public static Command algaeHighPosition(Elevator elevator, Algae algae) {
-        return elevator.setPosition(Positions.ALGAE_HIGH)
+        return elevator.setPositionCommand(Positions.ALGAE_HIGH)
         .alongWith(
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
             .andThen(algae.algaePosition())

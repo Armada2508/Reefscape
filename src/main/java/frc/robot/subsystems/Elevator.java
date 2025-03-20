@@ -80,14 +80,18 @@ public class Elevator extends SubsystemBase {
         talon.getConfigurator().apply(motionMagicConfigs);
     }
 
+    private void setPosition(Distance height)  {
+        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(height.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
+        talon.setControl(request);
+    }
+
     /**
      * Sets the position of the elevator to a specific height.
      * @param height height of the elevator to move to
      */
-    public Command setPosition(Distance height) {
-        MotionMagicVoltage request = new MotionMagicVoltage(Encoder.linearToAngular(height.div(ElevatorK.stageCount), ElevatorK.sprocketDiameter));
+    public Command setPositionCommand(Distance height) {
         return Commands.either(
-            runOnce(() -> talon.setControl(request))
+            runOnce(() -> setPosition(height))
                 .andThen(Commands.waitUntil(() -> getPosition().isNear(height, ElevatorK.allowableError)))
                 .withTimeout(2),
             Commands.print("Elevator not zeroed"),
@@ -99,13 +103,14 @@ public class Elevator extends SubsystemBase {
      * Sets the position of the elevator to a distance of height using the enum Positions within this class's constants file.
      * @param position position of the elevator to move to
      */
-    public Command setPosition(ElevatorK.Positions position) {
-        setPosition(position.close).withName("Setting to default Position " + position);
+    public Command setPositionCommand(ElevatorK.Positions position) {
+        setPositionCommand(position.close).withName("Setting to default Position " + position);
         return switch (position) {
-            case L1, L2, L3, L4, INTAKE -> 
-                setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far))
+            case L1, L2, L3, L4, INTAKE -> // Dynamic
+                runOnce(() -> setPosition(position.close)).andThen(setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far)))
                 .withName("Set Interpolating Position " + position);
-            case STOW, ALGAE_LOW, ALGAE_HIGH -> setPosition(position.close)
+            case STOW, ALGAE_LOW, ALGAE_HIGH -> // Static
+                setPositionCommand(position.close)
                 .withName("Set Position " + position);
             default -> throw new IllegalArgumentException("Invalid Position: " + position);
         };

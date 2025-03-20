@@ -267,7 +267,7 @@ public class Robot extends TimedRobot {
                 state = Positions.STOW; // Ready to take a new position
             }
             else {
-                elevator.setPosition(newState).alongWith(intake.coralIntake()).schedule();
+                elevator.setPositionCommand(newState).alongWith(intake.coralIntake()).schedule();
                 state = newState;
             }
         }).withName("Switch State");
