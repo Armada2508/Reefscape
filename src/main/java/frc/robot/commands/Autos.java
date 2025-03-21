@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
-import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -21,7 +20,7 @@ public class Autos {
     // Prevent this class from being instantiated
     private Autos() {}
 
-    public static SendableChooser<Command> initPathPlanner(Swerve swerve, Elevator elevator, Intake intake, Algae algae) {
+    public static SendableChooser<Command> initPathPlanner(Swerve swerve, Elevator elevator, Intake intake) {
         FollowPathCommand.warmupCommand().schedule();
 
         NamedCommands.registerCommand("intake named", Routines.intakeCoral(elevator, intake));

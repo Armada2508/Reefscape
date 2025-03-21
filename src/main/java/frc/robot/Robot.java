@@ -6,7 +6,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Map;
 import java.util.function.DoubleSupplier;
@@ -21,6 +20,7 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
@@ -52,7 +52,6 @@ import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
-import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
@@ -74,8 +73,8 @@ public class Robot extends TimedRobot {
     private final Elevator elevator = new Elevator();
     @Logged(name = "Intake")
     private final Intake intake = new Intake(() -> swerve.getChassisSpeeds().omegaRadiansPerSecond);
-    @Logged(name = "Algae")
-    private final Algae algae = new Algae();
+    // @Logged(name = "Algae")
+    // private final Algae algae = new Algae();
     @Logged(name = "Climb")
     private final Climb climb = new Climb();
     private final SendableChooser<Command> autoChooser;
@@ -104,7 +103,7 @@ public class Robot extends TimedRobot {
         });
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
-        autoChooser = Autos.initPathPlanner(swerve, elevator, intake, algae);
+        autoChooser = Autos.initPathPlanner(swerve, elevator, intake);
     }
 
     public Command teleopDriveCommand() {
@@ -183,11 +182,11 @@ public class Robot extends TimedRobot {
         // xboxController.povRight().onTrue(algae.zero());
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
         // xboxController.povRight().onTrue(algae.zero());
-        // xboxController.povUp().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0.5, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.povRight().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.povDown().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1.5, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.povLeft().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.leftTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2.5, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.povUp().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0.5, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.povRight().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.povDown().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1.5, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.povLeft().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
+        xboxController.leftTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2.5, 0, 0, swerve.getPose().getRotation()))));
         // xboxController.leftTrigger().onTrue(swerve.setP());
 
         /// Real Bindings ///
@@ -197,7 +196,7 @@ public class Robot extends TimedRobot {
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
-        xboxController.a().onTrue(Routines.stow(elevator, intake, algae, climb).alongWith(Commands.runOnce(() -> state = Positions.STOW)).withName("Stow Everything"));
+        xboxController.a().onTrue(Routines.stow(elevator, intake, climb).alongWith(Commands.runOnce(() -> state = Positions.STOW)).withName("Stow Everything"));
 
         // Alignment
         xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
@@ -228,8 +227,8 @@ public class Robot extends TimedRobot {
         ));
         
         // Algae
-        paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
-        paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
+        // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
+        // paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
         // xboxController.leftTrigger().onTrue(algae.loweredPosition());
 
         // Climb
@@ -259,10 +258,10 @@ public class Robot extends TimedRobot {
         // xboxController.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // xboxController.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
-        xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
+        // xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
 
         // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
-        xboxController.povDown().whileTrue(swerve.setDriveVoltage(Volts.of(3)));
+        // xboxController.povDown().whileTrue(swerve.setDriveVoltage(Volts.of(3)));
     }
 
     /**
@@ -317,7 +316,7 @@ public class Robot extends TimedRobot {
         swerve.stop();
         elevator.stop();
         intake.stop();
-        algae.stop();
+        // algae.stop();
         climb.stop();
         swerveCoastTimer.restart();
     }
