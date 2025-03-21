@@ -110,9 +110,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             ),
             new SysIdRoutine.Mechanism(
                 (volts) -> {
+                    VoltageOut request = new VoltageOut(volts);
                     for (var module : swerveDrive.getModules()) {
                         var motor = (TalonFXSwerve) module.getDriveMotor();
-                        ((TalonFX) motor.getMotor()).setControl(new VoltageOut(volts));
+                        ((TalonFX) motor.getMotor()).setControl(request);
                     }
                 },
                 null,
@@ -204,12 +205,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @return Command to drive along the constructed path
      */
     public Command alignToPosePP(Supplier<Pose2d> targetPoseSupplier) {
+        PathConstraints constraints = new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration);
         return Commands.defer(() -> {
             Pose2d targetPose = targetPoseSupplier.get();
             pathPlannerTarget = targetPose;
             PathPlannerPath path = new PathPlannerPath(
                 PathPlannerPath.waypointsFromPoses(getPose(), targetPose), 
-                new PathConstraints(SwerveK.maxRobotVelocity, SwerveK.maxRobotAcceleration, SwerveK.maxRobotAngularVelocity, SwerveK.maxRobotAngularAcceleration), 
+                constraints, 
                 null, 
                 new GoalEndState(MetersPerSecond.zero(), targetPose.getRotation()));
             return new FollowPathCommand(
@@ -248,10 +250,11 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     public Command setDriveVoltage(Voltage volts) {
+        VoltageOut request = new VoltageOut(volts);
         return run(() -> {
             for (var module : swerveDrive.getModules()) {
             var motor = (TalonFXSwerve) module.getDriveMotor();
-            ((TalonFX) motor.getMotor()).setControl(new VoltageOut(volts));
+            ((TalonFX) motor.getMotor()).setControl(request);
         }}).finallyDo(this::stop);
     }
 
