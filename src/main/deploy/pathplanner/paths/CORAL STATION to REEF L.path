@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.116,
-        "y": 7.016
+        "x": 1.101,
+        "y": 7.04
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.318578920400521,
-        "y": 6.869501600659395
+        "x": 1.3035789204005208,
+        "y": 6.893501600659395
       },
       "isLocked": false,
       "linkedName": "Top Coral Station Blue"
