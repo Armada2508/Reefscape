@@ -82,8 +82,8 @@ public class Constants {
         public static final double kA = 0.15136;
 
         // PathPlanner
-        public static final PIDConstants ppTranslationConstants = new PIDConstants(5, 0, 0);
-        public static final PIDConstants ppRotationConstants = new PIDConstants(5, 0, 0);
+        public static final PIDConstants ppTranslationConstants = new PIDConstants(5, 0, 0); // m/s / m
+        public static final PIDConstants ppRotationConstants = new PIDConstants(5, 0, 0); // rad/s / rad
         public static RobotConfig robotConfig; static {
             try {
                 robotConfig = RobotConfig.fromGUISettings();
