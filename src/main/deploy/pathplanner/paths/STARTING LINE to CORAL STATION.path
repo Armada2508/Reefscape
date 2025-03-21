@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.973766447368421,
-        "y": 5.256578947368421
+        "x": 7.57,
+        "y": 5.08
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8396436255198045,
-        "y": 6.866004595586396
+        "x": 7.202262903570938,
+        "y": 5.404005067704796
       },
       "isLocked": false,
-      "linkedName": "Reef-K"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 7.016
       },
       "prevControl": {
-        "x": 0.8933482104330828,
-        "y": 7.129693362174971
+        "x": 1.4259986260611885,
+        "y": 6.7422566726666995
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,20 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "stow elevator",
-      "waypointRelativePos": 0.05062034739454002,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "raise elevator to intake",
-      "waypointRelativePos": 0.3007444168734455,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 1.0,
     "maxAcceleration": 1.0,
@@ -61,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -60.42216131873867
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

@@ -35,7 +35,7 @@ public class Autos {
         new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake));
         new EventTrigger("score L4").onTrue(Commands.waitUntil(() -> elevator.nearHeight(Positions.L4.close)).andThen(Routines.scoreCoralLevelFour(elevator, intake)).withName("Auto score L4"));
         new EventTrigger("raise elevator to intake").onTrue(elevator.setPositionCommand(Positions.INTAKE.close));
-        new EventTrigger("raise elevator to L4").onTrue(elevator.setPositionCommand(Positions.L4.close));
+        new EventTrigger("raise elevator to L4").onTrue(elevator.setPositionCommand(Positions.L4).alongWith(intake.coralIntake()));
         new EventTrigger("stow elevator").onTrue(elevator.setPositionCommand(Positions.STOW));
         new EventTrigger("test").onTrue(Commands.print("test event trigger"));
 
