@@ -16,10 +16,12 @@ import org.littletonrobotics.urcl.URCL;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.FlippingUtil;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.DataLog;
@@ -82,6 +84,7 @@ public class Robot extends TimedRobot {
     private ElevatorK.Positions state = Positions.STOW;
 
     public Robot() {
+        // Mostly logging setup and callbacks
         DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this); // Should be configured for Network Tables or DataLog
@@ -91,11 +94,17 @@ public class Robot extends TimedRobot {
         DriverStation.startDataLog(dataLog); // DataLog
         TalonFXLogger.refreshAllLoggedTalonFX(this, Seconds.of(kDefaultPeriod), Seconds.zero()); // Epilogue
         logGitConstants();
+        Field.dumpToNT(); //? Comment out for comp
+        SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+        var xyError = NetworkTableInstance.getDefault().getDoubleTopic("/PathPlanner/XY Error (in.)").publish();
+        var thetaError = NetworkTableInstance.getDefault().getDoubleTopic("/PathPlanner/Theta Error (deg.)").publish();
+        PathPlannerLogging.setLogTargetPoseCallback((p) -> {
+            xyError.accept(Units.metersToInches(p.getTranslation().getDistance(swerve.getPose().getTranslation())));
+            thetaError.accept(p.getRotation().minus(swerve.getPose().getRotation()).getDegrees());
+        });
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake, algae);
-        Field.dumpToNT(); //? Comment out for comp
-        SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     }
 
     public Command teleopDriveCommand() {
