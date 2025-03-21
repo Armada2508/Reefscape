@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4721217105263156,
-        "y": 7.24827302631579
+        "x": 1.101,
+        "y": 7.04
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.284843078644923,
-        "y": 7.131807848618982
+        "x": 1.9137213681186074,
+        "y": 6.923534822303193
       },
       "isLocked": false,
       "linkedName": "Top Coral Station Blue"
     },
     {
       "anchor": {
-        "x": 3.14177093358999,
-        "y": 4.185466794995188
+        "x": 3.2,
+        "y": 4.19
       },
       "prevControl": {
-        "x": 2.4762243345709374,
-        "y": 4.410520823809919
+        "x": 2.5344534009809476,
+        "y": 4.4150540288147315
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,14 +33,14 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "stow elevator",
-      "waypointRelativePos": 0.17369727047145372,
+      "name": "raise elevator to L4",
+      "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "raise elevator to L4",
-      "waypointRelativePos": 0.6084367245657528,
+      "name": "score L4",
+      "waypointRelativePos": 0.99,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -61,7 +61,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 125.66
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }

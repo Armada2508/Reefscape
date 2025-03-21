@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "STARTING LINE to REEF I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "REEF I to CORAL STATION"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CORAL STATION to REEF A"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
