@@ -95,6 +95,11 @@ public class Robot extends TimedRobot {
         configureBindings();
         autoChooser = Autos.initPathPlanner(swerve, elevator, intake, algae);
         Field.dumpToNT(); //? Comment out for comp
+        SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+            // try {
+                // Thread.sleep(1000);
+            // } catch (InterruptedException e) { }
+        // });
     }
 
     public Command teleopDriveCommand() {
@@ -298,6 +303,7 @@ public class Robot extends TimedRobot {
         }
         CommandScheduler.getInstance().removeComposedCommand(selected);
         selected.alongWith(algae.zero().andThen(algae.stow())).withName(selected.getName()).schedule();
+
     }
 
     @Override

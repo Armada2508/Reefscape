@@ -39,7 +39,7 @@
       "command": null
     },
     {
-      "name": "score L4",
+      "name": "test",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null

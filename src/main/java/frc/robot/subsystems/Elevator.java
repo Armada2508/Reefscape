@@ -19,10 +19,10 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -40,12 +40,13 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
-    private final LinearFilter filter = LinearFilter.movingAverage(ElevatorK.averageSamples);
+    // private final LinearFilter filter = LinearFilter.movingAverage(ElevatorK.averageSamples);
     private boolean zeroed = false;
 
     public Elevator() {
         configTalons();
         configMotionMagic(ElevatorK.maxVelocity, ElevatorK.maxAcceleration);
+        timeOfFlight.setRangingMode(RangingMode.Short, ElevatorK.averageSamples);
     }
 
     @Override
@@ -134,7 +135,7 @@ public class Elevator extends SubsystemBase {
         Distance interpolatedHeight = Millimeters.of(MathUtil.interpolate(
             closeHeight.in(Millimeters), 
             farHeight.in(Millimeters), 
-            (filter.calculate(timeOfFlight.getRange()) + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
+            (timeOfFlight.getRange() + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
         ));
         return Optional.of(interpolatedHeight);
     }

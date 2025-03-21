@@ -40,7 +40,7 @@
     },
     {
       "name": "score L4",
-      "waypointRelativePos": 0.9939230249831189,
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     }
