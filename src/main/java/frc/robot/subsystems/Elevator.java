@@ -104,7 +104,6 @@ public class Elevator extends SubsystemBase {
      * @param position position of the elevator to move to
      */
     public Command setPositionCommand(ElevatorK.Positions position) {
-        setPositionCommand(position.close).withName("Setting to default Position " + position);
         return switch (position) {
             case L1, L2, L3, L4, INTAKE -> // Dynamic
                 runOnce(() -> setPosition(position.close)).andThen(setDynamicPosition(() -> getInterpolatedHeight(position.close, position.far)))
