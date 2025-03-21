@@ -306,8 +306,9 @@ public class Robot extends TimedRobot {
                 swerve.resetOdometry(pose);
             }
         }
-        CommandScheduler.getInstance().removeComposedCommand(selected);
-        selected.alongWith(algae.zero().andThen(algae.stow())).withName(selected.getName()).schedule();
+        // CommandScheduler.getInstance().removeComposedCommand(selected);
+        // selected.alongWith(algae.zero().andThen(algae.stow())).withName(selected.getName()).schedule();
+        selected.schedule();
     }
 
     @Override
