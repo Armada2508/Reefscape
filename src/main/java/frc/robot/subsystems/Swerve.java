@@ -360,8 +360,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     public Command faceWheelsForward() {
+        SwerveModuleState state = new SwerveModuleState();
         return run(() -> {
-            SwerveModuleState state = new SwerveModuleState();
             for (var module : swerveDrive.getModules()) {
                 module.setDesiredState(state, true, 0);
             }

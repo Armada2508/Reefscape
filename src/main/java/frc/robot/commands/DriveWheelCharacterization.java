@@ -16,6 +16,7 @@ import frc.robot.subsystems.Swerve;
  */
 public class DriveWheelCharacterization extends Command {
     
+    private final ChassisSpeeds speeds = new ChassisSpeeds(MetersPerSecond.zero(), MetersPerSecond.zero(), DegreesPerSecond.of(45));
     private final Swerve swerve;
     private double[] initialWheelPositions;
     private Angle initialYaw;
@@ -33,7 +34,7 @@ public class DriveWheelCharacterization extends Command {
 
     @Override
     public void execute() {
-        swerve.setChassisSpeeds(new ChassisSpeeds(MetersPerSecond.zero(), MetersPerSecond.zero(), DegreesPerSecond.of(45)));
+        swerve.setChassisSpeeds(speeds);
     }
 
     @Override
