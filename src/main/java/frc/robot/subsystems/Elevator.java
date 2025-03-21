@@ -61,7 +61,6 @@ public class Elevator extends SubsystemBase {
         talon.getConfigurator().apply(ElevatorK.currentLimitsConfig);
         talonFollow.getConfigurator().apply(ElevatorK.currentLimitsConfig);
         talon.getConfigurator().apply(ElevatorK.softwareLimitConfig);
-        talon.getConfigurator().apply(ElevatorK.hardwareLimitConfig);
         talon.getConfigurator().apply(ElevatorK.gearRatioConfig);
         talon.getConfigurator().apply(ElevatorK.pidConfig);
         // No limit switch
