@@ -258,11 +258,11 @@ public class Constants {
         public static final int servoRID = 0;
         public static final int servoLID = 1;
 
-        public static final Voltage climbVoltage = Volts.of(-3.5);
+        public static final Voltage climbVoltage = Volts.of(-3.8);
         public static final Voltage prepVoltage = Volts.of(2);
         
         public static final Angle maxAngle = Degrees.of(80);
-        public static final Angle minAngle = Degrees.of(-90);
+        public static final Angle minAngle = Degrees.of(-95);
         public static final Angle allowableError = Degrees.one();
         public static final Angle stowAngle = Degrees.zero();
 
