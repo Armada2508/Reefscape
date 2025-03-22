@@ -20,7 +20,6 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
@@ -182,11 +181,11 @@ public class Robot extends TimedRobot {
         // xboxController.povRight().onTrue(algae.zero());
         // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
         // xboxController.povRight().onTrue(algae.zero());
-        xboxController.povUp().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0.5, 0, 0, swerve.getPose().getRotation()))));
-        xboxController.povRight().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.povUp().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0.5, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.povRight().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
         // xboxController.povDown().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1.5, 0, 0, swerve.getPose().getRotation()))));
-        xboxController.povLeft().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
-        xboxController.leftTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2.5, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.povLeft().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
+        // xboxController.leftTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2.5, 0, 0, swerve.getPose().getRotation()))));
         // xboxController.leftTrigger().onTrue(swerve.setP());
 
         /// Real Bindings ///
@@ -260,7 +259,7 @@ public class Robot extends TimedRobot {
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
         // xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
 
-        xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
+        // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         // xboxController.povDown().whileTrue(swerve.setDriveVoltage(Volts.of(3)));
     }
 

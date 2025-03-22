@@ -106,11 +106,11 @@ public class Routines {
      * @return driveToPoseCommand to drive to the nearest reef pole on your side
      */
     public static Command alignToReef(ReefSide side, Swerve swerve) {
-        return swerve.alignToPosePID(() -> {
+        return Commands.either(swerve.alignToPosePID(() -> {
             Pose2d reefPose = swerve.getPose().nearest(Robot.onRedAlliance() ? side.redReef : side.blueReef);
             Translation2d reefOffset = new Translation2d(Field.reefOffsetDistance, Inches.zero()).rotateBy(reefPose.getRotation());
             return new Pose2d(reefPose.getTranslation().plus(reefOffset), reefPose.getRotation().plus(Rotation2d.k180deg));
-        }).withName("Align " + side + " Reef");
+        }), Commands.print("Haven't initalized odometry yet!"), swerve::initializedOdometryFromVision).withName("Align " + side + " Reef");
     }
 
     /**
