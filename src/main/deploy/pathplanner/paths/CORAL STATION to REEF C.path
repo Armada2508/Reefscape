@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.09,
-        "y": 1.01
+        "x": 1.0872532894736842,
+        "y": 0.8690789473684208
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2424677306635914,
-        "y": 2.779051638243865
+        "x": 2.1263980263157887,
+        "y": 0.9171875
       },
       "isLocked": false,
       "linkedName": "Low Coral Station Blue"
@@ -20,8 +20,8 @@
         "y": 3.0120389344262293
       },
       "prevControl": {
-        "x": 2.3792087512835898,
-        "y": 2.2221599933270686
+        "x": 3.757697596967311,
+        "y": 2.7195946650391307
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,21 +33,21 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "stow elevator",
-      "waypointRelativePos": 0.13995037220843753,
+      "name": "raise elevator to L4",
+      "waypointRelativePos": 0.29812834224598944,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "raise elevator to L4",
-      "waypointRelativePos": 0.596526054590572,
+      "name": "score L4",
+      "waypointRelativePos": 0.8930481283422471,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

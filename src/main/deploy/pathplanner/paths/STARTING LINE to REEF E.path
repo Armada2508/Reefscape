@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0872532894736842,
-        "y": 0.8690789473684208
+        "x": 7.572286184210526,
+        "y": 1.9274671052631585
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3064638157894732,
-        "y": 1.7384375
+        "x": 5.845778745454579,
+        "y": 1.6181166921118075
       },
       "isLocked": false,
-      "linkedName": "Low Coral Station Blue"
+      "linkedName": "Opposite Mid 45"
     },
     {
       "anchor": {
-        "x": 3.982,
-        "y": 2.838
+        "x": 4.974,
+        "y": 2.839
       },
       "prevControl": {
-        "x": 3.146299342105263,
-        "y": 1.8216282894736844
+        "x": 5.256105263157895,
+        "y": 1.9492796052631585
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef-D"
+      "linkedName": "Reef-E"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "raise elevator to L4",
-      "waypointRelativePos": 0.33823529411764736,
+      "waypointRelativePos": 0.30748663101604307,
       "endWaypointRelativePos": null,
       "command": null
     },
@@ -55,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": -125.00000000000001
+    "velocity": 10.0,
+    "rotation": 136.33221985386965
   },
   "useDefaultConstraints": true
 }

@@ -18,6 +18,7 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -37,6 +38,7 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
+    private final Debouncer debouncer = new Debouncer(0.0625);
 
     public Elevator() {
         configTalons();
@@ -46,7 +48,7 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (talon.getTorqueCurrent().getValue().abs(Amps) > ElevatorK.currentSpike.in(Amps)) {
+        if (debouncer.calculate(talon.getTorqueCurrent().getValue().abs(Amps) > ElevatorK.currentSpike.in(Amps))) {
             Command current = getCurrentCommand();
             if (current != null) current.cancel();
             stop();

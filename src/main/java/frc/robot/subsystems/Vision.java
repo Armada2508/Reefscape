@@ -116,6 +116,9 @@ public class Vision extends SubsystemBase {
         table.getEntry(name + " StdDevs/numTags").setInteger(numTags);
         table.getEntry(name + " StdDevs/Average Distance to Tag (in.) RF").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
         table.getEntry(name + " StdDevs/stdevScalar").setDouble(stdevScalar);
+        if (Units.metersToInches(avgDistMeters) > 120) {
+            return VisionK.untrustedStdDevs;
+        }
         if (numTags == 0) return VisionK.untrustedStdDevs;
         if (numTags == 1) {
             return VisionK.singleTagStdDevs.times(stdevScalar);
