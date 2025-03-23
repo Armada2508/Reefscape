@@ -259,7 +259,7 @@ public class Constants {
         public static final int servoRID = 0;
         public static final int servoLID = 1;
 
-        public static final Voltage climbVoltage = Volts.of(-3.8);
+        public static final Voltage climbVoltage = Volts.of(-4);
         public static final Voltage prepVoltage = Volts.of(2);
         
         public static final Angle maxAngle = Degrees.of(80);
@@ -272,10 +272,10 @@ public class Constants {
         public static final Time servoAcutateTime = Seconds.of(0.5);
 
         // Motion Magic
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); 
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(30);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(30); 
         
-        public static final double kP = 0;
+        public static final double kP = 200;
         public static final double kD = 0;
         public static final double gearRatio = 64;
 

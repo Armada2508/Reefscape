@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -33,8 +34,8 @@ public class Climb extends SubsystemBase {
     private final BangBangController bangBang = new BangBangController(ClimbK.allowableError.in(Degree));
 
     public Climb() {
-        configMotionMagic(ClimbK.maxVelocity, ClimbK.maxAcceleration); 
         configTalons();
+        configMotionMagic(ClimbK.maxVelocity, ClimbK.maxAcceleration); 
         bangBang.setSetpoint(ClimbK.stowAngle.in(Degrees));
     } 
 
@@ -79,18 +80,6 @@ public class Climb extends SubsystemBase {
         VoltageOut request = new VoltageOut(volts);
         return runOnce(() -> talon.setControl(request)).withName("Set Voltage");
     }
-    
-    /**
-     * Climbs the deep cage using voltage
-     */
-     public Command climb() {
-        return servoRatchet()
-            .andThen(
-                setVoltage(ClimbK.climbVoltage),
-                Commands.waitUntil(() -> talon.getFault_ReverseSoftLimit().getValue())
-            ).finallyDo(this::stop)
-            .withName("Deep Climb");
-    }
 
     /**
      * Preps the arm for climbing
@@ -120,17 +109,31 @@ public class Climb extends SubsystemBase {
         })).until(() -> bangBang.atSetpoint())
         .finallyDo(this::stop).withName("Stow");
     }
+
+    /**
+     * Climbs the deep cage using voltage
+     */
+    public Command climb() {
+        return servoRatchet()
+            .andThen(
+                setVoltage(ClimbK.climbVoltage),
+                Commands.waitUntil(() -> talon.getFault_ReverseSoftLimit().getValue())
+            ).finallyDo(this::stop)
+            .withName("Deep Climb");
+    }
     
     /**
      * Climbs the deep cage using motion magic
      */
-    // public Command climbMotionMagic() {
-    //     MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.maxAngle);
-    //     return servoCoast().andThen(
-    //         runOnce(() -> talon.setControl(request)),
-    //         Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.maxAngle, ClimbK.allowableError))
-    //     ).withName("Climb Motion Magic");
-    // }
+    public Command climbMotionMagic() {
+        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.minAngle);
+        return servoRatchet()
+            .andThen(
+                runOnce(() -> talon.setControl(request)),
+                Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError))
+                .finallyDo(this::stop)
+            ).withName("Climb Motion Magic");
+    }
 
     /**
      * Stops the climb motors

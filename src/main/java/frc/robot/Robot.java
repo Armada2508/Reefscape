@@ -232,7 +232,7 @@ public class Robot extends TimedRobot {
 
         // Climb
         xboxController.povUp().onTrue(climb.prep());
-        xboxController.povDown().onTrue(climb.climb());
+        xboxController.povDown().onTrue(climb.climbMotionMagic());
         xboxController.povRight().onTrue(climb.servoCoast());
         xboxController.povLeft().onTrue(climb.servoRatchet());
 
