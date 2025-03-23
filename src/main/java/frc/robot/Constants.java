@@ -135,8 +135,8 @@ public class Constants {
         public static final double gearRatio = 12.75;
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
-        public static final Voltage zeroingVoltage = Volts.of(-0.5);
         public static final Current currentSpike = Amps.of(30);
+        public static final Time currentTripTime = Seconds.of(0.0625);
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
@@ -246,7 +246,7 @@ public class Constants {
         public static final Distance minPoseZ = Inches.of(-6);
         // Used in scaling the standard deviations by average distance to april tags
         public static final Distance baseLineAverageTagDistance = Inches.of(84);
-        
+        public static final Distance maxAverageTagDistance = Inches.of(121);
         // Vision Standard Deviations (Meters, Meters, Radians)
         public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(6), Units.feetToMeters(6), Units.degreesToRadians(360));
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));

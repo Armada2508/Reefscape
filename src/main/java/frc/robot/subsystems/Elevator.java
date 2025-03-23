@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talon = new TalonFX(ElevatorK.talonID);
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
-    private final Debouncer debouncer = new Debouncer(0.0625);
+    private final Debouncer debouncer = new Debouncer(ElevatorK.currentTripTime.in(Seconds));
 
     public Elevator() {
         configTalons();
