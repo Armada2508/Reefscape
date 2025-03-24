@@ -235,6 +235,7 @@ public class Robot extends TimedRobot {
         xboxController.povDown().onTrue(climb.climbMotionMagic());
         xboxController.povRight().onTrue(climb.servoCoast());
         xboxController.povLeft().onTrue(climb.servoRatchet());
+        xboxController.leftTrigger().onTrue(climb.moveFreely());
 
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
         // xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage

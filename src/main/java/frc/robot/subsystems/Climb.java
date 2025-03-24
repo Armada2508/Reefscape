@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -13,7 +12,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -31,12 +29,10 @@ public class Climb extends SubsystemBase {
     private final TalonFX talonFollow = new TalonFX(ClimbK.talonFollowID);
     private final Servo servoL = new Servo(ClimbK.servoLID);
     private final Servo servoR = new Servo(ClimbK.servoRID);
-    private final BangBangController bangBang = new BangBangController(ClimbK.allowableError.in(Degree));
 
     public Climb() {
         configTalons();
         configMotionMagic(ClimbK.maxVelocity, ClimbK.maxAcceleration); 
-        bangBang.setSetpoint(ClimbK.stowAngle.in(Degrees));
     } 
 
     private void configTalons() {
@@ -49,6 +45,7 @@ public class Climb extends SubsystemBase {
         talonFollow.getConfigurator().apply(ClimbK.currentConfigs);
         talonFollow.setControl(new StrictFollower(ClimbK.talonID));
         Util.brakeMode(talon, talonFollow);
+        talon.setPosition(ClimbK.stowAngle);
     }
 
     private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
@@ -99,15 +96,13 @@ public class Climb extends SubsystemBase {
     }
 
     public Command stow() {
-        VoltageOut request = new VoltageOut(0);
-        return servoCoast().andThen(run(() -> {
-            // TODO: Remove prints
-            System.out.println(getPositionDegrees());
-            double v = bangBang.calculate(getPositionDegrees()) == 1 ? 1 : -1;
-            System.out.println(v);
-            talon.setControl(request.withOutput(v));
-        })).until(() -> bangBang.atSetpoint())
-        .finallyDo(this::stop).withName("Stow");
+        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.stowAngle);
+        return servoCoast()
+            .andThen(
+                runOnce(() -> talon.setControl(request)),
+                Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.stowAngle, ClimbK.allowableError))
+                .finallyDo(this::stop)
+            ).withName("Climb Motion Magic");
     }
 
     /**
@@ -133,6 +128,10 @@ public class Climb extends SubsystemBase {
                 Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError))
                 .finallyDo(this::stop)
             ).withName("Climb Motion Magic");
+    }
+
+    public Command moveFreely() {
+        return servoCoast().andThen(() -> Util.coastMode(talon, talonFollow));
     }
 
     /**

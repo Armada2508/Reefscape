@@ -262,10 +262,10 @@ public class Constants {
         public static final Voltage climbVoltage = Volts.of(-4);
         public static final Voltage prepVoltage = Volts.of(4);
         
-        public static final Angle maxAngle = Degrees.of(80);
-        public static final Angle minAngle = Degrees.of(-95);
+        public static final Angle maxAngle = Degrees.of(65);
+        public static final Angle minAngle = Degrees.of(-108);
         public static final Angle allowableError = Degrees.one();
-        public static final Angle stowAngle = Degrees.zero();
+        public static final Angle stowAngle = Degrees.of(-95);
 
         public static final double servoMin = 0;
         public static final double servoMax = 0.25;
@@ -275,14 +275,17 @@ public class Constants {
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(30);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(30); 
         
-        public static final double kP = 200;
+        public static final double kP = 300;
         public static final double kD = 0;
         public static final double gearRatio = 64;
 
         public static final MotorOutputConfigs outputConfigs = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
         public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD);
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
-        public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs().withStatorCurrentLimit(Amps.of(150)).withStatorCurrentLimitEnable(true);
+        public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(Amps.of(150))
+            .withStatorCurrentLimitEnable(false)
+            .withSupplyCurrentLimitEnable(false);
         
         public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
