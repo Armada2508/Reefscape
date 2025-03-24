@@ -33,14 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "stow elevator",
-      "waypointRelativePos": 0.10421836228287867,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "raise elevator to L4",
-      "waypointRelativePos": 0.4853598014888353,
+      "waypointRelativePos": 0.4,
       "endWaypointRelativePos": null,
       "command": null
     }

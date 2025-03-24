@@ -9,6 +9,12 @@
           "data": {
             "pathName": "STARTING LINE to REEF I"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
+          }
         }
       ]
     }

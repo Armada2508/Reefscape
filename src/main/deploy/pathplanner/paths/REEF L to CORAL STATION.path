@@ -34,13 +34,13 @@
   "eventMarkers": [
     {
       "name": "stow elevator",
-      "waypointRelativePos": 0.04665012406947652,
+      "waypointRelativePos": 0.05,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "raise elevator to intake",
-      "waypointRelativePos": 0.3602977667493851,
+      "name": "intake coral",
+      "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": null
     }

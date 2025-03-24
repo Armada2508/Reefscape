@@ -37,12 +37,6 @@
       "waypointRelativePos": 0.3997299122214663,
       "endWaypointRelativePos": null,
       "command": null
-    },
-    {
-      "name": "score L4",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
     }
   ],
   "globalConstraints": {

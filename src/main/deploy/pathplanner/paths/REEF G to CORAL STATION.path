@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.84436958614052,
-        "y": 3.8560875842155924
+        "x": 5.766068866571017,
+        "y": 3.823565279770445
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.0785,
-        "y": 2.4454999999999996
+        "x": 7.000199280430498,
+        "y": 2.412977695554852
       },
       "isLocked": false,
       "linkedName": "Reef-G"
@@ -34,13 +34,13 @@
   "eventMarkers": [
     {
       "name": "stow elevator",
-      "waypointRelativePos": 0.12605459057071236,
+      "waypointRelativePos": 0.05,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "raise elevator to intake",
-      "waypointRelativePos": 0.7870967741935426,
+      "name": "intake coral",
+      "waypointRelativePos": 0.6,
       "endWaypointRelativePos": null,
       "command": null
     }

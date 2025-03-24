@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.486571779699552,
-        "y": 0.7865572131933627
+        "x": 7.025035868005737,
+        "y": 2.7030846484935434
       },
       "isLocked": false,
       "linkedName": "Mid Starting Line"
     },
     {
       "anchor": {
-        "x": 5.84436958614052,
-        "y": 3.8560875842155924
+        "x": 5.766068866571017,
+        "y": 3.823565279770445
       },
       "prevControl": {
-        "x": 6.623473286761009,
-        "y": 4.674809307765447
+        "x": 6.9215558084075415,
+        "y": 3.77845330531095
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "raise elevator to L4",
-      "waypointRelativePos": 0.6878411910669971,
+      "waypointRelativePos": 0.4,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -55,7 +55,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 178.66601684255778
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

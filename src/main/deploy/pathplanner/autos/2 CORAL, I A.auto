@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "wait for score"
+            "name": "score L4"
           }
         },
         {
@@ -23,15 +23,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "wait for intake"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "CORAL STATION to REEF A"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
           }
         }
       ]

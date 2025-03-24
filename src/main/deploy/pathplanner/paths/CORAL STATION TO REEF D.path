@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 2.3064638157894732,
-        "y": 1.7384375
+        "y": 1.7384374999999999
       },
       "isLocked": false,
       "linkedName": "Low Coral Station Blue"
@@ -34,13 +34,7 @@
   "eventMarkers": [
     {
       "name": "raise elevator to L4",
-      "waypointRelativePos": 0.33823529411764736,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "score L4",
-      "waypointRelativePos": 0.99,
+      "waypointRelativePos": 0.4,
       "endWaypointRelativePos": null,
       "command": null
     }
