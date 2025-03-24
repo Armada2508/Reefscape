@@ -13,19 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": "wait for score"
+            "name": "score L4"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "REEF F TO CORAL STATION"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "wait for intake"
           }
         },
         {
@@ -37,7 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "wait for score"
+            "name": "score L4"
           }
         },
         {
@@ -47,15 +41,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "wait for intake"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "CORAL STATION to REEF C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
           }
         }
       ]

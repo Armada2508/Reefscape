@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "score L4"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "REEF K to CORAL STATION"
@@ -19,7 +25,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CORAL STATION to REEF L"
+            "pathName": "CORAL STATION to REEF A"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
           }
         }
       ]
