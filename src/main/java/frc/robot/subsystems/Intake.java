@@ -1,12 +1,9 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.function.DoubleSupplier;
 
-import com.playingwithfusion.TimeOfFlight;
-import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -22,33 +19,32 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
-import frc.robot.lib.util.Util;
 
 @Logged
 public class Intake extends SubsystemBase {
     
     private final SparkMax sparkMaxLeft = new SparkMax(IntakeK.sparkMaxLeftID, MotorType.kBrushless);
     private final SparkMax sparkMaxRight = new SparkMax(IntakeK.sparkMaxRightID, MotorType.kBrushless);
-    @Logged(name = "Time of Flight")
-    private final TimeOfFlight timeOfFlight = new TimeOfFlight(IntakeK.timeOfFlightId);
+    // @Logged(name = "Time of Flight")
+    // private final TimeOfFlight timeOfFlight = new TimeOfFlight(IntakeK.timeOfFlightId);
 
     /**
      * @param angularVelocity Supplier of the robot's angular velocity in radians per second
      */
     public Intake(DoubleSupplier angularVelocity) {
         configSparkMax();
-        timeOfFlight.setRangingMode(RangingMode.Short, 24);
+        // timeOfFlight.setRangingMode(RangingMode.Short, 24);
         setDefaultCommand(run(() -> {
-            if (isSensorTripped()) {
+            // if (isSensorTripped()) {
                 double volts = MathUtil.interpolate(0, IntakeK.holdVoltageAtMaxSpeed, 
                     Math.abs(angularVelocity.getAsDouble()) / SwerveK.maxAngularVelocity.in(RadiansPerSecond)
                 );
                 sparkMaxLeft.setVoltage(volts);
                 sparkMaxRight.setVoltage(volts);
-            }
-            else {
-                stop();
-            }
+            // }
+            // else {
+                // stop();
+            // }
         }).withName("Hold Coral"));
     }
 
@@ -72,10 +68,10 @@ public class Intake extends SubsystemBase {
      * True when ToF sensor is tripped
      * @return When milimeters are equal to the coralDetectionRange the sensor is tripped
      */
-    @Logged(name = "Sensor Tripped")
-    public boolean isSensorTripped() {
-        return Util.inRange(timeOfFlight.getRange(), IntakeK.coralDetectionRange.in(Millimeters));
-    }
+    // @Logged(name = "Sensor Tripped")
+    // public boolean isSensorTripped() {
+        // return Util.inRange(timeOfFlight.getRange(), IntakeK.coralDetectionRange.in(Millimeters));
+    // }
 
     /**
      * Stops motors
@@ -105,7 +101,8 @@ public class Intake extends SubsystemBase {
      */
     public Command score(Voltage volts) {
         return setVoltage(volts)
-        .andThen(Commands.waitUntil(() -> !isSensorTripped()))
+        .andThen(Commands.waitSeconds(0.25))
+        // .andThen(Commands.waitUntil(() -> !isSensorTripped()))
         .finallyDo(this::stop)
         .withName("Score");
     }
@@ -116,12 +113,16 @@ public class Intake extends SubsystemBase {
      */
     public Command coralIntake() {
         return setVoltage(IntakeK.coralIntakeVolts)
-        .andThen(
-            Commands.waitUntil(this::isSensorTripped),
-            Commands.waitTime(IntakeK.intakeAfterTrip)
-        )
-        .finallyDo(this::stop)
+        // .andThen(
+            // Commands.waitUntil(this::isSensorTripped),
+            // Commands.waitTime(IntakeK.intakeAfterTrip)
+        // )
+        // .finallyDo(this::stop)
         .withName("Coral Intake");
+    }
+
+    public Command coralIntakeTest() {
+        return setVoltage(IntakeK.coralIntakeVolts);
     }
 
     /**
@@ -160,10 +161,10 @@ public class Intake extends SubsystemBase {
         .withName("Score Level Four");
     }
 
-    @Logged(name = "TOF Range Valid")
-    public boolean isTOFRangeValid() {
-        return timeOfFlight.isRangeValid();
-    }
+    // @Logged(name = "TOF Range Valid")
+    // public boolean isTOFRangeValid() {
+        // return timeOfFlight.isRangeValid();
+    // }
     
     @Logged(name = "Current Command")
     public String getCurrentCommandName() {

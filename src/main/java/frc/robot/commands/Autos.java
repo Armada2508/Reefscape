@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK.Positions;
-import frc.robot.Constants.IntakeK;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -31,7 +30,7 @@ public class Autos {
         NamedCommands.registerCommand("score L4", Commands.waitUntil(() -> elevator.nearHeight(Positions.L4.close)).andThen(intake.scoreLevelFour()).withName("Auto score L4").asProxy());
         
         // NamedCommands.registerCommand("wait for score", Commands.waitUntil(() -> !intake.isSensorTripped()).withName("Wait for score"));
-        NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).andThen(Commands.waitTime(IntakeK.intakeAfterTrip)));
+        // NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).andThen(Commands.waitTime(IntakeK.intakeAfterTrip)));
         // NamedCommands.registerCommand("drive to coral", swerve.driveCommand(() -> 0.2, () -> 0, () -> 0, false, true).until(() -> elevator.getTimeOfFlightDistance() < 14).withTimeout(2).finallyDo(swerve::stop));
         
         new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake));

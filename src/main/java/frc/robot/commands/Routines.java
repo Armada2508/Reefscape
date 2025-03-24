@@ -39,6 +39,12 @@ public class Routines {
         .andThen(elevator.setPositionCommand(Positions.STOW))
         .withName("Intake Coral Routine");
     }
+
+    public static Command intakeCoralTest(Intake intake) {
+        return intake.coralIntakeTest()
+        .withName("Coral Intake Test");
+    }
+
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L1</STRONG> branch.
      * @param elevator
