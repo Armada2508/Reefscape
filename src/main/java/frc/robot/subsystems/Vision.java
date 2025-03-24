@@ -41,6 +41,7 @@ public class Vision extends SubsystemBase {
     private PhotonPipelineResult frontLatestResult;
     private PhotonPipelineResult backLatestResult;
 
+    @SuppressWarnings("removal")
     @Override
     public void periodic() {
         if (isCameraConnectedFront()) {
