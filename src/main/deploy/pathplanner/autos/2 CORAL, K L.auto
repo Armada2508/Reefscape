@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "wait for intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CORAL STATION to REEF L"
