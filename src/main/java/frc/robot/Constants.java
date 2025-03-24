@@ -260,7 +260,7 @@ public class Constants {
         public static final int servoLID = 1;
 
         public static final Voltage climbVoltage = Volts.of(-4);
-        public static final Voltage prepVoltage = Volts.of(2);
+        public static final Voltage prepVoltage = Volts.of(4);
         
         public static final Angle maxAngle = Degrees.of(80);
         public static final Angle minAngle = Degrees.of(-95);
