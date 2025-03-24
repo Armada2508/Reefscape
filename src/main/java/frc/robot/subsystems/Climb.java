@@ -32,7 +32,6 @@ public class Climb extends SubsystemBase {
 
     public Climb() {
         configTalons();
-        configMotionMagic(ClimbK.maxVelocity, ClimbK.maxAcceleration); 
     } 
 
     private void configTalons() {
@@ -99,7 +98,10 @@ public class Climb extends SubsystemBase {
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.stowAngle);
         return servoCoast()
             .andThen(
-                runOnce(() -> talon.setControl(request)),
+                runOnce(() -> {
+                    configMotionMagic(ClimbK.climbVelocity, ClimbK.climbAcceleration);
+                    talon.setControl(request);
+                }),
                 Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.stowAngle, ClimbK.allowableError))
                 .finallyDo(this::stop)
             ).withName("Climb Motion Magic");
@@ -121,13 +123,21 @@ public class Climb extends SubsystemBase {
      * Climbs the deep cage using motion magic
      */
     public Command climbMotionMagic() {
-        MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.minAngle);
+        MotionMagicVoltage grip = new MotionMagicVoltage(ClimbK.gripAngle);
+        MotionMagicVoltage climb = new MotionMagicVoltage(ClimbK.minAngle);
         return servoRatchet()
             .andThen(
-                runOnce(() -> talon.setControl(request)),
+                runOnce(() -> {
+                    configMotionMagic(ClimbK.gripVelocity, ClimbK.gripAcceleration);
+                    talon.setControl(grip);
+                }),
+                Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.gripAngle, ClimbK.allowableError)),
+                runOnce(() -> {
+                    configMotionMagic(ClimbK.climbVelocity, ClimbK.climbAcceleration);
+                    talon.setControl(climb);
+                }),
                 Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError))
-                .finallyDo(this::stop)
-            ).withName("Climb Motion Magic");
+            ).finallyDo(this::stop).withName("Climb Motion Magic");
     }
 
     public Command moveFreely() {

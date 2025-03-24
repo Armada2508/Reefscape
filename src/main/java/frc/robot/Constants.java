@@ -265,6 +265,7 @@ public class Constants {
         public static final Angle maxAngle = Degrees.of(65);
         public static final Angle minAngle = Degrees.of(-108);
         public static final Angle allowableError = Degrees.one();
+        public static final Angle gripAngle = Degrees.of(-20); // Angle of gription
         public static final Angle stowAngle = Degrees.of(-95);
 
         public static final double servoMin = 0;
@@ -272,8 +273,10 @@ public class Constants {
         public static final Time servoAcutateTime = Seconds.of(0.5);
 
         // Motion Magic
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(30);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(30); 
+        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(200);
+        public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(250); 
+        public static final AngularVelocity gripVelocity = DegreesPerSecond.of(30);
+        public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(30); 
         
         public static final double kP = 300;
         public static final double kD = 0;
