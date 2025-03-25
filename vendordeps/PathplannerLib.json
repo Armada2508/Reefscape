@@ -5,7 +5,7 @@
     "uuid": "1b42324f-17c6-4875-8e77-1c312bc8c786",
     "frcYear": "2025",
     "mavenUrls": [
-        "C:/Users/wispy/releases/maven/development"
+        "https://raw.githubusercontent.com/WispySparks/pathplanner/aeb27fb02dfd5f906cd803fa21f7a9d6d1b08861/pathplannerlib/repos/releases/"
     ],
     "jsonUrl": "https://3015rangerrobotics.github.io/pathplannerlib/PathplannerLib.json",
     "javaDependencies": [
