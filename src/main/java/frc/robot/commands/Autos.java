@@ -22,7 +22,7 @@ public class Autos {
 
     public static SendableChooser<Command> initPathPlanner(Swerve swerve, Elevator elevator, Intake intake) {
         FollowPathCommand.warmupCommand().schedule();
-
+        System.out.println(FollowPathCommand.additionalTimeSeconds + " " + FollowPathCommand.allowableTranslationErrorMeters);
         // NamedCommands.registerCommand("intake named", Routines.intakeCoral(elevator, intake));
         // NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));
         // NamedCommands.registerCommand("score L2", Routines.scoreCoralLevelTwo(elevator, intake));

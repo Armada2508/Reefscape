@@ -60,4 +60,5 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
+  "java.debug.settings.onBuildFailureProceed": true,
 }
