@@ -262,11 +262,11 @@ public class Constants {
         public static final Voltage climbVoltage = Volts.of(-4);
         public static final Voltage prepVoltage = Volts.of(4);
         
-        public static final Angle maxAngle = Degrees.of(65);
+        public static final Angle maxAngle = Degrees.of(62);
         public static final Angle minAngle = Degrees.of(-108);
         public static final Angle allowableError = Degrees.one();
-        public static final Angle gripAngle = Degrees.of(-20); // Angle of gription
-        public static final Angle stowAngle = Degrees.of(-95);
+        public static final Angle gripAngle = Degrees.of(-31); // Angle of gription
+        public static final Angle stowAngle = Degrees.of(-90);
 
         public static final double servoMin = 0;
         public static final double servoMax = 0.25;
@@ -275,8 +275,8 @@ public class Constants {
         // Motion Magic
         public static final AngularVelocity climbVelocity = DegreesPerSecond.of(200);
         public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(250); 
-        public static final AngularVelocity gripVelocity = DegreesPerSecond.of(30);
-        public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(30); 
+        public static final AngularVelocity gripVelocity = DegreesPerSecond.of(-60);
+        public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(90); 
         
         public static final double kP = 300;
         public static final double kD = 0;
