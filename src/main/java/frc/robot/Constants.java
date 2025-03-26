@@ -273,8 +273,8 @@ public class Constants {
         public static final Time servoAcutateTime = Seconds.of(0.5);
 
         // Motion Magic
-        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(200);
-        public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(250); 
+        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(60);
+        public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(90); 
         public static final AngularVelocity gripVelocity = DegreesPerSecond.of(-60);
         public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(90); 
         
@@ -286,7 +286,6 @@ public class Constants {
         public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD);
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(Amps.of(150))
             .withStatorCurrentLimitEnable(false)
             .withSupplyCurrentLimitEnable(false);
         
