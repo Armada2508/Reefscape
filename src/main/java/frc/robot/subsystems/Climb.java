@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
@@ -125,9 +126,14 @@ public class Climb extends SubsystemBase {
      * Climbs the deep cage using motion magic
      */
     public Command climbMotionMagic() {
+        MotionMagicVelocityVoltage grip = new MotionMagicVelocityVoltage(ClimbK.gripVelocity).withAcceleration(ClimbK.gripAcceleration).withSlot(1);
         MotionMagicVoltage climb = new MotionMagicVoltage(ClimbK.minAngle);
         return servoRatchet()
             .andThen(
+                runOnce(() -> {
+                    talon.setControl(grip);
+                }),
+                Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.gripAngle, ClimbK.allowableError)),
                 runOnce(() -> {
                     configMotionMagic(ClimbK.climbVelocity, ClimbK.climbAcceleration);
                     talon.setControl(climb);

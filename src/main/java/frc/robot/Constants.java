@@ -278,7 +278,7 @@ public class Constants {
         public static final AngularVelocity gripVelocity = DegreesPerSecond.of(-60);
         public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(90); 
         
-        public static final double kP = 300;
+        public static final double kP = 400;
         public static final double kD = 0;
         public static final double gearRatio = 64;
 
