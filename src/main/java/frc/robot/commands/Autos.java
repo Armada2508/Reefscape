@@ -5,6 +5,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.events.EventTrigger;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +23,7 @@ public class Autos {
 
     public static SendableChooser<Command> initPathPlanner(Swerve swerve, Elevator elevator, Intake intake) {
         FollowPathCommand.warmupCommand().schedule();
+        FollowPathCommand.allowableTranslationErrorMeters = Units.inchesToMeters(0.5);
         System.out.println(FollowPathCommand.additionalTimeSeconds + " " + FollowPathCommand.allowableTranslationErrorMeters);
         // NamedCommands.registerCommand("intake named", Routines.intakeCoral(elevator, intake));
         // NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));

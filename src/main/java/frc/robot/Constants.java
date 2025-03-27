@@ -135,8 +135,8 @@ public class Constants {
         public static final double gearRatio = 12.75;
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
-        public static final Current currentSpike = Amps.of(30);
-        public static final Time currentTripTime = Seconds.of(0.0625);
+        public static final Current currentSpike = Amps.of(47.5);
+        public static final Time currentTripTime = Seconds.of(0.125);
 
         // Feedfoward and feedback gains
         public static final double kG = 0.285; // Volts
@@ -145,8 +145,8 @@ public class Constants {
         public static final double kP = 6; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
 
-        public static final LinearVelocity maxVelocity = InchesPerSecond.of(60);
-        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(120);
+        public static final LinearVelocity maxVelocity = InchesPerSecond.of(105);
+        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(300);
 
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(5.925);
@@ -174,11 +174,11 @@ public class Constants {
             L1(Inches.of(22), Inches.of(22)),
             L2(Inches.of(30.125), Inches.of(30.125)),
             L3(Inches.of(45.70), Inches.of(45.70)),
-            L4(Inches.of(70.125), Inches.of(70.125)),
+            L4(Inches.of(69.875), Inches.of(69.875)),
             ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
             ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
             INTAKE(Inches.of(32), Inches.of(25.75)),
-            STOW(ElevatorK.minHeight, ElevatorK.minHeight);
+            STOW(Inches.of(7), Inches.of(7));
     
             public final Distance close, far;
     
@@ -214,7 +214,7 @@ public class Constants {
         public static final Time levelOneSecondWait = Seconds.of(0.5);
 
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
-        public static final Voltage levelFourVolts = Volts.of(-5);
+        public static final Voltage levelFourVolts = Volts.of(-6);
     }
 
     public static class AlgaeK {
