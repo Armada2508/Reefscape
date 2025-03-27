@@ -143,7 +143,7 @@ public class Constants {
         public static final double kS = 0.085; // Volts
         public static final double kV = 1.4389; // Volts/rps of target, 1.4389
         public static final double kP = 6; // Volts/rotation of error
-        public static final double kD = 0; // Volts/rps of error
+        public static final double kD = 1.9; // Volts/rps of error
 
         public static final LinearVelocity maxVelocity = InchesPerSecond.of(105);
         public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(300);
