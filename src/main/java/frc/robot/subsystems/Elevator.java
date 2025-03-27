@@ -40,6 +40,7 @@ public class Elevator extends SubsystemBase {
     private final TalonFX talonFollow = new TalonFX(ElevatorK.talonFollowID);
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(ElevatorK.tofID);
     private final Debouncer debouncer = new Debouncer(ElevatorK.currentTripTime.in(Seconds));
+    private double lastSensorRead = 0;
 
     public Elevator() {
         configTalons();
@@ -81,10 +82,12 @@ public class Elevator extends SubsystemBase {
 
     private Optional<Distance> getInterpolatedHeight(Distance closeHeight, Distance farHeight) {
         if (!timeOfFlight.isRangeValid()) return Optional.empty();
+        double range = timeOfFlight.getRange();
+        if (Millimeters.of(Math.abs(range - lastSensorRead)).gte(Inches.of(0.25))) lastSensorRead = range;
         Distance interpolatedHeight = Millimeters.of(MathUtil.interpolate(
             closeHeight.in(Millimeters), 
             farHeight.in(Millimeters), 
-            (timeOfFlight.getRange() + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
+            (lastSensorRead + ElevatorK.timeOfFlightOffset.in(Millimeters)) / ElevatorK.maxLinearDistance.in(Millimeters)
         ));
         return Optional.of(interpolatedHeight);
     }

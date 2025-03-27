@@ -177,8 +177,8 @@ public class Constants {
             L4(Inches.of(69.875), Inches.of(69.875)),
             ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
             ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
-            INTAKE(Inches.of(32), Inches.of(25.75)),
-            STOW(Inches.of(7), Inches.of(7));
+            INTAKE(Inches.of(32), Inches.of(27)),
+            STOW(Inches.of(6.5), Inches.of(6.5));
     
             public final Distance close, far;
     
@@ -193,6 +193,7 @@ public class Constants {
         public static final Distance maxLinearDistance = Inches.of(4.5);
         public static final int sampleTime = 100; // ms
     }  
+
 
     public static class IntakeK {
         public static final int sparkMaxLeftID = 2; 
@@ -214,7 +215,7 @@ public class Constants {
         public static final Time levelOneSecondWait = Seconds.of(0.5);
 
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
-        public static final Voltage levelFourVolts = Volts.of(-6);
+        public static final Voltage levelFourVolts = Volts.of(-7);
     }
 
     public static class AlgaeK {
