@@ -26,10 +26,10 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -78,8 +78,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private Pose2d pathPlannerTarget = Pose2d.kZero; // For logging
     // PID Alignment
     private Pose2d targetPose;
-    private PathPlannerTrajectoryState targetState;
-    private final PPHolonomicDriveController pidController = new PPHolonomicDriveController(SwerveK.translationConstants, SwerveK.rotationConstants);
+    private final ProfiledPIDController xController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.translationConstraints);
+    private final ProfiledPIDController yController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.translationConstraints);
+    private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.rotationConstraints);
 
     public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
         this.overridePathFollowing = overridePathFollowing;
@@ -100,6 +101,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         backRight = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
         rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees), SwerveK.angularVelocityDeadband.in(DegreesPerSecond));
         rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
         sysIdRoutine = new SysIdRoutine(
             new SysIdRoutine.Config(
                 null,        // Use default ramp rate (1 V/s)
@@ -235,13 +237,16 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
         return runOnce(() -> {
-            pidController.reset(getPose(), getChassisSpeeds());
+            xController.reset(getPose().getX(), getChassisSpeeds().vxMetersPerSecond);
+            yController.reset(getPose().getY(), getChassisSpeeds().vyMetersPerSecond);
+            thetaController.reset(getPose().getRotation().getRadians(), getChassisSpeeds().omegaRadiansPerSecond);
             targetPose = targetPoseSupplier.get();
-            targetState = new PathPlannerTrajectoryState();
-            targetState.pose = targetPose;
         }).andThen(run(() -> {
-            ChassisSpeeds targetSpeeds = pidController.calculateRobotRelativeSpeeds(getPose(), targetState);
-            setChassisSpeeds(targetSpeeds);
+            var currentPose = getPose();
+            double xFeedback = xController.calculate(currentPose.getX(), targetPose.getX());
+            double yFeedback = yController.calculate(currentPose.getY(), targetPose.getY());
+            double thetaFeedback = thetaController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+            setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, thetaFeedback, currentPose.getRotation()));
         })).until(() -> 
             (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
             && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees))

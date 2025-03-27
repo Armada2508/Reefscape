@@ -36,6 +36,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.LinearAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
@@ -65,7 +66,7 @@ public class Constants {
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
-        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477); //! Find this
+        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477);
         public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
@@ -98,8 +99,12 @@ public class Constants {
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
 
         // PID Alignment
-        public static final PIDConstants translationConstants = new PIDConstants(2.1, 0, 0);
-        public static final PIDConstants rotationConstants = new PIDConstants(3, 0, 0);
+        public static final PIDConstants translationConstants = new PIDConstants(2.1, 0, 0); // m/s / m of error
+        public static final PIDConstants rotationConstants = new PIDConstants(3, 0, 0); // rad/s / rad of error
+        public static final TrapezoidProfile.Constraints translationConstraints = 
+            new TrapezoidProfile.Constraints(Units.feetToMeters(3), Units.feetToMeters(3)); // m/s & m/s^2
+        public static final TrapezoidProfile.Constraints rotationConstraints = 
+            new TrapezoidProfile.Constraints(Units.degreesToRadians(180), Units.degreesToRadians(270)); // rad/s & rad/s^2
         public static final Distance maximumTranslationError = Inches.of(0.25);
         public static final Angle maximumRotationError = Degrees.of(0.5);
 
