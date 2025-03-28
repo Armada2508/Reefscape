@@ -300,6 +300,11 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return swerveDrive.getRobotVelocity();
     }
 
+    @Logged
+    public double getLinearVelocity() {
+        return Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
+    }
+
     /**
      * Set the speed of the robot with closed loop velocity control
      * @param chassisSpeeds to set speed with (robot relative)
