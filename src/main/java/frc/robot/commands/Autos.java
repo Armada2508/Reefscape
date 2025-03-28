@@ -32,12 +32,12 @@ public class Autos {
         // NamedCommands.registerCommand("raise and score L4", elevator.setPositionCommand(Positions.L4.close).andThen(Routines.scoreCoralLevelFour(elevator, intake)));
         // NamedCommands.registerCommand("wait for score", Commands.waitUntil(() -> !intake.isSensorTripped()).withName("Wait for score"));
         // NamedCommands.registerCommand("drive to coral", swerve.driveCommand(() -> 0.2, () -> 0, () -> 0, false, true).until(() -> elevator.getTimeOfFlightDistance() < 14).withTimeout(2).finallyDo(swerve::stop));
-        NamedCommands.registerCommand("score L4", Commands.waitUntil(() -> elevator.nearHeight(Positions.L4.close)).withTimeout(1).andThen(intake.scoreLevelFour()).withName("Auto score L4").asProxy());
+        NamedCommands.registerCommand("score L4", Commands.waitUntil(() -> elevator.nearL4()).withTimeout(1).andThen(intake.scoreLevelFour()).withName("Auto score L4").asProxy());
         NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).andThen(Commands.waitTime(IntakeK.intakeAfterTrip)).withName("Wait for intake auto"));
         
         // new EventTrigger("raise elevator to intake").onTrue(elevator.setPositionCommand(Positions.INTAKE.close));
         new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake));
-        new EventTrigger("raise elevator to L4").onTrue(elevator.setPositionCommand(Positions.L4).alongWith(intake.coralIntake()).withName("Raise elevator L4 auto"));
+        new EventTrigger("raise elevator to L4").onTrue(elevator.setPositionCommand(Positions.L4.close).alongWith(intake.coralIntake()).withName("Raise elevator L4 auto"));
         new EventTrigger("stow elevator").onTrue(elevator.setPositionCommand(Positions.STOW));
         
         SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("2 CORAL, E D");

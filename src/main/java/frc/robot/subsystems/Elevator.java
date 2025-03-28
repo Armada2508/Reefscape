@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorK;
+import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.lib.util.Encoder;
 import frc.robot.lib.util.Util;
 
@@ -151,6 +152,10 @@ public class Elevator extends SubsystemBase {
 
     public boolean nearHeight(Distance height) {
         return height.isNear(getPosition(), ElevatorK.allowableError);
+    }
+
+    public boolean nearL4() {
+        return nearHeight(Positions.L4.close);
     }
 
     @Logged(name = "TOF Reading (in.)")
