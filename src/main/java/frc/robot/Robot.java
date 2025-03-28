@@ -232,7 +232,7 @@ public class Robot extends TimedRobot {
 
         // Climb
         xboxController.povUp().onTrue(climb.prep());
-        xboxController.povDown().onTrue(climb.climbMotionMagic());
+        // xboxController.povDown().onTrue(climb.climbMotionMagic());
         xboxController.povRight().onTrue(climb.servoCoast());
         xboxController.povLeft().onTrue(climb.servoRatchet());
         xboxController.leftTrigger().onTrue(climb.moveFreely());
@@ -260,7 +260,7 @@ public class Robot extends TimedRobot {
         // xboxController.rightTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
         // xboxController.leftTrigger().whileTrue(swerve.faceWheelsForward());
 
-        // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
+        xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         // xboxController.povDown().whileTrue(swerve.setDriveVoltage(Volts.of(3)));
     }
 
