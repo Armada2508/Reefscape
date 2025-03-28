@@ -45,6 +45,24 @@
           "data": {
             "pathName": "Reef A to CORAL STATION"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CORAL STATION TO REEF B"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
+          }
         }
       ]
     }

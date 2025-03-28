@@ -3,33 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.151,
-        "y": 1.058
+        "x": 1.101,
+        "y": 7.04
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8162260058761608,
-        "y": 1.7444197313930974
+        "x": 1.9916940789473683,
+        "y": 6.940378289473683
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Top Coral Station Blue"
     },
     {
       "anchor": {
-        "x": 3.12975,
-        "y": 3.8495
+        "x": 3.201,
+        "y": 3.862
       },
       "prevControl": {
-        "x": 2.776421172815395,
-        "y": 3.6667984614300124
+        "x": 2.097532894736842,
+        "y": 3.7652138157894735
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "reef-b"
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.6,
+      "constraints": {
+        "maxVelocity": 3.75,
+        "maxAcceleration": 3.75,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -55,7 +69,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -125.22
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }
