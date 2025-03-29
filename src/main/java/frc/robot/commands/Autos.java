@@ -40,7 +40,7 @@ public class Autos {
         new EventTrigger("raise elevator to L4").onTrue(elevator.setPositionCommand(Positions.L4.close).alongWith(intake.coralIntake()).withName("Raise elevator L4 auto"));
         new EventTrigger("stow elevator").onTrue(elevator.setPositionCommand(Positions.STOW));
         
-        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("2 CORAL, E D");
+        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
         return autoChooser;
     }

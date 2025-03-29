@@ -17,7 +17,6 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -39,7 +38,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
@@ -53,7 +51,6 @@ import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
-import frc.robot.lib.logging.LogUtil;
 import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
@@ -391,15 +388,15 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return new DriveWheelCharacterization(this);
     }
 
-    private DoubleSubscriber p = LogUtil.getTunableDouble("drive p", 20);
+    // private DoubleSubscriber p = LogUtil.getTunableDouble("drive p", 20);
 
-    public Command setP() {
-        return Commands.runOnce(() -> {
-            for (var module : swerveDrive.getModules()) {
-                var motor = (TalonFXSwerve) module.getDriveMotor();
-                ((TalonFX) motor.getMotor()).getConfigurator().apply(new SlotConfigs().withKP(p.getAsDouble()));
-            }
-        });
-    }
+    // public Command setP() {
+    //     return Commands.runOnce(() -> {
+    //         for (var module : swerveDrive.getModules()) {
+    //             var motor = (TalonFXSwerve) module.getDriveMotor();
+    //             ((TalonFX) motor.getMotor()).getConfigurator().apply(new SlotConfigs().withKP(p.getAsDouble()));
+    //         }
+    //     });
+    // }
 
 }
