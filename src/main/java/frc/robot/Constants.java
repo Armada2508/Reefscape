@@ -99,12 +99,12 @@ public class Constants {
         public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
 
         // PID Alignment
-        public static final PIDConstants translationConstants = new PIDConstants(2.1, 0, 0); // m/s / m of error
-        public static final PIDConstants rotationConstants = new PIDConstants(3, 0, 0); // rad/s / rad of error
+        public static final PIDConstants translationConstants = new PIDConstants(5.25, 0, 0); // m/s / m of error
+        public static final PIDConstants rotationConstants = new PIDConstants(5, 0, 0); // rad/s / rad of error
         public static final TrapezoidProfile.Constraints translationConstraints = 
-            new TrapezoidProfile.Constraints(Units.feetToMeters(3), Units.feetToMeters(3)); // m/s & m/s^2
+            new TrapezoidProfile.Constraints(Units.feetToMeters(6), Units.feetToMeters(10)); // m/s & m/s^2
         public static final TrapezoidProfile.Constraints rotationConstraints = 
-            new TrapezoidProfile.Constraints(Units.degreesToRadians(180), Units.degreesToRadians(270)); // rad/s & rad/s^2
+            new TrapezoidProfile.Constraints(Units.degreesToRadians(540), Units.degreesToRadians(720)); // rad/s & rad/s^2
         public static final Distance maximumTranslationError = Inches.of(0.25);
         public static final Angle maximumRotationError = Degrees.of(0.5);
 
@@ -183,7 +183,7 @@ public class Constants {
             ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
             ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
             INTAKE(Inches.of(32.25), Inches.of(27)), // Min: 31.25" | Max: 33.25", Mid: 32.25"
-            STOW(Inches.of(8), Inches.of(8));
+            STOW(Inches.of(7.5), Inches.of(7.5));
     
             public final Distance close, far;
     
