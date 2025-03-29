@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9137213681186074,
-        "y": 6.923534822303193
+        "x": 1.318174342105263,
+        "y": 6.21875
       },
       "isLocked": false,
-      "linkedName": "Top Coral Station Blue"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 4.19
       },
       "prevControl": {
-        "x": 2.5344534009809476,
-        "y": 4.4150540288147315
+        "x": 2.9827302631578942,
+        "y": 4.948684210526316
       },
       "nextControl": null,
       "isLocked": false,
@@ -54,8 +54,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 2.25,
+    "maxAcceleration": 2.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -71,5 +71,5 @@
     "velocity": 0,
     "rotation": 126.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

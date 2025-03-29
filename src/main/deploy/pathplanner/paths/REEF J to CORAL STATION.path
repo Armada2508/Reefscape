@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.101,
-        "y": 7.04
+        "x": 1.1161184210526316,
+        "y": 6.978865131578947
       },
       "prevControl": {
-        "x": 3.239146937851583,
-        "y": 5.936489823341296
+        "x": 1.8721085526315788,
+        "y": 6.9273519736842095
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,8 +35,8 @@
       "minWaypointRelativePos": 0,
       "maxWaypointRelativePos": 0.6,
       "constraints": {
-        "maxVelocity": 3.75,
-        "maxAcceleration": 3.75,
+        "maxVelocity": 4.0,
+        "maxAcceleration": 4.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "stow elevator",
-      "waypointRelativePos": 0.05,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": null
     },
@@ -60,8 +60,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 3.75,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
