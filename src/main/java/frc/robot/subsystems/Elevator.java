@@ -177,6 +177,11 @@ public class Elevator extends SubsystemBase {
         return angularToLinear(Rotations.of(talon.getVelocity().getValueAsDouble())).in(Inches);
     }
 
+    @Logged(name = "Acceleration (in.)")
+    public double getAccelerationInches() {
+        return angularToLinear(Rotations.of(talon.getAcceleration().getValueAsDouble())).in(Inches);
+    }
+
     @Logged(name = "Target (in.)")
     public double getTargetInches() {
         return angularToLinear(Rotations.of(talon.getClosedLoopReference().getValue())).in(Inches);
