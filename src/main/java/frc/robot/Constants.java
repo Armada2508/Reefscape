@@ -104,7 +104,7 @@ public class Constants {
         public static final TrapezoidProfile.Constraints translationConstraints = 
             new TrapezoidProfile.Constraints(Units.feetToMeters(6), Units.feetToMeters(10)); // m/s & m/s^2
         public static final TrapezoidProfile.Constraints rotationConstraints = 
-            new TrapezoidProfile.Constraints(Units.degreesToRadians(540), Units.degreesToRadians(720)); // rad/s & rad/s^2
+            new TrapezoidProfile.Constraints(Units.degreesToRadians(360), Units.degreesToRadians(360)); // rad/s & rad/s^2
         public static final Distance maximumTranslationError = Inches.of(0.25);
         public static final Angle maximumRotationError = Degrees.of(0.5);
 
