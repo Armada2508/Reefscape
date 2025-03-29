@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -43,6 +44,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -131,6 +133,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
+        SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
         for (var result : visionSource.get().results()) {
             EstimatedRobotPose pose = result.getFirst();
             if (!initializedOdometryFromVision) {
@@ -230,6 +234,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         }, Set.of(this)).withName("PP Align");
     }
 
+    private boolean resetpid = false;
+
     /**
      * Command to drive the robot to another position without creating a path
      * @param targetPoseSupplier Supplier of the target pose
@@ -237,16 +243,29 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
         return runOnce(() -> {
-            xController.reset(getPose().getX(), getChassisSpeeds().vxMetersPerSecond);
-            yController.reset(getPose().getY(), getChassisSpeeds().vyMetersPerSecond);
-            thetaController.reset(getPose().getRotation().getRadians(), getChassisSpeeds().omegaRadiansPerSecond);
             targetPose = targetPoseSupplier.get();
-        }).andThen(run(() -> {
-            var currentPose = getPose();
-            double xFeedback = xController.calculate(currentPose.getX(), targetPose.getX());
-            double yFeedback = yController.calculate(currentPose.getY(), targetPose.getY());
-            double thetaFeedback = thetaController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
-            setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, thetaFeedback, currentPose.getRotation()));
+            overrideDebouncer.calculate(false);
+            resetpid = true;
+            for (var module : swerveDrive.getModules()) {
+                ((TalonFX) module.getDriveMotor().getMotor()).setControl(new NeutralOut());
+            }
+        }).andThen(
+            Commands.waitSeconds(0.25),
+            run(() -> {
+            var pose = getPose();
+            if (resetpid) {
+                var speeds = getChassisSpeeds();
+                xController.reset(pose.getX(), speeds.vxMetersPerSecond);
+                yController.reset(pose.getY(), speeds.vyMetersPerSecond);
+                thetaController.reset(pose.getRotation().getRadians(), speeds.omegaRadiansPerSecond);
+                System.out.println(pose);
+                System.out.println(speeds);
+                resetpid = false;
+            }
+            double xFeedback = xController.calculate(pose.getX(), targetPose.getX());
+            double yFeedback = yController.calculate(pose.getY(), targetPose.getY());
+            double thetaFeedback = thetaController.calculate(pose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+            setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, thetaFeedback, pose.getRotation()));
         })).until(() -> 
             (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
             && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees))
