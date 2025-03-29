@@ -178,7 +178,7 @@ public class Constants {
             ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
             ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
             INTAKE(Inches.of(32.25), Inches.of(27)), // Min: 31.25" | Max: 33.25", Mid: 32.25"
-            STOW(Inches.of(8), Inches.of(8));
+            STOW(Inches.of(7.5), Inches.of(7.5));
     
             public final Distance close, far;
     
