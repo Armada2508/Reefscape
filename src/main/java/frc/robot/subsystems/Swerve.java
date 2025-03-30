@@ -239,6 +239,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             targetPose = targetPoseSupplier.get();
             targetState = new PathPlannerTrajectoryState();
             targetState.pose = targetPose;
+            overrideDebouncer.calculate(false);
         }).andThen(run(() -> {
             ChassisSpeeds targetSpeeds = pidController.calculateRobotRelativeSpeeds(getPose(), targetState);
             setChassisSpeeds(targetSpeeds);
