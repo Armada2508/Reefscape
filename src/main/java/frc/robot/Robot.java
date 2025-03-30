@@ -27,6 +27,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -200,6 +201,10 @@ public class Robot extends TimedRobot {
         // Alignment
         xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
         xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
+        swerve.completedAlignment.onTrue(Commands.sequence(
+            Commands.runOnce(() -> xboxController.setRumble(RumbleType.kBothRumble, 0.5)),
+            Commands.waitTime(Seconds.of(0.25))
+        ).finallyDo(() -> xboxController.setRumble(RumbleType.kBothRumble, 0)));
         // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
         
         // Intake

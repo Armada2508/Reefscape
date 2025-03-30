@@ -65,7 +65,7 @@ public class Constants {
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
-        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477); //! Find this
+        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477);
         public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
@@ -91,11 +91,6 @@ public class Constants {
                 e.printStackTrace();
             }
         }
-
-        // Turn PID
-        public static final PIDConstants angularPID = new PIDConstants(5, 0, 0.4); // kP = degrees/second per degree
-        public static final Angle angularDeadband = Degrees.of(2);
-        public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
 
         // PID Alignment
         public static final PIDConstants translationConstants = new PIDConstants(2.1, 0, 0);
