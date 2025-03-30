@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import java.util.Set;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,20 +26,23 @@ public class Routines {
     // Prevent this class from being instantiated
     private Routines() {}
 
-    public static Command stow(Elevator elevator, Intake intake,/* Algae algae,*/ Climb climb) {
+    public static Command stow(Elevator elevator, Intake intake, Climb climb) {
         return elevator.setPositionCommand(Positions.STOW)
-        .alongWith(
+            .alongWith(
             intake.runOnce(intake::stop),
-            // algae.stow(),
             climb.stow()
         )
         .withName("Stow Routine");
     }
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
-        return elevator.setPositionCommand(Positions.INTAKE).withDeadline(intake.coralIntake())
-        .andThen(elevator.setPositionCommand(Positions.STOW))
-        .withName("Intake Coral Routine");
+        return elevator.setPositionCommand(Positions.INTAKE).withDeadline(intake.intakeCoral())
+        .andThen(
+            Commands.defer(() -> elevator.setPositionCommand(elevator.getPosition().plus(ElevatorK.intakeBumpHeight)), Set.of(elevator)),
+            intake.runOnce(() -> intake.stop()),
+            elevator.setPositionCommand(Positions.STOW),
+            intake.secureCoral()
+        ).withName("Intake Coral Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L1</STRONG> branch.

@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.324804658809975,
-        "y": 6.540958635359912
+        "x": 4.0796052631578945,
+        "y": 6.189884868421052
       },
       "isLocked": false,
       "linkedName": "Reef-J"
     },
     {
       "anchor": {
-        "x": 1.1161184210526316,
-        "y": 6.978865131578947
+        "x": 1.101,
+        "y": 7.04
       },
       "prevControl": {
-        "x": 1.8721085526315788,
-        "y": 6.9273519736842095
+        "x": 1.9532072368421052,
+        "y": 6.064802631578947
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,10 +33,10 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.6,
+      "maxWaypointRelativePos": 0.625,
       "constraints": {
-        "maxVelocity": 4.0,
-        "maxAcceleration": 4.0,
+        "maxVelocity": 3.75,
+        "maxAcceleration": 3.75,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -60,8 +60,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.5,
-    "maxAcceleration": 3.75,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.125,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

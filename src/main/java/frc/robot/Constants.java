@@ -156,6 +156,7 @@ public class Constants {
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(6.05);
         public static final Distance maxHeight = Inches.of(74.25);
+        public static final Distance intakeBumpHeight = Inches.of(4);
         public static final Distance armThresholdHeight = Inches.of(20); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.125);
 
@@ -196,7 +197,7 @@ public class Constants {
         // Linear Interpolation
         public static final Distance timeOfFlightOffset = Inches.of(-13.7);
         public static final Distance maxLinearDistance = Inches.of(4.5);
-        public static final int sampleTime = 100; // ms
+        public static final int sampleTime = 24; // ms
     }  
 
 
@@ -212,7 +213,7 @@ public class Constants {
         public static final double holdVoltageAtMaxSpeed = 1;
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
-        public static final Time intakeAfterTrip = Seconds.of(0.25);
+        public static final Time intakeSecureTime = Seconds.of(0.25);
 
         public static final Voltage levelOneVolts = Volts.of(-7.5);
         public static final Time levelOneWait = Seconds.of(0.04);
@@ -252,7 +253,7 @@ public class Constants {
         public static final Distance minPoseZ = Inches.of(-6);
         // Used in scaling the standard deviations by average distance to april tags
         public static final Distance baseLineAverageTagDistance = Inches.of(84);
-        public static final Distance maxAverageTagDistance = Inches.of(121);
+        public static final Distance maxAverageTagDistance = Inches.of(160);
         // Vision Standard Deviations (Meters, Meters, Radians)
         public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(3), Units.feetToMeters(3), Units.degreesToRadians(360));
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));
