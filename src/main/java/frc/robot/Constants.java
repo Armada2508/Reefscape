@@ -247,7 +247,7 @@ public class Constants {
         public static final Distance minPoseZ = Inches.of(-6);
         // Used in scaling the standard deviations by average distance to april tags
         public static final Distance baseLineAverageTagDistance = Inches.of(84);
-        public static final Distance maxAverageTagDistance = Inches.of(121);
+        public static final Distance maxAverageTagDistance = Inches.of(160);
         // Vision Standard Deviations (Meters, Meters, Radians)
         public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(3), Units.feetToMeters(3), Units.degreesToRadians(360));
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6952499999999997,
-        "y": 5.077999999999999
+        "x": 3.697,
+        "y": 5.049
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.515655850964774,
-        "y": 6.535777853927831
+        "x": 2.5174058509647743,
+        "y": 6.506777853927832
       },
       "isLocked": false,
       "linkedName": "Reef-L"
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Top Coral Station Blue"
     }
   ],
   "rotationTargets": [],
@@ -47,7 +47,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 2.0,
-    "maxAcceleration": 2.25,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
