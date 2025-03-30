@@ -66,7 +66,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX backRight;
     private final SysIdRoutine sysIdRoutine; 
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
-    private boolean initializedOdometryFromVision = true;
+    private boolean initializedOdometryFromVision = false;
     @SuppressWarnings("unused")
     private Pose2d pathPlannerTarget = Pose2d.kZero; // For logging
     // PID Alignment
