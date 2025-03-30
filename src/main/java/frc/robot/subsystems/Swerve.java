@@ -72,7 +72,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
-    private boolean initializedOdometryFromVision = false;
+    private boolean initializedOdometryFromVision = true;
     private final BooleanSupplier overridePathFollowing;
     private final Debouncer overrideDebouncer = new Debouncer(ControllerK.overrideTime.in(Seconds));
     @SuppressWarnings("unused")
