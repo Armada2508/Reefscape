@@ -121,10 +121,15 @@ public class Vision extends SubsystemBase {
             return VisionK.untrustedStdDevs;
         }
         if (numTags == 0) return VisionK.untrustedStdDevs;
+        Matrix<N3, N1> stdDevs;
         if (numTags == 1) {
-            return VisionK.singleTagStdDevs.times(stdevScalar);
+            stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
         }
-        return VisionK.multiTagStdDevs.times(stdevScalar);
+        stdDevs = VisionK.multiTagStdDevs.times(stdevScalar);
+        if (name == VisionK.backCameraName) {
+            stdDevs = stdDevs.times(2.75);
+        }
+        return stdDevs;
     }
 
     /**

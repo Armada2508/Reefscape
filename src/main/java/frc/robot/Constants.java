@@ -151,7 +151,7 @@ public class Constants {
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(6.05);
         public static final Distance maxHeight = Inches.of(74.25);
-        public static final Distance intakeBumpHeight = Inches.of(3);
+        public static final Distance intakeBumpHeight = Inches.of(4);
         public static final Distance armThresholdHeight = Inches.of(20); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.125);
 
@@ -192,7 +192,7 @@ public class Constants {
         // Linear Interpolation
         public static final Distance timeOfFlightOffset = Inches.of(-13.7);
         public static final Distance maxLinearDistance = Inches.of(4.5);
-        public static final int sampleTime = 100; // ms
+        public static final int sampleTime = 24; // ms
     }  
 
 
