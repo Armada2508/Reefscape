@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -28,18 +27,14 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -47,6 +42,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
@@ -69,21 +65,22 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX backLeft;
     private final TalonFX backRight;
     private final SysIdRoutine sysIdRoutine; 
-    private final PIDController rotationPIDController = new PIDController(SwerveK.angularPID.kP, SwerveK.angularPID.kI, SwerveK.angularPID.kD);
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
-    private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("swerve");
     private boolean initializedOdometryFromVision = true;
-    private final BooleanSupplier overridePathFollowing;
-    private final Debouncer overrideDebouncer = new Debouncer(ControllerK.overrideTime.in(Seconds));
     @SuppressWarnings("unused")
     private Pose2d pathPlannerTarget = Pose2d.kZero; // For logging
     // PID Alignment
+    private final BooleanSupplier overridePathFollowing;
+    private final Debouncer overrideDebouncer = new Debouncer(ControllerK.overrideTime.in(Seconds));
     private Pose2d targetPose;
+    private boolean completedAlignmentBool = false;
+    public final Trigger completedAlignment = new Trigger(() -> completedAlignmentBool);
     private final ProfiledPIDController xController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.translationConstraints);
     private final ProfiledPIDController yController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.translationConstraints);
     private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.rotationConstraints);
 
     public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
+        this.visionSource = visionSource;
         this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
@@ -94,14 +91,11 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             throw new RuntimeException("Swerve directory not found.");
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxPossibleRobotSpeed.in(MetersPerSecond));
-        this.visionSource = visionSource;
         swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(SwerveK.kS, SwerveK.kV, SwerveK.kA));
         frontLeft = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
         frontRight = (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
         backLeft = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
         backRight = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
-        rotationPIDController.setTolerance(SwerveK.angularDeadband.in(Degrees), SwerveK.angularVelocityDeadband.in(DegreesPerSecond));
-        rotationPIDController.enableContinuousInput(-Rotation2d.k180deg.getDegrees(), Rotation2d.k180deg.getDegrees());
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
         sysIdRoutine = new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -174,37 +168,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     /**
-     * Turns the robot to the desired field relative angle
-     * @param target Desired angle
-     * @return A command that turns the robot until it's at the desired angle
-     */
-    public Command turnCommand(Angle target) {
-        return turnCommand(() -> target);
-    }
-
-    /**
-     * Turns the robot to the desired field relative angle
-     * @param targetSupplier Desired angle
-     * @return A command that turns the robot until it's at the desired angle
-     */
-    public Command turnCommand(Supplier<Angle> targetSupplier) {
-        return runOnce(() -> {
-            Angle target = targetSupplier.get();
-            rotationPIDController.reset();
-            rotationPIDController.setSetpoint(target.in(Degrees));
-            table.getEntry("Reference").setDouble(target.in(Degrees));
-        })
-        .andThen(runEnd(() -> {
-            table.getEntry("Current").setDouble(getHeading().in(Degrees));
-            AngularVelocity velocity = DegreesPerSecond.of(rotationPIDController.calculate(getHeading().in(Degrees)));
-            drive(Translation2d.kZero, velocity, true, false);
-        }, this::stop))
-        .until(rotationPIDController::atSetpoint)
-        .withTimeout(Seconds.of(2))
-        .withName("Swerve Turn");
-    }
-
-    /**
      * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
      * @param targetPoseSupplier Supplier of the target pose
      * @return Command to drive along the constructed path
@@ -244,6 +207,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return runOnce(() -> {
             targetPose = targetPoseSupplier.get();
             overrideDebouncer.calculate(false);
+            completedAlignmentBool = false;
             resetpid = true;
         }).andThen(
             run(() -> {
@@ -261,11 +225,13 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             double yFeedback = yController.calculate(pose.getY() - targetPose.getY(), 0);
             double thetaFeedback = thetaController.calculate(pose.getRotation().getRadians(), targetPose.getRotation().getRadians());
             setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, thetaFeedback, pose.getRotation()));
-        })).until(() -> 
-            (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
-            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees))
-            || overrideDebouncer.calculate(overridePathFollowing.getAsBoolean())
-        ).finallyDo(this::stop).withName("PID Align");
+        })).until(() -> {
+            boolean withinError = (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
+            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees));
+            boolean override = overrideDebouncer.calculate(overridePathFollowing.getAsBoolean());
+            if (withinError) completedAlignmentBool = true;
+            return withinError || override;
+        }).finallyDo(this::stop).withName("PID Align");
     }
 
     public Command setDriveVoltage(Voltage volts) {
@@ -406,16 +372,5 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public Command characterizeDriveWheelDiameter() {
         return new DriveWheelCharacterization(this);
     }
-
-    // private DoubleSubscriber p = LogUtil.getTunableDouble("drive p", 20);
-
-    // public Command setP() {
-    //     return Commands.runOnce(() -> {
-    //         for (var module : swerveDrive.getModules()) {
-    //             var motor = (TalonFXSwerve) module.getDriveMotor();
-    //             ((TalonFX) motor.getMotor()).getConfigurator().apply(new SlotConfigs().withKP(p.getAsDouble()));
-    //         }
-    //     });
-    // }
 
 }
