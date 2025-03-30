@@ -92,11 +92,6 @@ public class Constants {
             }
         }
 
-        // Turn PID
-        public static final PIDConstants angularPID = new PIDConstants(5, 0, 0.4); // kP = degrees/second per degree
-        public static final Angle angularDeadband = Degrees.of(2);
-        public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
-
         // PID Alignment
         public static final PIDConstants translationConstants = new PIDConstants(2.1, 0, 0);
         public static final PIDConstants rotationConstants = new PIDConstants(3, 0, 0);
