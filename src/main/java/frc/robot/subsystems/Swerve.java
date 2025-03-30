@@ -41,6 +41,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
@@ -73,6 +74,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final Debouncer overrideDebouncer = new Debouncer(ControllerK.overrideTime.in(Seconds));
     private Pose2d targetPose;
     private PathPlannerTrajectoryState targetState;
+    private boolean completedAlignmentBool = false;
+    public final Trigger completedAlignment = new Trigger(() -> completedAlignmentBool);
 
     public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
         this.visionSource = visionSource;
@@ -200,14 +203,17 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             targetState = new PathPlannerTrajectoryState();
             targetState.pose = targetPose;
             overrideDebouncer.calculate(false);
+            completedAlignmentBool = false;
         }).andThen(run(() -> {
             ChassisSpeeds targetSpeeds = pidController.calculateRobotRelativeSpeeds(getPose(), targetState);
             setChassisSpeeds(targetSpeeds);
-        })).until(() -> 
-            (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
-            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees))
-            || overrideDebouncer.calculate(overridePathFollowing.getAsBoolean())
-        ).finallyDo(this::stop).withName("PID Align");
+        })).until(() -> {
+            boolean withinError = (getPose().getTranslation().getDistance(targetPose.getTranslation()) < SwerveK.maximumTranslationError.in(Meters)
+            && Math.abs(getPose().getRotation().minus(targetPose.getRotation()).getDegrees()) < SwerveK.maximumRotationError.in(Degrees));
+            boolean override = overrideDebouncer.calculate(overridePathFollowing.getAsBoolean());
+            if (withinError) completedAlignmentBool = true;
+            return withinError || override;
+        }).finallyDo(this::stop).withName("PID Align");
     }
 
     public Command setDriveVoltage(Voltage volts) {
