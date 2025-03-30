@@ -24,11 +24,10 @@ public class Routines {
     // Prevent this class from being instantiated
     private Routines() {}
 
-    public static Command stow(Elevator elevator, Intake intake,/* Algae algae,*/ Climb climb) {
+    public static Command stow(Elevator elevator, Intake intake, Climb climb) {
         return elevator.setPositionCommand(Positions.STOW)
-        .alongWith(
+            .alongWith(
             intake.runOnce(intake::stop),
-            // algae.stow(),
             climb.stow()
         )
         .withName("Stow Routine");
@@ -36,7 +35,10 @@ public class Routines {
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
         return elevator.setPositionCommand(Positions.INTAKE).withDeadline(intake.coralIntake())
-        .andThen(elevator.setPositionCommand(Positions.STOW))
+        .andThen(
+            elevator.setPositionCommand(elevator.getPosition().plus(Inches.of(1))).alongWith(Commands.print("Up 1 inch")),
+            intake.runOnce(() -> intake.stop()),
+            elevator.setPositionCommand(Positions.STOW))
         .withName("Intake Coral Routine");
     }
     /**

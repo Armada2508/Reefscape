@@ -120,7 +120,6 @@ public class Intake extends SubsystemBase {
             Commands.waitUntil(this::isSensorTripped),
             Commands.waitTime(IntakeK.intakeAfterTrip)
         )
-        .finallyDo(this::stop)
         .withName("Coral Intake");
     }
 
