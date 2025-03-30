@@ -250,8 +250,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             var pose = getPose();
             if (resetpid) {
                 var speeds = getChassisSpeeds();
-                xController.reset(pose.getX() - targetPose.getX(), speeds.vxMetersPerSecond);
-                yController.reset(pose.getY() - targetPose.getY(), speeds.vyMetersPerSecond);
+                xController.reset(pose.getX() - targetPose.getX(), 0);
+                yController.reset(pose.getY() - targetPose.getY(), 0);
                 thetaController.reset(pose.getRotation().getRadians(), speeds.omegaRadiansPerSecond);
                 System.out.println(pose);
                 System.out.println(speeds);
