@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import java.util.Set;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -34,12 +36,13 @@ public class Routines {
     }
     
     public static Command intakeCoral(Elevator elevator, Intake intake) {
-        return elevator.setPositionCommand(Positions.INTAKE).withDeadline(intake.coralIntake())
+        return elevator.setPositionCommand(Positions.INTAKE).withDeadline(intake.intakeCoral())
         .andThen(
-            elevator.setPositionCommand(elevator.getPosition().plus(Inches.of(1))).alongWith(Commands.print("Up 1 inch")),
+            Commands.defer(() -> elevator.setPositionCommand(elevator.getPosition().plus(ElevatorK.intakeBumpHeight)), Set.of(elevator)),
             intake.runOnce(() -> intake.stop()),
-            elevator.setPositionCommand(Positions.STOW))
-        .withName("Intake Coral Routine");
+            elevator.setPositionCommand(Positions.STOW),
+            intake.secureCoral()
+        ).withName("Intake Coral Routine");
     }
     /**
      * Command that raises the elevator for the intake to score the coral on an <STRONG>L1</STRONG> branch.

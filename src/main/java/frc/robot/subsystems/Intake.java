@@ -98,6 +98,13 @@ public class Intake extends SubsystemBase {
         .withName("Set Voltage");
     }
 
+    public Command secureCoral() {
+        return setVoltage(IntakeK.coralIntakeVolts)
+        .andThen(Commands.waitTime(IntakeK.intakeSecureTime))
+        .finallyDo(this::stop)
+        .withName("Secure Coral");
+    }
+
     /**
      * Sets voltage to motors for scoring.
      * @param volts Voltage to give motors
@@ -114,11 +121,10 @@ public class Intake extends SubsystemBase {
      * Sets voltage to motors for intake.
      * @return Command to set voltage and stop when time of flight is tripped
      */
-    public Command coralIntake() {
+    public Command intakeCoral() {
         return setVoltage(IntakeK.coralIntakeVolts)
         .andThen(
-            Commands.waitUntil(this::isSensorTripped),
-            Commands.waitTime(IntakeK.intakeAfterTrip)
+            Commands.waitUntil(this::isSensorTripped)
         )
         .withName("Coral Intake");
     }

@@ -203,7 +203,8 @@ public class Robot extends TimedRobot {
         // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
         
         // Intake
-        xboxController.leftBumper().onTrue(Routines.intakeCoral(elevator, intake).alongWith(Commands.runOnce(() -> state = Positions.STOW)));
+        Command intakeRoutine = Routines.intakeCoral(elevator, intake);
+        xboxController.leftBumper().onTrue(intakeRoutine.alongWith(Commands.runOnce(() -> state = Positions.STOW)).withName(intakeRoutine.getName()));
 
         // Reef Levels
         paddle2.onTrue(switchStateOrAction(
@@ -276,7 +277,7 @@ public class Robot extends TimedRobot {
                 state = Positions.STOW; // Ready to take a new position
             }
             else {
-                elevator.setPositionCommand(newState).alongWith(intake.coralIntake()).schedule();
+                elevator.setPositionCommand(newState).alongWith(intake.secureCoral()).schedule();
                 state = newState;
             }
         }).withName("Switch State");

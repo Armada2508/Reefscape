@@ -151,6 +151,7 @@ public class Constants {
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
         public static final Distance minHeight = Inches.of(6.05);
         public static final Distance maxHeight = Inches.of(74.25);
+        public static final Distance intakeBumpHeight = Inches.of(3);
         public static final Distance armThresholdHeight = Inches.of(20); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.125);
 
@@ -207,7 +208,7 @@ public class Constants {
         public static final double holdVoltageAtMaxSpeed = 1;
 
         public static final Voltage coralIntakeVolts = Volts.of(12);
-        public static final Time intakeAfterTrip = Seconds.of(0.25);
+        public static final Time intakeSecureTime = Seconds.of(0.25);
 
         public static final Voltage levelOneVolts = Volts.of(-7.5);
         public static final Time levelOneWait = Seconds.of(0.04);
