@@ -17,7 +17,6 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -246,24 +245,20 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             targetPose = targetPoseSupplier.get();
             overrideDebouncer.calculate(false);
             resetpid = true;
-            for (var module : swerveDrive.getModules()) {
-                ((TalonFX) module.getDriveMotor().getMotor()).setControl(new NeutralOut());
-            }
         }).andThen(
-            Commands.waitSeconds(0.25),
             run(() -> {
             var pose = getPose();
             if (resetpid) {
                 var speeds = getChassisSpeeds();
-                xController.reset(pose.getX(), speeds.vxMetersPerSecond);
-                yController.reset(pose.getY(), speeds.vyMetersPerSecond);
+                xController.reset(pose.getX() - targetPose.getX(), speeds.vxMetersPerSecond);
+                yController.reset(pose.getY() - targetPose.getY(), speeds.vyMetersPerSecond);
                 thetaController.reset(pose.getRotation().getRadians(), speeds.omegaRadiansPerSecond);
                 System.out.println(pose);
                 System.out.println(speeds);
                 resetpid = false;
             }
-            double xFeedback = xController.calculate(pose.getX(), targetPose.getX());
-            double yFeedback = yController.calculate(pose.getY(), targetPose.getY());
+            double xFeedback = xController.calculate(pose.getX() - targetPose.getX(), 0);
+            double yFeedback = yController.calculate(pose.getY() - targetPose.getY(), 0);
             double thetaFeedback = thetaController.calculate(pose.getRotation().getRadians(), targetPose.getRotation().getRadians());
             setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, thetaFeedback, pose.getRotation()));
         })).until(() -> 
