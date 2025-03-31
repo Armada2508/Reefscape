@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.0796052631578945,
-        "y": 6.189884868421052
+        "x": 4.166200657894737,
+        "y": 6.10328947368421
       },
       "isLocked": false,
       "linkedName": "Reef-J"
@@ -20,8 +20,8 @@
         "y": 7.04
       },
       "prevControl": {
-        "x": 1.8525,
-        "y": 6.62825
+        "x": 1.5683388157894738,
+        "y": 6.786430921052631
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,12 +33,12 @@
     {
       "name": "Leave REEF J",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.2,
+      "maxWaypointRelativePos": 0.25,
       "constraints": {
         "maxVelocity": 6.0,
         "maxAcceleration": 6.0,
         "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 500.0,
+        "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -48,10 +48,10 @@
       "minWaypointRelativePos": 0.85,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.125,
+        "maxVelocity": 1.0,
         "maxAcceleration": 5.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
+        "maxAngularVelocity": 30.0,
+        "maxAngularAcceleration": 450.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -67,15 +67,15 @@
     },
     {
       "name": "intake coral",
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.55,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.25,
+    "maxVelocity": 3.0,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 540.0,
+    "maxAngularVelocity": 200.0,
     "maxAngularAcceleration": 500.0,
     "nominalVoltage": 12.0,
     "unlimited": false
