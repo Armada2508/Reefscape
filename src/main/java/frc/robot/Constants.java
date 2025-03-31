@@ -120,7 +120,7 @@ public class Constants {
 
         public static final double driveSpeedModifier = 1;
         public static final double rotationSpeedModifier = 1;
-        public static final double exponentialControl = 1.5;
+        public static final double exponentialControl = 1.75;
     }
 
     public static class ElevatorK {
