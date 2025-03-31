@@ -112,7 +112,7 @@ public class Constants {
         public static final double rightJoystickDeadband = 0.07;
 
         // Teleop Alignment Overriding
-        public static final double overrideThreshold = 0.07;
+        public static final double overrideThreshold = 0.14;
         public static final Time overrideTime = Seconds.of(0.25);
     }
 
