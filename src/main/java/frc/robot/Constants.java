@@ -125,7 +125,7 @@ public class Constants {
 
         public static final double driveSpeedModifier = 1;
         public static final double rotationSpeedModifier = 1;
-        public static final double exponentialControl = 1.5;
+        public static final double exponentialControl = 1.75;
     }
 
     public static class ElevatorK {
@@ -216,7 +216,7 @@ public class Constants {
         public static final Time levelOneSecondWait = Seconds.of(0.5);
 
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
-        public static final Voltage levelFourVolts = Volts.of(-6);
+        public static final Voltage levelFourVolts = Volts.of(-6.5);
     }
 
     public static class AlgaeK {
