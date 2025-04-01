@@ -62,7 +62,8 @@ public class Intake extends SubsystemBase {
         rightConfig.smartCurrentLimit(IntakeK.currentLimit);
         leftConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
         rightConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
-        rightConfig.inverted(true);
+        leftConfig.inverted(true);
+        rightConfig.inverted(false);
 
         sparkMaxLeft.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         sparkMaxRight.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
