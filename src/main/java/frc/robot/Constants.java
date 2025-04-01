@@ -216,7 +216,7 @@ public class Constants {
         public static final Time levelOneSecondWait = Seconds.of(0.5);
 
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
-        public static final Voltage levelFourVolts = Volts.of(-6.5);
+        public static final Voltage levelFourVolts = Volts.of(-6);
     }
 
     public static class AlgaeK {
@@ -265,8 +265,8 @@ public class Constants {
         public static final Voltage prepVoltage = Volts.of(4);
         
         public static final Angle maxAngle = Degrees.of(62);
-        public static final Angle minAngle = Degrees.of(-108);
-        public static final Angle allowableError = Degrees.one();
+        public static final Angle minAngle = Degrees.of(-97);
+        public static final Angle allowableError = Degrees.of(0.5);
         public static final Angle gripAngle = Degrees.of(-31); // Angle of gription
         public static final Angle stowAngle = Degrees.of(-90);
 
@@ -282,7 +282,7 @@ public class Constants {
         
         public static final double kP = 400;
         public static final double kD = 0;
-        public static final double gearRatio = 64;
+        public static final double gearRatio = 100;
 
         public static final MotorOutputConfigs outputConfigs = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
         public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD);

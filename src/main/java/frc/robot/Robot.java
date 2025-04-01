@@ -45,6 +45,7 @@ import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
+import frc.robot.Field.Cage;
 import frc.robot.Field.ReefSide;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
@@ -202,8 +203,8 @@ public class Robot extends TimedRobot {
         xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
         xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
         swerve.completedAlignment.onTrue(Commands.sequence(
-            Commands.runOnce(() -> xboxController.setRumble(RumbleType.kBothRumble, 0.5)),
-            Commands.waitTime(Seconds.of(0.25))
+            Commands.runOnce(() -> xboxController.setRumble(RumbleType.kBothRumble, 1)),
+            Commands.waitTime(Seconds.of(0.5))
         ).finallyDo(() -> xboxController.setRumble(RumbleType.kBothRumble, 0)));
         // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
         
@@ -240,8 +241,9 @@ public class Robot extends TimedRobot {
         xboxController.povUp().onTrue(climb.prep());
         xboxController.povDown().onTrue(climb.climbMotionMagic());
         xboxController.povRight().onTrue(climb.servoCoast());
-        xboxController.povLeft().onTrue(climb.servoRatchet());
-        // xboxController.leftTrigger().onTrue(climb.moveFreely());
+        // xboxController.povLeft().onTrue(climb.servoRatchet());
+        xboxController.povLeft().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve));
+        xboxController.leftTrigger().onTrue(climb.moveFreely());
 
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
         // xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
