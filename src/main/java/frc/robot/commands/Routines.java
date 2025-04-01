@@ -135,7 +135,14 @@ public class Routines {
      * @return driveToPoseCommand to drive to the mid cage
      */
     public static Command alignToCage(Cage cage, Swerve swerve) {
-        return swerve.alignToPosePID(() -> Robot.onRedAlliance() ? cage.redPose : cage.bluePose).withName("Align " + cage + " Cage");
+        return Commands.either(
+            swerve.alignToPosePID(() -> {
+                var pose = Robot.onRedAlliance() ? cage.redPose : cage.bluePose;
+                return new Pose2d(pose.getTranslation(), pose.getRotation().plus(Rotation2d.fromDegrees(-30)));
+            }),
+            Commands.print("Haven't initalized odometry yet!"),
+            swerve::initializedOdometryFromVision
+        ).withName("Align " + cage + " Cage");
     }
 
 }

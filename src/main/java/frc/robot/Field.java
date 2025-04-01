@@ -70,13 +70,13 @@ public class Field {
     public static final Distance algaeHighHeight = levelThreeHeight.minus(Inches.of(6.25));
     
     // Barge
-    public static final Pose2d blueCageTop = new Pose2d(Inches.of(345.4375), Inches.of(285.875), Rotation2d.k180deg);
-    public static final Pose2d blueCageMid = new Pose2d(Inches.of(345.4375), Inches.of(242.875), Rotation2d.k180deg);
-    public static final Pose2d blueCageLow = new Pose2d(Inches.of(345.4375), Inches.of(200), Rotation2d.k180deg);
+    public static final Pose2d blueCageTop = new Pose2d(Inches.of(344.969), Inches.of(285.875), Rotation2d.k180deg);
+    public static final Pose2d blueCageMid = new Pose2d(blueCageTop.getMeasureX(), Inches.of(242.875), Rotation2d.k180deg);
+    public static final Pose2d blueCageLow = new Pose2d(blueCageTop.getMeasureX(), Inches.of(200), Rotation2d.k180deg);
 
-    public static final Pose2d redCageTop = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageTop.getMeasureY()), Rotation2d.kZero);
-    public static final Pose2d redCageMid = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageMid.getMeasureY()), Rotation2d.kZero);
-    public static final Pose2d redCageLow = new Pose2d(Inches.of(345.4375), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.kZero);
+    public static final Pose2d redCageTop = new Pose2d(blueCageTop.getMeasureX(), fieldWidth.minus(blueCageTop.getMeasureY()), Rotation2d.kZero);
+    public static final Pose2d redCageMid = new Pose2d(blueCageTop.getMeasureX(), fieldWidth.minus(blueCageMid.getMeasureY()), Rotation2d.kZero);
+    public static final Pose2d redCageLow = new Pose2d(blueCageTop.getMeasureX(), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.kZero);
 
     // Coral Station
     public static final Pose2d blueStationLow = new Pose2d(Inches.of(33.057), Inches.of(25.824), Rotation2d.fromDegrees(54));
