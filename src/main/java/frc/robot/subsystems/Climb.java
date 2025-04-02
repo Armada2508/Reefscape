@@ -130,10 +130,10 @@ public class Climb extends SubsystemBase {
         MotionMagicVoltage climb = new MotionMagicVoltage(ClimbK.minAngle);
         return servoRatchet()
             .andThen(
-                runOnce(() -> {
-                    talon.setControl(grip);
-                }),
-                Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.gripAngle, ClimbK.allowableError)),
+                // runOnce(() -> {
+                //     talon.setControl(grip);
+                // }),
+                // Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.gripAngle, ClimbK.allowableError)),
                 runOnce(() -> {
                     configMotionMagic(ClimbK.climbVelocity, ClimbK.climbAcceleration);
                     talon.setControl(climb);
@@ -151,6 +151,11 @@ public class Climb extends SubsystemBase {
      */
     public void stop() {
         talon.setControl(new NeutralOut());
+    }
+
+    public void zero() {
+        talon.setPosition(ClimbK.stowAngle);
+        Util.brakeMode(talon, talonFollow);
     }
 
     @Logged(name = "Current Command")

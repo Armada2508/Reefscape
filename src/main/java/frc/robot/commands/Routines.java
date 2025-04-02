@@ -138,7 +138,7 @@ public class Routines {
         return Commands.either(
             swerve.alignToPosePID(() -> {
                 var pose = Robot.onRedAlliance() ? cage.redPose : cage.bluePose;
-                return new Pose2d(pose.getTranslation(), pose.getRotation().plus(Rotation2d.fromDegrees(-30)));
+                return new Pose2d(pose.getTranslation(), pose.getRotation().plus(Rotation2d.fromDegrees(-45)));
             }),
             Commands.print("Haven't initalized odometry yet!"),
             swerve::initializedOdometryFromVision

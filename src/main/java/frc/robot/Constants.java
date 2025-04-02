@@ -265,8 +265,8 @@ public class Constants {
         public static final Voltage prepVoltage = Volts.of(4);
         
         public static final Angle maxAngle = Degrees.of(62);
-        public static final Angle minAngle = Degrees.of(-97);
-        public static final Angle allowableError = Degrees.of(0.5);
+        public static final Angle minAngle = Degrees.of(-105.5);
+        public static final Angle allowableError = Degrees.of(0.25);
         public static final Angle gripAngle = Degrees.of(-31); // Angle of gription
         public static final Angle stowAngle = Degrees.of(-90);
 
@@ -275,12 +275,12 @@ public class Constants {
         public static final Time servoAcutateTime = Seconds.of(0.5);
 
         // Motion Magic
-        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(60);
-        public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(90); 
+        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(45);
+        public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(60); 
         public static final AngularVelocity gripVelocity = DegreesPerSecond.of(-60);
         public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(90); 
         
-        public static final double kP = 400;
+        public static final double kP = 2500;
         public static final double kD = 0;
         public static final double gearRatio = 100;
 
@@ -288,8 +288,11 @@ public class Constants {
         public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD);
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs()
-            .withStatorCurrentLimitEnable(false)
-            .withSupplyCurrentLimitEnable(false);
+            .withStatorCurrentLimit(Amps.of(220))
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimit(Amps.of(110))
+            .withSupplyCurrentLowerLimit(Amps.of(110))
+            .withSupplyCurrentLimitEnable(true);
         
         public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
