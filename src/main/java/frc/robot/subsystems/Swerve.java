@@ -48,7 +48,6 @@ import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
-import frc.robot.commands.Routines;
 import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
@@ -331,10 +330,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         var cmd = getCurrentCommand();
         if (cmd == null) return "None";
         return cmd.getName();
-    }
-
-    public Pose2d nearestCage() {
-        return Routines.getNearestCage(this);
     }
 
     public boolean initializedOdometryFromVision() {

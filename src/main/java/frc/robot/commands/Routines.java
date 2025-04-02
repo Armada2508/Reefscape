@@ -2,12 +2,12 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Inches;
 
-import java.util.List;
 import java.util.Set;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK;
@@ -131,26 +131,22 @@ public class Routines {
     }
 
     /**
-     * Returns the nearest cage to the robot
-     * @param swerve
-     * @return Pose2d of the closest cage
-     */
-    public static Pose2d getNearestCage(Swerve swerve) {
-        return swerve.getPose().nearest(Robot.onRedAlliance() ? List.of(Field.redCageLow, Field.redCageMid, Field.redCageTop) : List.of(  Field.blueCageLow ,  Field.blueCageMid, Field.blueCageTop));
-    }
-
-    /**
      * Creates a command to drive to the cage of your side
      * @return driveToPoseCommand to drive to the mid cage
      */
-    public static Command alignToCage(Pose2d cage, Swerve swerve) {
+    public static Command alignToCage(Swerve swerve) {
         return Commands.either(
             swerve.alignToPosePID(() -> {
-                return new Pose2d(cage.getTranslation(), cage.getRotation().plus(Rotation2d.fromDegrees(-45)));
+                var cage = swerve.getPose().nearest(Robot.onRedAlliance() ? Field.redCages : Field.blueCages);
+                Distance x = Robot.onRedAlliance() ? Inches.of(8.75) : Inches.of(-8.75);
+                Distance y = Robot.onRedAlliance() ? Inches.of(-6.375) : Inches.of(6.375);
+                return new Pose2d(
+                    new Translation2d(cage.getMeasureX().plus(x), cage.getMeasureY().plus(y)), 
+                    cage.getRotation().plus(Rotation2d.fromDegrees(-45)));
             }),
             Commands.print("Haven't initalized odometry yet!"),
             swerve::initializedOdometryFromVision
-        ).withName("Align " + cage + " Cage");
+        ).withName("Align Cage");
     }
 
 }

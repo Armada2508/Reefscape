@@ -74,9 +74,13 @@ public class Field {
     public static final Pose2d blueCageMid = new Pose2d(blueCageTop.getMeasureX(), Inches.of(242.875), Rotation2d.k180deg);
     public static final Pose2d blueCageLow = new Pose2d(blueCageTop.getMeasureX(), Inches.of(200), Rotation2d.k180deg);
 
+    public static final List<Pose2d> blueCages = List.of(blueCageTop, blueCageMid, blueCageLow);
+
     public static final Pose2d redCageTop = new Pose2d(blueCageTop.getMeasureX(), fieldWidth.minus(blueCageTop.getMeasureY()), Rotation2d.kZero);
     public static final Pose2d redCageMid = new Pose2d(blueCageTop.getMeasureX(), fieldWidth.minus(blueCageMid.getMeasureY()), Rotation2d.kZero);
     public static final Pose2d redCageLow = new Pose2d(blueCageTop.getMeasureX(), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.kZero);
+
+    public static final List<Pose2d> redCages = List.of(redCageTop, redCageMid, redCageLow);
 
     // Coral Station
     public static final Pose2d blueStationLow = new Pose2d(Inches.of(33.057), Inches.of(25.824), Rotation2d.fromDegrees(54));
