@@ -124,6 +124,8 @@ public class Field {
             this.redPose = redPose;
         }
     }
+    
+
 
     // Hi! Welcome to introspection :) https://www.oracle.com/technical-resources/articles/java/javareflection.html
     /**

@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import java.util.List;
 import java.util.Set;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -104,6 +105,15 @@ public class Routines {
             Commands.waitUntil(() -> elevator.getPosition().gte(ElevatorK.armThresholdHeight))
             .andThen(algae.algaePosition())
         ).withName("Algae High Routine");
+    }
+
+    /**
+     * Returns the nearest cage to the robot
+     * @param swerve
+     * @return Pose2d of the closest cage
+     */
+    public static Pose2d getNearestCage(Swerve swerve) {
+        return swerve.getPose().nearest(Robot.onRedAlliance() ? List.of(Field.redCageLow, Field.redCageMid, Field.redCageTop) : List.of(Field.blueCageLow, Field.blueCageMid, Field.blueCageTop));
     }
 
      /**
