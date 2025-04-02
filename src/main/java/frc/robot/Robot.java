@@ -45,7 +45,6 @@ import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Constants.IntakeK;
 import frc.robot.Constants.SwerveK;
-import frc.robot.Field.Cage;
 import frc.robot.Field.ReefSide;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
@@ -243,7 +242,7 @@ public class Robot extends TimedRobot {
         // xboxController.povRight().onTrue(climb.servoCoast());
         // xboxController.povLeft().onTrue(climb.servoRatchet());
         xboxController.povRight().onTrue(climb.runOnce(climb::zero));
-        xboxController.povLeft().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve));
+        xboxController.povLeft().onTrue(Routines.alignToCage(Routines.getNearestCage(swerve), swerve));
         xboxController.leftTrigger().onTrue(climb.moveFreely());
 
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));

@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import java.util.List;
 import java.util.Set;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.Field;
-import frc.robot.Field.Cage;
 import frc.robot.Field.ReefSide;
 import frc.robot.Robot;
 import frc.robot.subsystems.Algae;
@@ -131,14 +131,22 @@ public class Routines {
     }
 
     /**
+     * Returns the nearest cage to the robot
+     * @param swerve
+     * @return Pose2d of the closest cage
+     */
+    public static Pose2d getNearestCage(Swerve swerve) {
+        return swerve.getPose().nearest(Robot.onRedAlliance() ? List.of(Field.redCageLow, Field.redCageMid, Field.redCageTop) : List.of(  Field.blueCageLow ,  Field.blueCageMid, Field.blueCageTop));
+    }
+
+    /**
      * Creates a command to drive to the cage of your side
      * @return driveToPoseCommand to drive to the mid cage
      */
-    public static Command alignToCage(Cage cage, Swerve swerve) {
+    public static Command alignToCage(Pose2d cage, Swerve swerve) {
         return Commands.either(
             swerve.alignToPosePID(() -> {
-                var pose = Robot.onRedAlliance() ? cage.redPose : cage.bluePose;
-                return new Pose2d(pose.getTranslation(), pose.getRotation().plus(Rotation2d.fromDegrees(-45)));
+                return new Pose2d(cage.getTranslation(), cage.getRotation().plus(Rotation2d.fromDegrees(-45)));
             }),
             Commands.print("Haven't initalized odometry yet!"),
             swerve::initializedOdometryFromVision
