@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.572286184210526,
-        "y": 1.9274671052631585
+        "x": 7.11,
+        "y": 2.222
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.845778745454579,
-        "y": 1.6181166921118075
+        "x": 5.9654605263157885,
+        "y": 2.1776315789473686
       },
       "isLocked": false,
-      "linkedName": "Opposite Mid 45"
+      "linkedName": null
     },
     {
       "anchor": {
         "x": 4.974,
-        "y": 2.839
+        "y": 2.84
       },
       "prevControl": {
-        "x": 5.256105263157895,
-        "y": 1.9492796052631585
+        "x": 5.55172697368421,
+        "y": 2.2556052631578947
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Approach Reef",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.3,
+      "constraints": {
+        "maxVelocity": 2.25,
+        "maxAcceleration": 2.25,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -55,7 +69,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 10.0,
-    "rotation": 136.33221985386965
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

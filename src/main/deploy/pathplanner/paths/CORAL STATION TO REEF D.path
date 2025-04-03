@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0872532894736842,
-        "y": 0.8690789473684208
+        "x": 1.1,
+        "y": 1.02
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3064638157894732,
-        "y": 1.7384374999999999
+        "x": 2.2395591647331785,
+        "y": 2.3046113689095127
       },
       "isLocked": false,
       "linkedName": "Low Coral Station Blue"
     },
     {
       "anchor": {
-        "x": 3.982,
-        "y": 2.838
+        "x": 3.98,
+        "y": 2.84
       },
       "prevControl": {
-        "x": 3.146299342105263,
-        "y": 1.8216282894736844
+        "x": 3.2575406032482594,
+        "y": 2.630365429234339
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,34 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.13,
+      "constraints": {
+        "maxVelocity": 3.75,
+        "maxAcceleration": 4.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.4,
+      "constraints": {
+        "maxVelocity": 3.75,
+        "maxAcceleration": 3.75,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
