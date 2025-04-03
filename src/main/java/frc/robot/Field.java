@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -21,6 +22,7 @@ public class Field {
     // Field
     public static final Distance fieldLength = Inches.of(690.875);
     public static final Distance fieldWidth = Inches.of(317);
+    public static final Pose2d fieldCenter = new Pose2d(fieldLength.div(2), fieldWidth.div(2), Rotation2d.kZero);
 
     // Reef
     public static final Translation2d blueReefCenter = new Translation2d(Inches.of(176.2768), Inches.of(158.4991));
@@ -81,6 +83,8 @@ public class Field {
     public static final Pose2d redCageLow = new Pose2d(blueCageTop.getMeasureX(), fieldWidth.minus(blueCageLow.getMeasureY()), Rotation2d.kZero);
 
     public static final List<Pose2d> redCages = List.of(redCageTop, redCageMid, redCageLow);
+
+    public static final Rectangle2d bargeZone = new Rectangle2d(fieldCenter, Inches.of(89.325), fieldWidth);
 
     // Coral Station
     public static final Pose2d blueStationLow = new Pose2d(Inches.of(33.057), Inches.of(25.824), Rotation2d.fromDegrees(54));

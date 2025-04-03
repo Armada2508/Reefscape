@@ -199,8 +199,18 @@ public class Robot extends TimedRobot {
         xboxController.a().onTrue(Routines.stow(elevator, intake, climb).alongWith(Commands.runOnce(() -> state = Positions.STOW)).withName("Stow Everything"));
 
         // Alignment
-        xboxController.x().onTrue(Routines.alignToReef(ReefSide.LEFT, swerve));
-        xboxController.b().onTrue(Routines.alignToReef(ReefSide.RIGHT, swerve));
+        xboxController.x().onTrue(Commands.either(
+            Routines.alignToCage(swerve), 
+            Routines.alignToReef(ReefSide.LEFT, swerve), 
+            () -> Field.bargeZone.contains(swerve.getPose().getTranslation())
+        ));
+
+        xboxController.b().onTrue(Commands.either(
+            Routines.alignToCage(swerve), 
+            Routines.alignToReef(ReefSide.RIGHT, swerve), 
+            () -> Field.bargeZone.contains(swerve.getPose().getTranslation())
+        ));
+
         swerve.completedAlignment.onTrue(Commands.sequence(
             Commands.runOnce(() -> xboxController.setRumble(RumbleType.kBothRumble, 1)),
             Commands.waitTime(Seconds.of(0.5))
