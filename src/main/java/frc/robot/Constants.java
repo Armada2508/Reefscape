@@ -96,10 +96,12 @@ public class Constants {
         // PID Alignment
         public static final PIDConstants translationConstants = new PIDConstants(5.25, 0, 0); // m/s / m of error
         public static final PIDConstants rotationConstants = new PIDConstants(5, 0, 0); // rad/s / rad of error
-        public static final TrapezoidProfile.Constraints translationConstraints = 
+        public static final TrapezoidProfile.Constraints defaultTranslationConstraints = 
             new TrapezoidProfile.Constraints(Units.feetToMeters(5), Units.feetToMeters(10)); // m/s & m/s^2
         public static final TrapezoidProfile.Constraints rotationConstraints = 
             new TrapezoidProfile.Constraints(Units.degreesToRadians(360), Units.degreesToRadians(360)); // rad/s & rad/s^2
+        public static final TrapezoidProfile.Constraints climbTranslationConstraints = 
+            new TrapezoidProfile.Constraints(Units.feetToMeters(2), Units.feetToMeters(4)); // m/s & m/s^2
         public static final Distance maximumTranslationError = Inches.of(0.25);
         public static final Angle maximumRotationError = Degrees.of(0.5);
 

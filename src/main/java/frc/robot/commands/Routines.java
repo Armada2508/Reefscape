@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ElevatorK;
 import frc.robot.Constants.ElevatorK.Positions;
+import frc.robot.Constants.SwerveK;
 import frc.robot.Field;
 import frc.robot.Field.ReefSide;
 import frc.robot.Robot;
@@ -143,7 +144,7 @@ public class Routines {
                 return new Pose2d(
                     new Translation2d(cage.getMeasureX().plus(x), cage.getMeasureY().plus(y)), 
                     cage.getRotation().plus(Rotation2d.fromDegrees(-45)));
-            }),
+            }, SwerveK.climbTranslationConstraints),
             Commands.print("Haven't initalized odometry yet!"),
             swerve::initializedOdometryFromVision
         ).withName("Align Cage");
