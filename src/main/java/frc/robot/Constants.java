@@ -177,7 +177,7 @@ public class Constants {
             L1(Inches.of(22), Inches.of(22)),
             L2(Inches.of(30.125), Inches.of(30.125)),
             L3(Inches.of(45.70), Inches.of(45.70)),
-            L4(Inches.of(69.875), Inches.of(69.875)),
+            L4(Inches.of(70.375), Inches.of(70.375)),
             ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
             ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
             INTAKE(Inches.of(32.25), Inches.of(27)), // Min: 31.25" | Max: 33.25", Mid: 32.25"
@@ -192,7 +192,7 @@ public class Constants {
         }
 
         // Linear Interpolation
-        public static final Distance timeOfFlightOffset = Inches.of(-14.75);
+        public static final Distance timeOfFlightOffset = Inches.of(-14.45);
         public static final Distance maxLinearDistance = Inches.of(4.5);
         public static final int sampleTime = 24; // ms
     }  
@@ -218,7 +218,7 @@ public class Constants {
         public static final Time levelOneSecondWait = Seconds.of(0.5);
 
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
-        public static final Voltage levelFourVolts = Volts.of(-6);
+        public static final Voltage levelFourVolts = Volts.of(-5);
     }
 
     public static class AlgaeK {

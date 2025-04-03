@@ -115,11 +115,11 @@ public class Elevator extends SubsystemBase {
      */
     public Command setPositionCommand(ElevatorK.Positions position) {
         return switch (position) {
-            case L1, L2, L3, L4, INTAKE -> // Dynamic
+            case INTAKE -> // Dynamic
                 runOnce(() -> setPosition(position.close))
                 .andThen(run(() -> getInterpolatedHeight(position.close, position.far).ifPresent(this::setPosition)))
                 .withName("Set Dynamic Position " + position);
-            case STOW, ALGAE_LOW, ALGAE_HIGH -> // Static
+            case STOW, ALGAE_LOW, ALGAE_HIGH, L1, L2, L3, L4 -> // Static
                 setPositionCommand(position.close)
                 .withName("Set Static Position " + position);
             default -> throw new IllegalArgumentException("Invalid Position: " + position);
