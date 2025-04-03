@@ -177,7 +177,7 @@ public class Constants {
             L1(Inches.of(22), Inches.of(22)),
             L2(Inches.of(30.125), Inches.of(30.125)),
             L3(Inches.of(45.70), Inches.of(45.70)),
-            L4(Inches.of(70.125), Inches.of(70.125)),
+            L4(Inches.of(69.875), Inches.of(69.875)),
             ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
             ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
             INTAKE(Inches.of(32.25), Inches.of(27)), // Min: 31.25" | Max: 33.25", Mid: 32.25"

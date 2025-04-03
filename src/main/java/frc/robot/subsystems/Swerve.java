@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
+import frc.robot.Field;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
 import frc.robot.subsystems.Vision.VisionResults;
@@ -341,6 +342,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     public boolean initializedOdometryFromVision() {
         return initializedOdometryFromVision;
+    }
+
+    public boolean inBarge() {
+        return Field.bargeZone.contains(getPose().getTranslation());
     }
 
     /**
