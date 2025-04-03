@@ -127,7 +127,7 @@ public class Vision extends SubsystemBase {
         }
         stdDevs = VisionK.multiTagStdDevs.times(stdevScalar);
         if (name == VisionK.backCameraName) {
-            stdDevs = stdDevs.times(2.75);
+            stdDevs = stdDevs.times(4);
         }
         return stdDevs;
     }
