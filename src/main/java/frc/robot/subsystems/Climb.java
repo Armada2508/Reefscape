@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
@@ -97,6 +98,10 @@ public class Climb extends SubsystemBase {
         return talon.getPosition().getValue().in(Degrees);
     }
 
+    public double getVelocityDegrees() {
+        return talon.getVelocity().getValue().in(DegreesPerSecond);
+    }
+
     public Command stow() {
         MotionMagicVoltage request = new MotionMagicVoltage(ClimbK.stowAngle);
         return servoCoast()
@@ -130,10 +135,10 @@ public class Climb extends SubsystemBase {
         MotionMagicVoltage climb = new MotionMagicVoltage(ClimbK.minAngle);
         return servoRatchet()
             .andThen(
-                // runOnce(() -> {
-                //     talon.setControl(grip);
-                // }),
-                // Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.gripAngle, ClimbK.allowableError)),
+                runOnce(() -> {
+                    talon.setControl(grip);
+                }),
+                Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.gripAngle, ClimbK.allowableError)),
                 runOnce(() -> {
                     configMotionMagic(ClimbK.climbVelocity, ClimbK.climbAcceleration);
                     talon.setControl(climb);

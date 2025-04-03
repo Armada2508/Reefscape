@@ -264,7 +264,7 @@ public class Constants {
         public static final int servoLID = 1;
 
         public static final Voltage climbVoltage = Volts.of(-4);
-        public static final Voltage prepVoltage = Volts.of(4);
+        public static final Voltage prepVoltage = Volts.of(6);
         
         public static final Angle maxAngle = Degrees.of(62);
         public static final Angle minAngle = Degrees.of(-105.5);
@@ -277,17 +277,19 @@ public class Constants {
         public static final Time servoAcutateTime = Seconds.of(0.5);
 
         // Motion Magic
-        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(45);
+        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(60);
         public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(60); 
         public static final AngularVelocity gripVelocity = DegreesPerSecond.of(-60);
         public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(90); 
         
+        public static final double kV = 0.943;
+        public static final double kS = 0.12;
         public static final double kP = 2500;
         public static final double kD = 0;
         public static final double gearRatio = 100;
 
         public static final MotorOutputConfigs outputConfigs = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
-        public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD);
+        public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD).withKS(kS).withKV(kV);
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
         public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(Amps.of(220))
