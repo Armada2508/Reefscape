@@ -230,7 +230,7 @@ public class Robot extends TimedRobot {
             Positions.L4,
             Routines.scoreCoralLevelFour(elevator, intake)
         ));
-        
+
         // Algae
         // paddle4.onTrue(Routines.algaeLowPosition(elevator, algae));
         // paddle3.onTrue(Routines.algaeHighPosition(elevator, algae));
@@ -241,9 +241,9 @@ public class Robot extends TimedRobot {
         xboxController.povDown().onTrue(climb.climbMotionMagic());
         // xboxController.povRight().onTrue(climb.servoCoast());
         // xboxController.povLeft().onTrue(climb.servoRatchet());
-        xboxController.povRight().onTrue(climb.runOnce(climb::zero));
+        // xboxController.povRight().onTrue(climb.runOnce(climb::zero));
         xboxController.povLeft().onTrue(Routines.alignToCage(swerve));
-        xboxController.leftTrigger().onTrue(climb.moveFreely());
+        // xboxController.leftTrigger().onTrue(climb.moveFreely());
 
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
         // xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
