@@ -192,7 +192,7 @@ public class Robot extends TimedRobot {
         /// Real Bindings ///
 
         // Reset forward direction for field relative
-        xboxController.back().onTrue(swerve.runOnce(swerve::zeroGyro));
+        xboxController.back().and(xboxController.leftTrigger()).onTrue(swerve.runOnce(swerve::zeroGyro).withName("Zero Gyro"));
 
         // Zeroing
         // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
