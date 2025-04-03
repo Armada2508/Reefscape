@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.9654605263157885,
-        "y": 2.1776315789473686
+        "x": 5.434782435364177,
+        "y": 2.694650128577679
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 2.84
       },
       "prevControl": {
-        "x": 5.55172697368421,
-        "y": 2.2556052631578947
+        "x": 5.21598446962543,
+        "y": 2.777202576007456
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "raise elevator to L4",
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0.35,
       "endWaypointRelativePos": null,
       "command": null
     }
