@@ -192,7 +192,7 @@ public class Constants {
         }
 
         // Linear Interpolation
-        public static final Distance timeOfFlightOffset = Inches.of(-14.45);
+        public static final Distance timeOfFlightOffset = Inches.of(-13.9);
         public static final Distance maxLinearDistance = Inches.of(4.5);
         public static final int sampleTime = 24; // ms
     }  
