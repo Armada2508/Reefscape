@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "STARTING LINE to REEF E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "REEF E TO CORAL STATION"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CORAL STATION TO REEF D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "REEF D to CORAL STATION"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CORAL STATION to REEF C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
