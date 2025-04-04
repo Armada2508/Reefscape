@@ -248,11 +248,11 @@ public class Robot extends TimedRobot {
 
         // Climb
         xboxController.povUp().onTrue(climb.prep());
-        xboxController.povDown().onTrue(climb.climbMotionMagic());
+        xboxController.povDown().or(xboxController.povLeft()).onTrue(climb.climbMotionMagic());
         // xboxController.povRight().onTrue(climb.servoCoast());
         // xboxController.povLeft().onTrue(climb.servoRatchet());
         // xboxController.povRight().onTrue(climb.runOnce(climb::zero));
-        xboxController.povLeft().onTrue(Routines.alignToCage(swerve));
+        // xboxController.povLeft().onTrue(Routines.alignToCage(swerve));
         // xboxController.leftTrigger().onTrue(climb.moveFreely());
 
         // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
