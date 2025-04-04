@@ -138,12 +138,12 @@ public class Climb extends SubsystemBase {
                 runOnce(() -> {
                     talon.setControl(grip);
                 }),
-                Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.gripAngle, ClimbK.allowableError)),
+                Commands.waitUntil(() -> talon.getPosition().getValue().lte(ClimbK.gripAngle)),
                 runOnce(() -> {
                     configMotionMagic(ClimbK.climbVelocity, ClimbK.climbAcceleration);
                     talon.setControl(climb);
                 }),
-                Commands.waitUntil(() -> talon.getPosition().getValue().isNear(ClimbK.minAngle, ClimbK.allowableError))
+                Commands.waitUntil(() -> talon.getPosition().getValue().lte(ClimbK.minAngle))
             ).finallyDo(this::stop).withName("Climb Motion Magic");
     }
 
