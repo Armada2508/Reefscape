@@ -144,7 +144,7 @@ public class Routines {
                 return new Pose2d(
                     new Translation2d(cage.getMeasureX().plus(x), cage.getMeasureY().plus(y)), 
                     cage.getRotation().plus(Rotation2d.fromDegrees(-45)));
-            }, SwerveK.climbTranslationConstraints),
+            }, SwerveK.climbTranslationConstraints, SwerveK.climbRotationConstraints),
             Commands.print("Haven't initalized odometry yet!"),
             swerve::initializedOdometryFromVision
         ).withName("Align Cage");

@@ -79,7 +79,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public final Trigger completedAlignment = new Trigger(() -> completedAlignmentBool);
     private final ProfiledPIDController xController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
     private final ProfiledPIDController yController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
-    private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.rotationConstraints);
+    private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.defaultRotationConstraints);
 
     public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
         this.visionSource = visionSource;
@@ -205,7 +205,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      * @param targetPoseSupplier Supplier of the target pose
      * @return The command
      */
-    public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier, TrapezoidProfile.Constraints translationConstraints) {
+    public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier, TrapezoidProfile.Constraints translationConstraints, TrapezoidProfile.Constraints rotationConstraints) {
         return runOnce(() -> {
             targetPose = targetPoseSupplier.get();
             overrideDebouncer.calculate(false);
@@ -221,6 +221,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
                 thetaController.reset(pose.getRotation().getRadians(), speeds.omegaRadiansPerSecond);
                 xController.setConstraints(translationConstraints);
                 yController.setConstraints(translationConstraints);
+                thetaController.setConstraints(rotationConstraints);
                 System.out.println(pose);
                 System.out.println(speeds);
                 resetpid = false;
@@ -239,7 +240,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
-        return alignToPosePID(targetPoseSupplier, SwerveK.defaultTranslationConstraints);
+        return alignToPosePID(targetPoseSupplier, SwerveK.defaultTranslationConstraints, SwerveK.defaultRotationConstraints);
     }
 
     public Command setDriveVoltage(Voltage volts) {
