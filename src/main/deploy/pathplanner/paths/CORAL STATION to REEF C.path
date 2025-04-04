@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0156032482598607,
-        "y": 1.8770591647331787
+        "x": 2.232236842105263,
+        "y": 1.7254111842105258
       },
       "isLocked": false,
       "linkedName": "Low Coral Station Blue"
@@ -20,8 +20,8 @@
         "y": 3.0
       },
       "prevControl": {
-        "x": 2.8503480278422275,
-        "y": 2.630365429234339
+        "x": 3.6370065789473682,
+        "y": 1.7638980263157895
       },
       "nextControl": null,
       "isLocked": false,
