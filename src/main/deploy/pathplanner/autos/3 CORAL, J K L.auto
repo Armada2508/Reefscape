@@ -17,15 +17,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "REEF J to CORAL STATION"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "wait for intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "wait for intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "REEF J to CORAL STATION"
+                }
+              }
+            ]
           }
         },
         {

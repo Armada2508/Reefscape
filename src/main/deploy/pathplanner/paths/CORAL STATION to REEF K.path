@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.731,
-        "y": 6.7675
+        "x": 0.683141447368421,
+        "y": 6.863404605263157
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9797500000000001,
-        "y": 5.527
+        "x": 1.931891447368421,
+        "y": 5.622904605263157
       },
       "isLocked": false,
       "linkedName": "Coral Top Alt"
