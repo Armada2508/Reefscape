@@ -89,6 +89,9 @@ public class Field {
     // Coral Station
     public static final Pose2d blueStationLow = new Pose2d(Inches.of(33.057), Inches.of(25.824), Rotation2d.fromDegrees(54));
     public static final Pose2d blueStationTop = new Pose2d(blueStationLow.getMeasureX(), fieldWidth.minus(blueStationLow.getMeasureY()), Rotation2d.fromDegrees(-54));
+    public static final Pose2d blueStationLowAlt = getPoseWithNormalOffsetLateral(blueStationLow, Inches.of(-18));
+    public static final Pose2d blueStationTopAlt = getPoseWithNormalOffsetLateral(blueStationTop, Inches.of(-18));
+
 
     public static final Pose2d redStationLow = new Pose2d(fieldLength.minus(blueStationLow.getMeasureX()), blueStationLow.getMeasureY(), Rotation2d.fromDegrees(blueStationTop.getRotation().getDegrees() - 180));
     public static final Pose2d redStationTop = new Pose2d(fieldLength.minus(blueStationLow.getMeasureX()), fieldWidth.minus(blueStationLow.getMeasureY()), Rotation2d.fromDegrees(blueStationLow.getRotation().getDegrees() - 180));
@@ -163,6 +166,11 @@ public class Field {
 
     public static Pose2d getPoseWithNormalOffset(Pose2d pose, Distance offset) {
         Translation2d normalOffset = new Translation2d(offset, Inches.zero()).rotateBy(pose.getRotation());
+        return new Pose2d(pose.getTranslation().plus(normalOffset), pose.getRotation());
+    }
+
+    public static Pose2d getPoseWithNormalOffsetLateral(Pose2d pose, Distance offset) {
+        Translation2d normalOffset = new Translation2d(Inches.zero(), offset).rotateBy(pose.getRotation());
         return new Pose2d(pose.getTranslation().plus(normalOffset), pose.getRotation());
     }
 

@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.1,
-        "y": 1.02
+        "x": 1.471,
+        "y": 0.747
       },
       "prevControl": {
-        "x": 1.5523273520028675,
-        "y": 1.2461411896870092
+        "x": 2.837282894736842,
+        "y": 0.8143519736842116
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Low Coral Station Blue"
+      "linkedName": "Coral Low Alt"
     }
   ],
   "rotationTargets": [],
