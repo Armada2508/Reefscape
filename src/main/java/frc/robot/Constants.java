@@ -16,6 +16,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.json.simple.parser.ParseException;
 
@@ -257,6 +258,8 @@ public class Constants {
         public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(3), Units.feetToMeters(3), Units.degreesToRadians(360));
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+
+        public static final List<Integer> reefTags = List.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
     }
 
     public static class ClimbK { // TODO: Tune everything
