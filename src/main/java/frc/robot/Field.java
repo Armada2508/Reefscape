@@ -13,7 +13,6 @@ import edu.wpi.first.units.measure.Distance;
 import frc.robot.Constants.SwerveK;
 
 public class Field {
-    // TODO: double check all values in at some point, good chance something could be wrong here, rookie task?
     //^  X is left and right from origin, Y is top to bottom
 
     // Blue bottom corner is the origin

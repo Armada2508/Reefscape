@@ -4,12 +4,10 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 import org.littletonrobotics.urcl.URCL;
 
@@ -22,7 +20,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -150,44 +147,6 @@ public class Robot extends TimedRobot {
         // xboxController.a().whileTrue(elevator.setVoltage(Volts.of(-1)).andThen(Commands.idle(elevator)).finallyDo(elevator::stop).withName("Elevator Down"));
         // xboxController.x().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().plus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Up"));
         // xboxController.b().onTrue(Commands.defer(() -> elevator.setPosition(elevator.getPosition().minus(Inches.of(0.25))), Set.of(elevator)).withName("Bump Down"));
-        // xboxController.a().onTrue(swerve.alignToPosePID(Field.blueReefA));
-        // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.STOW));
-        // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.INTAKE));
-        // xboxController.leftTrigger().onTrue(elevator.setPosition(Positions.L2));
-        // xboxController.leftBumper().onTrue(elevator.setPosition(Positions.L4));
-        // xboxController.povLeft().onTrue(elevator.setPosition(Positions.INTAKE));
-        // xboxController.povRight().onTrue(intake.coralIntake());
-        // xboxController.back().onTrue(elevator.zeroManual());
-        
-        // paddle1.onTrue(elevator.setPosition(Positions.L2));
-        // xboxController.rightTrigger().onTrue(elevator.setPosition(Positions.L3));
-        // xboxController.rightBumper().onTrue(elevator.setPosition(Positions.L4));
-
-        // xboxController.povUp().onTrue(intake.scoreLevelOne());
-        // xboxController.povRight().onTrue(intake.scoreLevelTwoThree());
-        // xboxController.povDown().onTrue(intake.scoreLevelFour());
-        // xboxController.leftTrigger().onTrue(intake.coralIntake());
-
-        // paddle4.onTrue(algae.loweredPosition());
-        // paddle3.onTrue(algae.algaePosition());
-        // xboxController.leftTrigger().onTrue(algae.zero());
-
-        // xboxController.povDown().onTrue(Commands.defer(() -> intake.scoreLevelOne(), Set.of(intake)));
-        // xboxController.povUp().onTrue(elevator.setPosition(Positions.INTAKE));
-        // xboxController.povRight().onTrue(intake.runOnce(intake::stop));
-        // xboxController.y().onTrue(intake.scoreLevelFour());
-        // xboxController.rightTrigger().onTrue(intake.setVoltage(Volts.of(4)));
-        // xboxController.povUp().onTrue(algae.stow());
-        // xboxController.povDown().onTrue(algae.algaePosition());
-        // xboxController.povRight().onTrue(algae.zero());
-        // xboxController.povLeft().onTrue(algae.runOnce(algae::stop));
-        // xboxController.povRight().onTrue(algae.zero());
-        // xboxController.povUp().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0.5, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.povRight().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.povDown().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(1.5, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.povLeft().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.leftTrigger().whileTrue(swerve.run(() -> swerve.setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(2.5, 0, 0, swerve.getPose().getRotation()))));
-        // xboxController.leftTrigger().onTrue(swerve.setP());
 
         /// Real Bindings ///
 
@@ -195,7 +154,6 @@ public class Robot extends TimedRobot {
         xboxController.back().and(xboxController.leftTrigger()).onTrue(swerve.runOnce(swerve::zeroGyro).withName("Zero Gyro"));
 
         // Zeroing
-        // xboxController.back().and(xboxController.start()).onTrue(Routines.zeroAll(elevator, algae, climb));
         xboxController.a().onTrue(Routines.stow(elevator, intake, climb).alongWith(Commands.runOnce(() -> state = Positions.STOW)).withName("Stow Everything"));
 
         // Alignment
@@ -215,7 +173,6 @@ public class Robot extends TimedRobot {
             Commands.runOnce(() -> xboxController.setRumble(RumbleType.kBothRumble, 1)),
             Commands.waitTime(Seconds.of(0.5))
         ).finallyDo(() -> xboxController.setRumble(RumbleType.kBothRumble, 0)));
-        // xboxController.a().onTrue(Routines.alignToCoralStation(swerve));
         
         // Intake
         Command intakeRoutine = Routines.intakeCoral(elevator, intake);
@@ -254,19 +211,6 @@ public class Robot extends TimedRobot {
         // xboxController.povRight().onTrue(climb.runOnce(climb::zero));
         // xboxController.povLeft().onTrue(Routines.alignToCage(swerve));
         // xboxController.leftTrigger().onTrue(climb.moveFreely());
-
-        // xboxController.povUp().onTrue(swerve.turnCommand(Robot.onRedAlliance() ? Degrees.of(Field.redCageMid.getRotation().getDegrees()) : Degrees.of(Field.blueCageMid.getRotation().getDegrees())));
-        // xboxController.povDown().onTrue(Routines.alignToCage(Cage.MIDDLE, swerve)); // Still needs to work for any cage
-        // xboxController.povRight().onTrue(climb.deepclimb()); // Incase auto-alignment fails
-
-        // xboxController.leftTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationTop.getRotation().getDegrees() + 180))));
-        // xboxController.rightTrigger().onTrue(swerve.turnCommand(flipAngleAlliance(Degrees.of(Field.blueStationLow.getRotation().getDegrees() + 180))));
-        //^ Please for the love of god do not delete / touch this lest peril be upon ye of remaking it
-
-
-        // xboxController.povLeft().onTrue(Routines.alignToTopCage(swerve));
-        // xboxController.povUp().onTrue(Routines.alignToMidCage(swerve));
-        // xboxController.povRight().onTrue(Routines.alignToLowCage(swerve));
 
         // SysID
         // xboxController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -323,8 +267,6 @@ public class Robot extends TimedRobot {
                 swerve.resetOdometry(pose);
             }
         }
-        // CommandScheduler.getInstance().removeComposedCommand(selected);
-        // selected.alongWith(algae.zero().andThen(algae.stow())).withName(selected.getName()).schedule();
         selected.schedule();
     }
 
@@ -334,7 +276,6 @@ public class Robot extends TimedRobot {
         swerve.stop();
         elevator.stop();
         intake.stop();
-        // algae.stop();
         climb.stop();
         swerveCoastTimer.restart();
     }
@@ -352,18 +293,6 @@ public class Robot extends TimedRobot {
      */
     public static boolean onRedAlliance() {
         return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
-    }
-
-    /**
-     * Flips an angle across the x and y axis if we're on the red alliance
-     * @param angle angle to flip
-     * @return A supplier that returns the correct angle depending on the current alliance
-     */
-    public Supplier<Angle> flipAngleAlliance(Angle angle) {
-        return () -> {
-            Angle flippedAngle = angle.gte(Degrees.zero()) ? angle.minus(Constants.halfTurn) : angle.plus(Constants.halfTurn);
-            return onRedAlliance() ? flippedAngle : angle;
-        };
     }
 
     private void logGitConstants() {

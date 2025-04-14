@@ -262,7 +262,7 @@ public class Constants {
         public static final List<Integer> reefTags = List.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
     }
 
-    public static class ClimbK { // TODO: Tune everything
+    public static class ClimbK {
         public static final int talonID = 10;
         public static final int talonFollowID = 11;
         public static final int servoRID = 0;

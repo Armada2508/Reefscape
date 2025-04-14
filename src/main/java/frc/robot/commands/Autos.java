@@ -24,17 +24,10 @@ public class Autos {
         FollowPathCommand.warmupCommand().schedule();
         FollowPathCommand.allowableTranslationErrorMeters = Units.inchesToMeters(0.5);
         System.out.println(FollowPathCommand.additionalTimeSeconds + " " + FollowPathCommand.allowableTranslationErrorMeters);
-        // NamedCommands.registerCommand("intake named", Routines.intakeCoral(elevator, intake));
-        // NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));
-        // NamedCommands.registerCommand("score L2", Routines.scoreCoralLevelTwo(elevator, intake));
-        // NamedCommands.registerCommand("score L3", Routines.scoreCoralLevelThree(elevator, intake));
-        // NamedCommands.registerCommand("raise and score L4", elevator.setPositionCommand(Positions.L4.close).andThen(Routines.scoreCoralLevelFour(elevator, intake)));
-        // NamedCommands.registerCommand("wait for score", Commands.waitUntil(() -> !intake.isSensorTripped()).withName("Wait for score"));
-        // NamedCommands.registerCommand("drive to coral", swerve.driveCommand(() -> 0.2, () -> 0, () -> 0, false, true).until(() -> elevator.getTimeOfFlightDistance() < 14).withTimeout(2).finallyDo(swerve::stop));
+        
         NamedCommands.registerCommand("score L4", Commands.waitUntil(() -> elevator.nearL4()).withTimeout(1).andThen(intake.scoreLevelFour()).withName("Auto score L4").asProxy());
         NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).withName("Wait for intake auto"));
         
-        // new EventTrigger("raise elevator to intake").onTrue(elevator.setPositionCommand(Positions.INTAKE.close));
         new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake));
         new EventTrigger("raise elevator to L4").onTrue(elevator.setPositionCommand(Positions.L4.close).alongWith(intake.secureCoral()).withName("Raise elevator L4 auto"));
         new EventTrigger("stow elevator").onTrue(elevator.setPositionCommand(Positions.STOW));
