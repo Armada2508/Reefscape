@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.591529605263157,
-        "y": 6.0
+        "x": 7.57,
+        "y": 5.08
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.223792508834095,
-        "y": 6.324005067704796
+        "x": 7.202262903570938,
+        "y": 5.404005067704796
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.052055921052631,
-        "y": 7.363733552631578
+        "x": 1.101,
+        "y": 7.04
       },
       "prevControl": {
-        "x": 6.36205454711382,
-        "y": 7.089990225298277
+        "x": 1.4109986260611884,
+        "y": 6.7662566726666995
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Top Coral Station Blue"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 126.0
   },
   "reversed": false,
   "folder": null,

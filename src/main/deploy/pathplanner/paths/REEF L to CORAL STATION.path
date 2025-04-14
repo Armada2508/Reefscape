@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.981,
-        "y": 5.213
+        "x": 3.697,
+        "y": 5.049
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9907335526315793,
-        "y": 5.833921052631579
+        "x": 2.5174058509647743,
+        "y": 6.506777853927832
       },
       "isLocked": false,
-      "linkedName": "Reef-K"
+      "linkedName": "Reef-L"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 7.04
       },
       "prevControl": {
-        "x": 1.5490953947368422,
-        "y": 6.51702302631579
+        "x": 2.0752002055120062,
+        "y": 5.846749025062387
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,26 +29,12 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.63,
-      "constraints": {
-        "maxVelocity": 3.75,
-        "maxAcceleration": 3.75,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "stow elevator",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.05,
       "endWaypointRelativePos": null,
       "command": null
     },
@@ -60,8 +46,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -77,5 +63,5 @@
     "velocity": 0,
     "rotation": -60.42216131873867
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

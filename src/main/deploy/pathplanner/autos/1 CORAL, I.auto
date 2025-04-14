@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BUMP"
+            "pathName": "STARTING LINE to REEF I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score L4"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

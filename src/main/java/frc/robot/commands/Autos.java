@@ -3,30 +3,36 @@ package frc.robot.commands;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.events.EventTrigger;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.ElevatorK.Positions;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 
 public class Autos {
+
     // Prevent this class from being instantiated
     private Autos() {}
 
     public static SendableChooser<Command> initPathPlanner(Swerve swerve, Elevator elevator, Intake intake) {
         FollowPathCommand.warmupCommand().schedule();
-
-        NamedCommands.registerCommand("intake", Routines.intakeCoral(elevator, intake));
-        NamedCommands.registerCommand("score L1", Routines.scoreCoralLevelOne(elevator, intake));
-        NamedCommands.registerCommand("score L2", Routines.scoreCoralLevelTwo(elevator, intake));
-        NamedCommands.registerCommand("score L3", Routines.scoreCoralLevelThree(elevator, intake));
-        NamedCommands.registerCommand("score L4", Routines.scoreCoralLevelFour(elevator, intake));
+        FollowPathCommand.allowableTranslationErrorMeters = Units.inchesToMeters(0.5);
+        System.out.println(FollowPathCommand.additionalTimeSeconds + " " + FollowPathCommand.allowableTranslationErrorMeters);
         
-        // new EventTrigger("raise elevator to intake").onTrue(elevator.setPosition(ElevatorK.Positions.INTAKE));
-
-        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Score 1 CORAL");
+        NamedCommands.registerCommand("score L4", Commands.waitUntil(() -> elevator.nearL4()).withTimeout(1).andThen(intake.scoreLevelFour()).withName("Auto score L4").asProxy());
+        NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).withName("Wait for intake auto"));
+        
+        new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake));
+        new EventTrigger("raise elevator to L4").onTrue(elevator.setPositionCommand(Positions.L4.close).alongWith(intake.secureCoral()).withName("Raise elevator L4 auto"));
+        new EventTrigger("stow elevator").onTrue(elevator.setPositionCommand(Positions.STOW));
+        
+        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
         return autoChooser;
     }

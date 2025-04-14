@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Millimeters;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.function.DoubleSupplier;
 
@@ -14,14 +15,16 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
-import frc.robot.lib.logging.LogUtil;
+import frc.robot.Constants.SwerveK;
 import frc.robot.lib.util.Util;
 
+@Logged
 public class Intake extends SubsystemBase {
     
     private final SparkMax sparkMaxLeft = new SparkMax(IntakeK.sparkMaxLeftID, MotorType.kBrushless);
@@ -29,17 +32,19 @@ public class Intake extends SubsystemBase {
     @Logged(name = "Time of Flight")
     private final TimeOfFlight timeOfFlight = new TimeOfFlight(IntakeK.timeOfFlightId);
 
-    DoubleSupplier v = LogUtil.getTunableDouble("Intake Hold (V)", 0.375);
-
-    public Intake() {
+    /**
+     * @param angularVelocity Supplier of the robot's angular velocity in radians per second
+     */
+    public Intake(DoubleSupplier angularVelocity) {
         configSparkMax();
         timeOfFlight.setRangingMode(RangingMode.Short, 24);
-        setDefaultCommand(run(() -> { // TODO: Finalize + move into another branch
+        setDefaultCommand(run(() -> {
             if (isSensorTripped()) {
-                // var volts = Volts.of(v.getAsDouble());
-                // System.out.println("Do stuff " + volts);
-                // sparkMaxLeft.setVoltage(volts);
-                // sparkMaxRight.setVoltage(volts);
+                double volts = MathUtil.interpolate(0, IntakeK.holdVoltageAtMaxSpeed, 
+                    Math.abs(angularVelocity.getAsDouble()) / SwerveK.maxAngularVelocity.in(RadiansPerSecond)
+                );
+                sparkMaxLeft.setVoltage(volts);
+                sparkMaxRight.setVoltage(volts);
             }
             else {
                 stop();
@@ -57,7 +62,8 @@ public class Intake extends SubsystemBase {
         rightConfig.smartCurrentLimit(IntakeK.currentLimit);
         leftConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
         rightConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
-        rightConfig.inverted(true);
+        leftConfig.inverted(true);
+        rightConfig.inverted(false);
 
         sparkMaxLeft.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         sparkMaxRight.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -93,6 +99,13 @@ public class Intake extends SubsystemBase {
         .withName("Set Voltage");
     }
 
+    public Command secureCoral() {
+        return setVoltage(IntakeK.coralIntakeVolts)
+        .andThen(Commands.waitTime(IntakeK.intakeSecureTime))
+        .finallyDo(this::stop)
+        .withName("Secure Coral");
+    }
+
     /**
      * Sets voltage to motors for scoring.
      * @param volts Voltage to give motors
@@ -109,13 +122,11 @@ public class Intake extends SubsystemBase {
      * Sets voltage to motors for intake.
      * @return Command to set voltage and stop when time of flight is tripped
      */
-    public Command coralIntake() {
+    public Command intakeCoral() {
         return setVoltage(IntakeK.coralIntakeVolts)
         .andThen(
-            Commands.waitUntil(this::isSensorTripped),
-            Commands.waitTime(IntakeK.intakeAfterTrip)
+            Commands.waitUntil(this::isSensorTripped)
         )
-        .finallyDo(this::stop)
         .withName("Coral Intake");
     }
 
@@ -130,7 +141,8 @@ public class Intake extends SubsystemBase {
         })
         .andThen(
             Commands.waitTime(IntakeK.levelOneWait),
-            runOnce(() -> sparkMaxRight.setVoltage(IntakeK.levelOneReverseVolts))
+            runOnce(() -> sparkMaxRight.setVoltage(IntakeK.levelOneReverseVolts)),
+            Commands.waitTime(IntakeK.levelOneSecondWait)
         )
         .finallyDo(this::stop)
         .withName("Score Level One");

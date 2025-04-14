@@ -9,21 +9,24 @@ import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
@@ -34,6 +37,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.LinearAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
@@ -63,7 +67,10 @@ public class Constants {
         public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
-        public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs().withSupplyCurrentLimit(Amps.of(40)).withSupplyCurrentLimitEnable(true);
+        public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477);
+        public static final CurrentLimitsConfigs currentLimitsConfig = new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
+            .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
 
         // Path Constraints
         public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(6); // Should be just under 3/4 of our max possible speed, arbitrary value
@@ -72,13 +79,13 @@ public class Constants {
         public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(270); 
 
         // Drive Feedforward
-        public static final double kS = 0.10431;
-        public static final double kV = 2.0967;
-        public static final double kA = 0.055428;
+        public static final double kS = 0.23118;
+        public static final double kV = 2.1701;
+        public static final double kA = 0.15136;
 
         // PathPlanner
-        public static final PIDConstants translationConstants = new PIDConstants(5, 0, 0);
-        public static final PIDConstants rotationConstants = new PIDConstants(5, 0, 0);
+        public static final PIDConstants ppTranslationConstants = new PIDConstants(5.25, 0, 0); // m/s / m
+        public static final PIDConstants ppRotationConstants = new PIDConstants(5, 0, 0); // rad/s / rad
         public static RobotConfig robotConfig; static {
             try {
                 robotConfig = RobotConfig.fromGUISettings();
@@ -87,10 +94,19 @@ public class Constants {
             }
         }
 
-        // Turn PID
-        public static final PIDConstants angularPID = new PIDConstants(5, 0, 0.4); // kP = degrees/second per degree
-        public static final Angle angularDeadband = Degrees.of(2);
-        public static final AngularVelocity angularVelocityDeadband = DegreesPerSecond.of(0.3);
+        // PID Alignment
+        public static final PIDConstants translationConstants = new PIDConstants(5.25, 0, 0); // m/s / m of error
+        public static final PIDConstants rotationConstants = new PIDConstants(5, 0, 0); // rad/s / rad of error
+        public static final TrapezoidProfile.Constraints defaultTranslationConstraints = 
+            new TrapezoidProfile.Constraints(Units.feetToMeters(5), Units.feetToMeters(10)); // m/s & m/s^2
+        public static final TrapezoidProfile.Constraints defaultRotationConstraints = 
+            new TrapezoidProfile.Constraints(Units.degreesToRadians(360), Units.degreesToRadians(360)); // rad/s & rad/s^2
+        public static final TrapezoidProfile.Constraints climbTranslationConstraints = 
+            new TrapezoidProfile.Constraints(Units.feetToMeters(2), Units.feetToMeters(4)); // m/s & m/s^2
+        public static final TrapezoidProfile.Constraints climbRotationConstraints = 
+            new TrapezoidProfile.Constraints(Units.degreesToRadians(180), Units.degreesToRadians(180)); // rad/s & rad/s^2
+        public static final Distance maximumTranslationError = Inches.of(0.25);
+        public static final Angle maximumRotationError = Degrees.of(0.5);
 
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }
@@ -100,42 +116,48 @@ public class Constants {
         public static final double leftJoystickDeadband = 0.07;
         public static final double rightJoystickDeadband = 0.07;
 
-        public static final double overrideThreshold = 0.15;
+        // Teleop Alignment Overriding
+        public static final double overrideThreshold = 0.14;
+        public static final Time overrideTime = Seconds.of(0.25);
     }
 
     public static class DriveK {
         // Larger number = faster rate of change, limit is in units of (units)/second. In this case the joystick [-1, 1].
         public static final Pair<Double, Double> translationAccelLimits = Pair.of(1.25, 2.0); 
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
+        public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
+        public static final RangeTransformer elevatorAccelTransformer = new RangeTransformer(ElevatorK.minHeight.in(Inches), ElevatorK.maxHeight.in(Inches), 1, elevatorAccelScaling, true);
 
-        public static final double driveSpeedModifier = 0.7;
+        public static final double driveSpeedModifier = 1;
         public static final double rotationSpeedModifier = 1;
+        public static final double exponentialControl = 1.75;
     }
 
     public static class ElevatorK {
         public static final int talonID = 8;
         public static final int talonFollowID = 9;
+        public static final int tofID = 1;
         public static final double gearRatio = 12.75;
         public static final Distance sprocketDiameter = Inches.of(1.751); // Pitch Diameter
         public static final int stageCount = 3;
-        public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final Current currentSpike = Amps.of(0); // TODO: Find current spike threshold and spike time
-        public static final double spikeTime = 0.25;
+        public static final Current currentSpike = Amps.of(47.5);
+        public static final Time currentTripTime = Seconds.of(0.125);
 
         // Feedfoward and feedback gains
-        public static final double kG = 0.285; // Volts
-        public static final double kS = 0.085; // Volts
+        public static final double kG = 0.28; // Volts
+        public static final double kS = 0.07; // Volts
         public static final double kV = 1.4389; // Volts/rps of target, 1.4389
-        public static final double kP = 6; // Volts/rotation of error
+        public static final double kP = 30; // Volts/rotation of error
         public static final double kD = 0; // Volts/rps of error
 
-        public static final LinearVelocity maxVelocity = InchesPerSecond.of(35);
-        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(46);
+        public static final LinearVelocity maxVelocity = InchesPerSecond.of(105);
+        public static final LinearAcceleration maxAcceleration = InchesPerSecondPerSecond.of(300);
 
         // All heights are relative to the top of the bottom bar of the carriage station to the ground floor
-        public static final Distance minHeight = Inches.of(5.925);
+        public static final Distance minHeight = Inches.of(6.05);
         public static final Distance maxHeight = Inches.of(74.25);
-        public static final Distance armThresholdHeight = Inches.of(30); // height that is safe to move algae arm w/o hitting robot
+        public static final Distance intakeBumpHeight = Inches.of(4);
+        public static final Distance armThresholdHeight = Inches.of(20); // height that is safe to move algae arm w/o hitting robot
         public static final Distance allowableError = Inches.of(0.125);
 
         // Configs
@@ -153,27 +175,31 @@ public class Constants {
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.maxHeight.div(ElevatorK.stageCount), sprocketDiameter))
             .withReverseSoftLimitThreshold(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
-        public static final HardwareLimitSwitchConfigs hardwareLimitConfig = new HardwareLimitSwitchConfigs()
-            .withReverseLimitAutosetPositionEnable(true)
-            .withReverseLimitAutosetPositionValue(Encoder.linearToAngular(ElevatorK.minHeight.div(ElevatorK.stageCount), sprocketDiameter));
 
         public enum Positions {
-            L1(Inches.of(22)),
-            L2(Inches.of(30.875)),
-            L3(Inches.of(46.6875)),
-            L4(Inches.of(71.5)),
-            ALGAE_LOW(Inches.of(29)), // Not Found
-            ALGAE_HIGH(Inches.of(29)), // Not Found
-            INTAKE(Inches.of(31.5)),
-            STOW(ElevatorK.minHeight);
+            L1(Inches.of(22), Inches.of(22)),
+            L2(Inches.of(30.125), Inches.of(30.125)),
+            L3(Inches.of(45.70), Inches.of(45.70)),
+            L4(Inches.of(70.375), Inches.of(70.375)),
+            ALGAE_LOW(Inches.of(25), Inches.of(25)), // Not Found
+            ALGAE_HIGH(Inches.of(40), Inches.of(40)), // Not Found
+            INTAKE(Inches.of(32.25), Inches.of(27)), // Min: 31.25" | Max: 33.25", Mid: 32.25"
+            STOW(Inches.of(7.5), Inches.of(7.5));
     
-            public final Distance level;
+            public final Distance close, far;
     
-            private Positions(Distance position) {
-                this.level = position;
+            private Positions(Distance close, Distance far) {
+                this.close = close;
+                this.far = far;
             }
         }
+
+        // Linear Interpolation
+        public static final Distance timeOfFlightOffset = Inches.of(-13.75);
+        public static final Distance maxLinearDistance = Inches.of(4.5);
+        public static final int sampleTime = 24; // ms
     }  
+
 
     public static class IntakeK {
         public static final int sparkMaxLeftID = 2; 
@@ -184,12 +210,15 @@ public class Constants {
 
         public static final int currentLimit = 20; // Amps
 
+        public static final double holdVoltageAtMaxSpeed = 1;
+
         public static final Voltage coralIntakeVolts = Volts.of(12);
-        public static final Time intakeAfterTrip = Seconds.of(0.25);
+        public static final Time intakeSecureTime = Seconds.of(0.25);
 
         public static final Voltage levelOneVolts = Volts.of(-7.5);
         public static final Time levelOneWait = Seconds.of(0.04);
         public static final Voltage levelOneReverseVolts = Volts.of(5.5);
+        public static final Time levelOneSecondWait = Seconds.of(0.5);
 
         public static final Voltage levelTwoThreeVolts = Volts.of(-5.5);
         public static final Voltage levelFourVolts = Volts.of(-5);
@@ -199,68 +228,86 @@ public class Constants {
         public static final int sparkMaxID = 1;
         public static final double gearRatio = 47.045881;
         public static final Voltage zeroingVoltage = Volts.of(-0.5);
-        public static final int currentLimit = 20;
+        public static final int currentLimit = 30;
 
         public static final Angle zeroPosition = Degrees.of(5);
-        public static final Angle maxPosition = Degrees.of(160);
-        public static final Angle algaePosition = Degrees.of(75);
+        public static final Angle maxPosition = Degrees.of(120);
+        public static final Angle algaePosition = Degrees.of(70);
         public static final Angle loweredAlgaePosition = Degrees.of(90);
-        public static final Angle stowPosition = zeroPosition;
+        public static final Angle stowPosition = Degrees.of(15);
         public static final Angle allowableError = Degrees.of(2);
 
-        public static final double kP = 0.1;
+        public static final double kP = 230;
         public static final double kD = 0;
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(15);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(15);
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(90);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(90);
     }
 
-    public static class VisionK { // TODO: Find transform and standard deviations
-        public static final String frontCameraName = "ArducamFront";
-        public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(4.087), Inches.of(-9.5), Inches.of(26.09), new Rotation3d(Degrees.of(0), Degrees.of(15), Degrees.of(0)));
-        public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(0.927), Inches.of(-9.5), Inches.of(24.027), new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(180)));
+    public static class VisionK {
+        public static final String frontCameraName = "ArducamFront"; // 7.5, 34.77, 5.22
+        public static final String backCameraName = "ArducamBack"; 
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(0.577), Inches.of(-1.023), Inches.of(29.223), new Rotation3d(Degrees.of(11.5), Degrees.of(30.75), Degrees.of(5.8)));
+        public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);
         // Used in scaling the standard deviations by average distance to april tags
-        public static final Distance baseLineAverageTagDistance = Inches.of(60);
+        public static final Distance baseLineAverageTagDistance = Inches.of(84);
+        public static final Distance maxAverageTagDistance = Inches.of(160);
         // Vision Standard Deviations (Meters, Meters, Radians)
-        public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(9), Units.feetToMeters(9), Units.degreesToRadians(360));
+        public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(3), Units.feetToMeters(3), Units.degreesToRadians(360));
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+
+        public static final List<Integer> reefTags = List.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
     }
 
-    public static class ClimbK { // TODO: Tune everything
-        // Motors
+    public static class ClimbK {
         public static final int talonID = 10;
         public static final int talonFollowID = 11;
+        public static final int servoRID = 0;
+        public static final int servoLID = 1;
 
-        // Positions/Angles/Voltage
-        public static final Voltage climbVoltage = Volts.of(2);
+        public static final Voltage climbVoltage = Volts.of(-4);
+        public static final Voltage prepVoltage = Volts.of(10);
         
-        public static final Angle maxAngle = Degrees.of(90);
-        public static final Angle minAngle = Degrees.of(0);
-        public static final Angle allowableError = Degrees.of(1);
+        public static final Angle maxAngle = Degrees.of(62);
+        public static final Angle minAngle = Degrees.of(-105.5);
+        public static final Angle allowableError = Degrees.of(0.25);
+        public static final Angle gripAngle = Degrees.of(-31); // Angle of gription
+        public static final Angle stowAngle = Degrees.of(-90);
+
+        public static final double servoMin = 0;
+        public static final double servoMax = 0.25;
+        public static final Time servoAcutateTime = Seconds.of(0.5);
 
         // Motion Magic
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); 
+        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(60);
+        public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(60); 
+        public static final AngularVelocity gripVelocity = DegreesPerSecond.of(-60);
+        public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(90); 
         
-        public static final double kP = 0;
+        public static final double kV = 0.943;
+        public static final double kS = 0.12;
+        public static final double kP = 2500;
         public static final double kD = 0;
-
-        public static final Slot0Configs pidconfig = new Slot0Configs().withKD(kD).withKP(kP);
         public static final double gearRatio = 100;
+
+        public static final MotorOutputConfigs outputConfigs = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+        public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD).withKS(kS).withKV(kV);
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+        public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(Amps.of(220))
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimit(Amps.of(110))
+            .withSupplyCurrentLowerLimit(Amps.of(110))
+            .withSupplyCurrentLimitEnable(true);
         
-        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs() // Forward limit
+        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(maxAngle);
-        
-        public static final HardwareLimitSwitchConfigs hardLimitSwitchConfigs = new HardwareLimitSwitchConfigs() // Reverse limit
-            .withReverseLimitEnable(true)
-            .withReverseLimitAutosetPositionEnable(true)
-            .withReverseLimitAutosetPositionValue(minAngle);
+            .withForwardSoftLimitThreshold(maxAngle)
+            .withReverseSoftLimitEnable(true)
+            .withReverseSoftLimitThreshold(minAngle);
     }
 
     public static class LEDK {
@@ -276,5 +323,5 @@ public class Constants {
         public static final int climbLEDLength = 0; 
 
     }
-    
+
 }

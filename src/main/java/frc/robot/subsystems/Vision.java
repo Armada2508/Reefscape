@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
 
+@Logged
 public class Vision extends SubsystemBase {
 
     private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
@@ -40,6 +41,7 @@ public class Vision extends SubsystemBase {
     private PhotonPipelineResult frontLatestResult;
     private PhotonPipelineResult backLatestResult;
 
+    @SuppressWarnings("removal")
     @Override
     public void periodic() {
         if (isCameraConnectedFront()) {
@@ -115,11 +117,25 @@ public class Vision extends SubsystemBase {
         table.getEntry(name + " StdDevs/numTags").setInteger(numTags);
         table.getEntry(name + " StdDevs/Average Distance to Tag (in.) RF").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
         table.getEntry(name + " StdDevs/stdevScalar").setDouble(stdevScalar);
-        if (numTags == 0) return VisionK.untrustedStdDevs;
-        if (numTags == 1) {
-            return VisionK.singleTagStdDevs.times(stdevScalar);
+        if (avgDistMeters > VisionK.maxAverageTagDistance.in(Meters)) {
+            return VisionK.untrustedStdDevs;
         }
-        return VisionK.multiTagStdDevs.times(stdevScalar);
+        if (numTags == 0) return VisionK.untrustedStdDevs;
+        boolean sawReef = false;
+        for (var target : result.getTargets()) {
+            if (VisionK.reefTags.contains(target.getFiducialId())) {
+                sawReef = true;
+            }
+        }
+        Matrix<N3, N1> stdDevs;
+        if (numTags == 1) {
+            stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
+        }
+        stdDevs = VisionK.multiTagStdDevs.times(stdevScalar);
+        if (name == VisionK.backCameraName && !sawReef) {
+            stdDevs = stdDevs.times(4);
+        }
+        return stdDevs;
     }
 
     /**
@@ -208,6 +224,18 @@ public class Vision extends SubsystemBase {
     public double distanceToBestTagBack() {
         if (!canSeeTagBack()) return -1;
         return Units.metersToInches(backLatestResult.getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
+    }
+
+    /**
+     * Returns the normal distance to the best tag in inches from the front camera (Camera Frame) or -1 if no tag is seen
+     */
+    @Logged(name = "Robot Normal Distance to Front Best Tag")
+    public double robotToFrontTag() {
+        if (!canSeeTagFront()) return -1;
+        return Units.metersToInches(
+            Pose3d.kZero.transformBy(frontLatestResult.getBestTarget().getBestCameraToTarget().inverse())
+            .transformBy(VisionK.robotToFrontCamera.inverse()).getTranslation().toTranslation2d().getNorm()
+        );
     }
 
     // This is your poor man's type alias, allows me to shorten the type and reference it by using VisionResults instead of List<Pair<EstimatedRobotPose, Matrix<N3, N1>>>
