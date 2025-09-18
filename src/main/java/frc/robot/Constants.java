@@ -33,7 +33,9 @@ import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -49,8 +51,8 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.lib.util.Encoder;
 
 public class Constants {
 
@@ -308,6 +310,9 @@ public class Constants {
             .withForwardSoftLimitThreshold(maxAngle)
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(minAngle);
+    }
+    public static class QuestK {
+        public static final Transform2d questOffset = new Transform2d(0, 0, Rotation2d.k180deg);
     }
 
 }
