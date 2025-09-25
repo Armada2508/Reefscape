@@ -6,11 +6,15 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.photonvision.EstimatedRobotPose;
+
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -23,6 +27,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -46,6 +51,9 @@ import frc.robot.commands.DriveWheelCharacterization;
 import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
+import swervelib.parser.SwerveParser;
+import swervelib.telemetry.SwerveDriveTelemetry;
+import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 @Logged
 public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
@@ -58,7 +66,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX backRight;
     private final SysIdRoutine sysIdRoutine; 
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
-    //private boolean initializedOdometryFromVision = false; //! replace with Quest
+    private boolean initializedOdometryFromVision = false; //! replace with Quest
     @SuppressWarnings("unused")
     private Pose2d pathPlannerTarget = Pose2d.kZero; // For logging
     // PID Alignment
@@ -71,8 +79,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final ProfiledPIDController yController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
     private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.defaultRotationConstraints);
 
-    public Swerve(Supplier<//!VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
-        //!this.visionSource = visionSource;
+    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
+        this.visionSource = visionSource;
         this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
@@ -120,14 +128,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public void periodic() {
         SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
-        for (var result : //!visionSource.get().results()) {
+        for (var result : visionSource.get().results()) {
             EstimatedRobotPose pose = result.getFirst();
             if (!initializedOdometryFromVision) {
                 resetOdometry(pose.estimatedPose.toPose2d());
                 initializedOdometryFromVision = true;
                 continue;
             }
-            swerveDrive.//!addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
+            swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
         }
     }
 
@@ -331,7 +339,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return cmd.getName();
     }
 
-    public boolean //!initializedOdometryFromVision() {
+    public boolean initializedOdometryFromVision() {
         return initializedOdometryFromVision;
     }
 
