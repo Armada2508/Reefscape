@@ -1,8 +1,12 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -80,6 +84,18 @@ public class Quest extends SubsystemBase {
                 swerveDrive.addVisionMeasurement(robotPose, ctreTimestamp, QUESTNAV_STD_DEVS);
             };
         }
-}};
+}
+    /*
+     Attempt to make a QuestNav equivalent of VisionResults in Vision code
+     Goal is to return a wrapper object containing estimated robot poses and their standard deviations
+     */
+    public QuestResults getQuestResults() {
+        List<Pair</*estimated robot pose */, Matrix<N3, N1>>> questResults = new ArrayList<>();
+        if (questNav.isTracking()) {
+            questResults.addAll(/*need something to process results */(), SwerveDrivePoseEstimator); //use either SwerveDrivePoseEstimator or PoseEstimator
+        }
+        return new QuestResults(questResults);
+    }
+};
 
 
