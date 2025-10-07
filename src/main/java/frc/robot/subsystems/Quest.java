@@ -8,6 +8,7 @@ import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.numbers.N1;
@@ -21,6 +22,8 @@ import swervelib.SwerveDrive;
 public class Quest extends SubsystemBase {
     QuestNav questNav = new QuestNav();
     
+    private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null);
+
     private void GetPose() {
         // First, Declare our geometrical transform from the robot center to the Quest
         Transform2d ROBOT_TO_QUEST = new Transform2d( /*TODO: Put your x, y, rotational offsets here!*/ );
@@ -90,12 +93,13 @@ public class Quest extends SubsystemBase {
      Goal is to return a wrapper object containing estimated robot poses and their standard deviations
      */
     public QuestResults getQuestResults() {
-        List<Pair</*estimated robot pose */, Matrix<N3, N1>>> questResults = new ArrayList<>();
-        if (questNav.isTracking()) {
-            questResults.addAll(/*need something to process results */(), SwerveDrivePoseEstimator); //use either SwerveDrivePoseEstimator or PoseEstimator
+        List<Pair</*estimated robot pose*/, Matrix<N3, N1>>> questResults = new ArrayList<>();
+        if (questNav.isConnected()) {
+            questResults.addAll(/*need something to process results*/(questNav.getAllUnreadPoseFrames(), poseEstimator, questNav.getName())); //use either SwerveDrivePoseEstimator or PoseEstimator
         }
         return new QuestResults(questResults);
     }
 };
+
 
 
