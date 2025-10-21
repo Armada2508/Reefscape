@@ -12,8 +12,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.photonvision.EstimatedRobotPose;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -30,6 +28,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -48,7 +47,7 @@ import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
-import frc.robot.subsystems.Vision.VisionResults;
+import frc.robot.subsystems.Quest.QuestResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
 import swervelib.parser.SwerveParser;
@@ -59,7 +58,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
 
     private final SwerveDrive swerveDrive;
-    private final Supplier<VisionResults> visionSource;
+    private final Supplier<QuestResults> questSource;
     private final TalonFX frontLeft;
     private final TalonFX frontRight;
     private final TalonFX backLeft;
@@ -79,8 +78,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final ProfiledPIDController yController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
     private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.defaultRotationConstraints);
 
-    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
-        this.visionSource = visionSource;
+    public Swerve(Supplier<QuestResults> questSource, BooleanSupplier overridePathFollowing) {
+        this.questSource = questSource;
         this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
@@ -124,14 +123,15 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         backRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
     }
 
-    @Override
+    @Override //! this space needs more work connecting QuestNav in place of Vision
     public void periodic() {
         SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
-        for (var result : visionSource.get().results()) {
-            EstimatedRobotPose pose = result.getFirst();
+        for (var pose : questSource.get().results()) {
+            Pose3d questPose = pose.questPose();
+            Pose3d robotPose = questPose.transformBy(QuestNavConstants.ROBOT_TO_QUEST.inverse());
             if (!initializedOdometryFromVision) {
-                resetOdometry(pose.estimatedPose.toPose2d());
+                resetOdometry(robotPose.toPose2d());
                 initializedOdometryFromVision = true;
                 continue;
             }

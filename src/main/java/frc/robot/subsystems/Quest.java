@@ -1,12 +1,8 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -93,12 +89,16 @@ public class Quest extends SubsystemBase {
      Goal is to return a wrapper object containing estimated robot poses and their standard deviations
      */
     public QuestResults getQuestResults() {
-        List<Pair</*estimated robot pose*/, Matrix<N3, N1>>> questResults = new ArrayList<>();
-        if (questNav.isConnected()) {
-            questResults.addAll(/*need something to process results*/(questNav.getAllUnreadPoseFrames(), poseEstimator, questNav.getName())); //use either SwerveDrivePoseEstimator or PoseEstimator
+        //List<PoseFrame> questResults = new ArrayList<>(); Remove later if code works
+        PoseFrame[] questFrames = null;
+        if (questNav.isConnected() && questNav.isTracking()) {
+            questFrames = questNav.getAllUnreadPoseFrames();
+            //questResults.addAll(questNav.getAllUnreadPoseFrames(), poseEstimator, questNav);  Remove later if code works
         }
-        return new QuestResults(questResults);
+        return new QuestResults(questFrames);
     }
+
+    public record QuestResults(PoseFrame[] results){}
 };
 
 
