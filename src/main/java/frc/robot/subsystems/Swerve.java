@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerK;
+import frc.robot.Constants.QuestK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
@@ -127,9 +128,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public void periodic() {
         SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
+
         for (var pose : questSource.get().results()) {
-            Pose3d questPose = pose.questPose();
-            Pose3d robotPose = questPose.transformBy(QuestNavConstants.ROBOT_TO_QUEST.inverse());
+            Pose3d questPose = pose.questPose(); // Fix this error by today hopefully
+            Pose3d robotPose = questPose.transformBy(QuestK.ROBOT_TO_QUEST.inverse());
             if (!initializedOdometryFromVision) {
                 resetOdometry(robotPose.toPose2d());
                 initializedOdometryFromVision = true;
