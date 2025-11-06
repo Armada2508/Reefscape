@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.io.IOException;
 import java.util.Set;
@@ -28,7 +29,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -130,14 +130,14 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
 
         for (var pose : questSource.get().results()) {
-            Pose3d questPose = pose.questPose(); // Fix this error by today hopefully
-            Pose3d robotPose = questPose.transformBy(QuestK.ROBOT_TO_QUEST.inverse());
+            Pose2d questPose = pose.questPose();
+            Pose2d robotPose = questPose.transformBy(QuestK.ROBOT_TO_QUEST.inverse());
             if (!initializedOdometryFromVision) {
-                resetOdometry(robotPose.toPose2d());
                 initializedOdometryFromVision = true;
                 continue;
             }
-            swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
+            
+            swerveDrive.addVisionMeasurement(robotPose, ctreTimestamp, QUESTNAV_STD_DEVS, result.getSecond());
         }
     }
 

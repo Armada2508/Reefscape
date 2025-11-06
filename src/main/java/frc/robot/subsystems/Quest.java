@@ -13,11 +13,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuestK;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
-import swervelib.SwerveDrive;
 
 public class Quest extends SubsystemBase {
     QuestNav questNav = new QuestNav();
     
+    private Swerve swerve = new Swerve(null, null);
+
     private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null);
 
     private void GetPose() {
@@ -50,16 +51,15 @@ public class Quest extends SubsystemBase {
         questNav.setPose(questPose);
     }
 
+    Matrix<N3, N1> QUESTNAV_STD_DEVS =
+    VecBuilder.fill(
+        0.02, // Trust down to 2cm in X direction
+        0.02, // Trust down to 2cm in Y direction
+        0.035 // Trust down to 2 degrees rotational
+);
 
-    private void QuestSwerve() {
-        SwerveDrive swerveDrive = new SwerveDrive(null, null, 0, null);
-        Matrix<N3, N1> QUESTNAV_STD_DEVS =
-            VecBuilder.fill(
-                0.02, // Trust down to 2cm in X direction
-                0.02, // Trust down to 2cm in Y direction
-                0.035 // Trust down to 2 degrees rotational
-        );
-
+    @Override
+    public void periodic() {
         if (questNav.isTracking()) {
             // Get the latest pose data frames from the Quest
             PoseFrame[] questFrames = questNav.getAllUnreadPoseFrames();
