@@ -26,7 +26,7 @@ public class Autos {
         System.out.println(FollowPathCommand.additionalTimeSeconds + " " + FollowPathCommand.allowableTranslationErrorMeters);
         
         NamedCommands.registerCommand("score L4", Commands.waitUntil(() -> elevator.nearL4()).withTimeout(1).andThen(intake.scoreLevelFour()).withName("Auto score L4").asProxy());
-        NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).withName("Wait for intake auto"));
+        // NamedCommands.registerCommand("wait for intake", Commands.waitUntil(intake::isSensorTripped).withName("Wait for intake auto"));
         
         new EventTrigger("intake coral").onTrue(Routines.intakeCoral(elevator, intake));
         new EventTrigger("raise elevator to L4").onTrue(elevator.setPositionCommand(Positions.L4.close).alongWith(intake.secureCoral()).withName("Raise elevator L4 auto"));

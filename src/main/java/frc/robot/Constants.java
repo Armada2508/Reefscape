@@ -22,11 +22,9 @@ import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
@@ -262,52 +260,52 @@ public class Constants {
         public static final List<Integer> reefTags = List.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
     }
 
-    public static class ClimbK {
-        public static final int talonID = 10;
-        public static final int talonFollowID = 11;
-        public static final int servoRID = 0;
-        public static final int servoLID = 1;
+    // public static class ClimbK {
+    //     public static final int talonID = 10;
+    //     public static final int talonFollowID = 11;
+    //     public static final int servoRID = 0;
+    //     public static final int servoLID = 1;
 
-        public static final Voltage climbVoltage = Volts.of(-4);
-        public static final Voltage prepVoltage = Volts.of(10);
+    //     public static final Voltage climbVoltage = Volts.of(-4);
+    //     public static final Voltage prepVoltage = Volts.of(10);
         
-        public static final Angle maxAngle = Degrees.of(62);
-        public static final Angle minAngle = Degrees.of(-105.5);
-        public static final Angle allowableError = Degrees.of(0.25);
-        public static final Angle gripAngle = Degrees.of(-31); // Angle of gription
-        public static final Angle stowAngle = Degrees.of(-90);
+    //     public static final Angle maxAngle = Degrees.of(62);
+    //     public static final Angle minAngle = Degrees.of(-105.5);
+    //     public static final Angle allowableError = Degrees.of(0.25);
+    //     public static final Angle gripAngle = Degrees.of(-31); // Angle of gription
+    //     public static final Angle stowAngle = Degrees.of(-90);
 
-        public static final double servoMin = 0;
-        public static final double servoMax = 0.25;
-        public static final Time servoAcutateTime = Seconds.of(0.5);
+    //     public static final double servoMin = 0;
+    //     public static final double servoMax = 0.25;
+    //     public static final Time servoAcutateTime = Seconds.of(0.5);
 
-        // Motion Magic
-        public static final AngularVelocity climbVelocity = DegreesPerSecond.of(60);
-        public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(60); 
-        public static final AngularVelocity gripVelocity = DegreesPerSecond.of(-60);
-        public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(90); 
+    //     // Motion Magic
+    //     public static final AngularVelocity climbVelocity = DegreesPerSecond.of(60);
+    //     public static final AngularAcceleration climbAcceleration = DegreesPerSecondPerSecond.of(60); 
+    //     public static final AngularVelocity gripVelocity = DegreesPerSecond.of(-60);
+    //     public static final AngularAcceleration gripAcceleration = DegreesPerSecondPerSecond.of(90); 
         
-        public static final double kV = 0.943;
-        public static final double kS = 0.12;
-        public static final double kP = 2500;
-        public static final double kD = 0;
-        public static final double gearRatio = 100;
+    //     public static final double kV = 0.943;
+    //     public static final double kS = 0.12;
+    //     public static final double kP = 2500;
+    //     public static final double kD = 0;
+    //     public static final double gearRatio = 100;
 
-        public static final MotorOutputConfigs outputConfigs = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
-        public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD).withKS(kS).withKV(kV);
-        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
-        public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(Amps.of(220))
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(Amps.of(110))
-            .withSupplyCurrentLowerLimit(Amps.of(110))
-            .withSupplyCurrentLimitEnable(true);
+    //     public static final MotorOutputConfigs outputConfigs = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+    //     public static final Slot0Configs pidconfig = new Slot0Configs().withKP(kP).withKD(kD).withKS(kS).withKV(kV);
+    //     public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs().withSensorToMechanismRatio(gearRatio);
+    //     public static final CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs()
+    //         .withStatorCurrentLimit(Amps.of(220))
+    //         .withStatorCurrentLimitEnable(true)
+    //         .withSupplyCurrentLimit(Amps.of(110))
+    //         .withSupplyCurrentLowerLimit(Amps.of(110))
+    //         .withSupplyCurrentLimitEnable(true);
         
-        public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(maxAngle)
-            .withReverseSoftLimitEnable(true)
-            .withReverseSoftLimitThreshold(minAngle);
-    }
+    //     public static final SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs()
+    //         .withForwardSoftLimitEnable(true)
+    //         .withForwardSoftLimitThreshold(maxAngle)
+    //         .withReverseSoftLimitEnable(true)
+    //         .withReverseSoftLimitThreshold(minAngle);
+    // }
 
 }

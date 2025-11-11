@@ -123,9 +123,11 @@ public class Intake extends SubsystemBase {
      * @return Command to set voltage and stop when time of flight is tripped
      */
     public Command intakeCoral() {
-        return setVoltage(IntakeK.coralIntakeVolts)
+        return setVoltage(IntakeK.coralIntakeVolts).alongWith(Commands.print("==================APPLYING VOLTAGE=================="))
         .andThen(
-            Commands.waitUntil(this::isSensorTripped)
+            // Commands.waitUntil(this::isSensorTripped)
+            Commands.waitSeconds(0.1)
+            // Commands.waitTime(null)
         )
         .withName("Coral Intake");
     }
@@ -176,6 +178,11 @@ public class Intake extends SubsystemBase {
         var cmd = getCurrentCommand();
         if (cmd == null) return "None";
         return cmd.getName();
+    }
+
+    @Logged(name = "left voltage")
+    public double getVoltage() {
+        return sparkMaxLeft.getOutputCurrent();
     }
     
 }

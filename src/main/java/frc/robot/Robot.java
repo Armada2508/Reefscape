@@ -49,7 +49,6 @@ import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.logging.TalonFXLogger;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.lib.util.DynamicSlewRateLimiter;
-import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -73,7 +72,7 @@ public class Robot extends TimedRobot {
     // @Logged(name = "Algae")
     // private final Algae algae = new Algae();
     @Logged(name = "Climb")
-    private final Climb climb = new Climb();
+    // private final Climb climb = new Climb();
     private final SendableChooser<Command> autoChooser;
     private final Timer swerveCoastTimer = new Timer();
     @Logged(name = "State")
@@ -154,7 +153,7 @@ public class Robot extends TimedRobot {
         xboxController.back().and(xboxController.leftTrigger()).onTrue(swerve.runOnce(swerve::zeroGyro).withName("Zero Gyro"));
 
         // Zeroing
-        xboxController.a().onTrue(Routines.stow(elevator, intake, climb).alongWith(Commands.runOnce(() -> state = Positions.STOW)).withName("Stow Everything"));
+        xboxController.a().onTrue(Routines.stow(elevator, intake /* climb*/ ).alongWith(Commands.runOnce(() -> state = Positions.STOW)).withName("Stow Everything"));
 
         // Alignment
         xboxController.x().onTrue(Commands.either(
@@ -204,8 +203,8 @@ public class Robot extends TimedRobot {
         // xboxController.leftTrigger().onTrue(algae.loweredPosition());
 
         // Climb
-        xboxController.povUp().onTrue(climb.prep());
-        xboxController.povDown().or(xboxController.povLeft()).onTrue(climb.climbMotionMagic());
+        // xboxController.povUp().onTrue(climb.prep());
+        // xboxController.povDown().or(xboxController.povLeft()).onTrue(climb.climbMotionMagic());
         // xboxController.povRight().onTrue(climb.servoCoast());
         // xboxController.povLeft().onTrue(climb.servoRatchet());
         // xboxController.povRight().onTrue(climb.runOnce(climb::zero));
@@ -276,7 +275,7 @@ public class Robot extends TimedRobot {
         swerve.stop();
         elevator.stop();
         intake.stop();
-        climb.stop();
+        // climb.stop();
         swerveCoastTimer.restart();
     }
 
