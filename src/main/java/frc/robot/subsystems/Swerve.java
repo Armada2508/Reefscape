@@ -137,7 +137,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
                 continue;
             }
             
-            swerveDrive.addVisionMeasurement(robotPose, ctreTimestamp, QUESTNAV_STD_DEVS, result.getSecond());
+            swerveDrive.addVisionMeasurement(robotPose, pose.ctreTimestamp, QUESTNAV_STD_DEVS, result.getSecond());
         }
     }
 

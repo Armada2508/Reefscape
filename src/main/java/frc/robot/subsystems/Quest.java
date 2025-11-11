@@ -20,7 +20,7 @@ public class Quest extends SubsystemBase {
     private Swerve swerve = new Swerve(null, null);
 
     private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null);
-
+    
     private void GetPose() {
         // First, Declare our geometrical transform from the robot center to the Quest
         Transform2d ROBOT_TO_QUEST = new Transform2d( /*TODO: Put your x, y, rotational offsets here!*/ );
@@ -51,12 +51,12 @@ public class Quest extends SubsystemBase {
         questNav.setPose(questPose);
     }
 
-    Matrix<N3, N1> QUESTNAV_STD_DEVS =
-    VecBuilder.fill(
-        0.02, // Trust down to 2cm in X direction
-        0.02, // Trust down to 2cm in Y direction
-        0.035 // Trust down to 2 degrees rotational
-);
+        Matrix<N3, N1> QUESTNAV_STD_DEVS =
+            VecBuilder.fill(
+                0.02, // Trust down to 2cm in X direction
+                0.02, // Trust down to 2cm in Y direction
+                0.035 // Trust down to 2 degrees rotational
+        );
 
     @Override
     public void periodic() {
@@ -80,7 +80,7 @@ public class Quest extends SubsystemBase {
                 // // You can put some sort of filtering here if you would like!
 
                 // // Add the measurement to our estimator
-                swerveDrive.addVisionMeasurement(robotPose, ctreTimestamp, QUESTNAV_STD_DEVS);
+                swerve.addVisionMeasurement(robotPose, timestamp, QUESTNAV_STD_DEVS);
             };
         }
 }
