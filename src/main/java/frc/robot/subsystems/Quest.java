@@ -13,11 +13,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuestK;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
+import swervelib.SwerveDrive;
 
 public class Quest extends SubsystemBase {
     QuestNav questNav = new QuestNav();
     
     private Swerve swerve = new Swerve(null, null);
+
+    private final SwerveDrive swerveDrive;
 
     private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null);
     
@@ -80,7 +83,7 @@ public class Quest extends SubsystemBase {
                 // // You can put some sort of filtering here if you would like!
 
                 // // Add the measurement to our estimator
-                swerve.addVisionMeasurement(robotPose, timestamp, QUESTNAV_STD_DEVS);
+                swerveDrive.addVisionMeasurement(robotPose, timestamp, QUESTNAV_STD_DEVS);
             };
         }
 }
