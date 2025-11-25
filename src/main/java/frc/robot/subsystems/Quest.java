@@ -62,14 +62,6 @@ public class Quest extends SubsystemBase {
         );
 
 
-
-
-            // chris is short
-
-
-
-
-            
     @Override
     public void periodic() {
         if (questNav.isTracking()) {
