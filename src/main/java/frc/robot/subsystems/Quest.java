@@ -61,6 +61,15 @@ public class Quest extends SubsystemBase {
                 0.035 // Trust down to 2 degrees rotational
         );
 
+
+
+
+            // chris is short
+
+
+
+
+            
     @Override
     public void periodic() {
         if (questNav.isTracking()) {
