@@ -44,7 +44,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerK;
-import frc.robot.Constants.QuestK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
@@ -66,7 +65,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX backRight;
     private final SysIdRoutine sysIdRoutine; 
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
-    private boolean initializedOdometryFromVision = false; //! replace with Quest
+    //private boolean initializedOdometryFromVision = false; //! may not be needed with questnav
     @SuppressWarnings("unused")
     private Pose2d pathPlannerTarget = Pose2d.kZero; // For logging
     // PID Alignment
@@ -124,21 +123,22 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         backRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
     }
 
-    @Override //! this space needs more work connecting QuestNav in place of Vision
+    @Override
     public void periodic() {
         SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
 
-        for (var pose : questSource.get().results()) {
-            Pose2d questPose = pose.questPose();
-            Pose2d robotPose = questPose.transformBy(QuestK.ROBOT_TO_QUEST.inverse());
-            if (!initializedOdometryFromVision) {
-                initializedOdometryFromVision = true;
-                continue;
-            }
+    //! this code was origionally made for vision, we altered it for questnav but it may not be needed here
+        //for (var pose : questSource.get().results()) {
+            //Pose2d questPose = pose.questPose();
+            //Pose2d robotPose = questPose.transformBy(QuestK.ROBOT_TO_QUEST.inverse());
+            //if (!initializedOdometryFromVision) {
+                //initializedOdometryFromVision = true;
+                //continue;
+            //}
             
-            swerveDrive.addVisionMeasurement(robotPose, timestamp, QUESTNAV_STD_DEVS, result.getSecond());
-        }
+            //swerveDrive.addVisionMeasurement(robotPose, timestamp, QUESTNAV_STD_DEVS, result.getSecond());
+        //}
     }
 
     private void setupPathPlanner() {
@@ -341,9 +341,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return cmd.getName();
     }
 
-    public boolean initializedOdometryFromVision() {
-        return initializedOdometryFromVision;
-    }
+    //! may not be needed with questnav
+    //public boolean initializedOdometryFromVision() {
+        //return initializedOdometryFromVision;
+    //}
 
     /**
      * Resets the gyro and odometry to the current position but the current direction is now seen as 0.
