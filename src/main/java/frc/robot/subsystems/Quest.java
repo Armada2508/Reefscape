@@ -6,7 +6,9 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,13 +44,13 @@ public class Quest extends SubsystemBase {
     
     private void SetPose() {
         // First, Declare our geometrical transform from the robot center to the quest
-        Transform2d ROBOT_TO_QUEST = new Transform2d( /*TODO: Put your x, y, rotational offsets here!*/ );
+        Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, rotational offsets here!*/ );
 
         // Assume this is the requested reset pose
-        Pose2d robotPose = new Pose2d( /* Some pose data */ );
+        Pose3d robotPose = new Pose3d( /* Some pose data */ );
 
         // Transform by the offset to get the Quest pose
-        Pose2d questPose = robotPose.transformBy(ROBOT_TO_QUEST);
+        Pose3d questPose = robotPose.transformBy(ROBOT_TO_QUEST);
 
         // Send the reset operation
         questNav.setPose(questPose);
