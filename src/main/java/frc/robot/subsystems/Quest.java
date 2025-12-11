@@ -7,7 +7,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -28,17 +27,17 @@ public class Quest extends SubsystemBase {
     
     private void GetPose() {
         // First, Declare our geometrical transform from the robot center to the Quest
-        Transform2d ROBOT_TO_QUEST = new Transform2d( /*TODO: Put your x, y, rotational offsets here!*/ );
+        Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, rotational offsets here!*/ );
 
         // Get the latest pose data frames from the Quest
         PoseFrame[] poseFrames = questNav.getAllUnreadPoseFrames();
 
         if (poseFrames.length > 0) {
                 // Get the most recent Quest pose
-                Pose2d questPose = poseFrames[poseFrames.length - 1].questPose();
+                Pose3d questPose = poseFrames[poseFrames.length - 1].questPose();
 
                 // Transform by the mount pose to get your robot pose
-                Pose2d robotPose = questPose.transformBy(ROBOT_TO_QUEST.inverse());
+                Pose3d robotPose = questPose.transformBy(ROBOT_TO_QUEST.inverse());
         }
     }
     
@@ -73,11 +72,9 @@ public class Quest extends SubsystemBase {
             // Loop over the pose data frames and send them to the pose estimator
             for (PoseFrame questFrame : questFrames) {
                 // Get the pose of the Quest
-                Pose2d questPose = questFrame.questPose();
+                Pose3d questPose = questFrame.questPose();
                 // Get timestamp for when the data was sent
-                
-                double timestamp = questFrame.dataTimestamp();
-
+                double timestamp = questFrame.dataTimestamp()
                 // Transform by the mount pose to get your robot pose
                 Pose2d robotPose = questPose.transformBy(QuestK.questOffset.inverse());
 
