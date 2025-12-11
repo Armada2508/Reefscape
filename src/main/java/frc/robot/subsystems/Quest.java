@@ -4,8 +4,6 @@ import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
@@ -19,13 +17,13 @@ import swervelib.SwerveDrive;
 public class Quest extends SubsystemBase {
     QuestNav questNav = new QuestNav();
     
-    private Swerve swerve = new Swerve(null, null);
+    //private Swerve swerve = new Swerve(null, null);
 
-    private final SwerveDrive swerveDrive;
+    private SwerveDrive swerveDrive;
 
-    private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null);
+    //private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null);
     
-    private void GetPose() {
+    public void GetPose() {
         // First, Declare our geometrical transform from the robot center to the Quest
         Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, rotational offsets here!*/ );
 
@@ -34,16 +32,16 @@ public class Quest extends SubsystemBase {
 
         if (poseFrames.length > 0) {
                 // Get the most recent Quest pose
-                Pose3d questPose = poseFrames[poseFrames.length - 1].questPose();
+                Pose3d questPose = poseFrames[poseFrames.length - 1].questPose3d();
 
                 // Transform by the mount pose to get your robot pose
                 Pose3d robotPose = questPose.transformBy(ROBOT_TO_QUEST.inverse());
         }
     }
     
-    private void SetPose() {
+    public void SetPose() {
         // First, Declare our geometrical transform from the robot center to the quest
-        Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, rotational offsets here!*/ );
+        Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, z, yaw, pitch, and roll offsets here!*/ );
 
         // Assume this is the requested reset pose
         Pose3d robotPose = new Pose3d( /* Some pose data */ );
@@ -72,11 +70,11 @@ public class Quest extends SubsystemBase {
             // Loop over the pose data frames and send them to the pose estimator
             for (PoseFrame questFrame : questFrames) {
                 // Get the pose of the Quest
-                Pose3d questPose = questFrame.questPose();
+                Pose3d questPose = questFrame.questPose3d();
                 // Get timestamp for when the data was sent
-                double timestamp = questFrame.dataTimestamp()
+                double timestamp = questFrame.dataTimestamp();
                 // Transform by the mount pose to get your robot pose
-                Pose2d robotPose = questPose.transformBy(QuestK.questOffset.inverse());
+                Pose3d robotPose = questPose.transformBy(QuestK.questOffset.inverse());
 
                 // Convert FPGA timestamp to CTRE's time domain using Phoenix 6 utility
                 double ctreTimestamp = Utils.fpgaToCurrentTime(timestamp);
@@ -84,7 +82,7 @@ public class Quest extends SubsystemBase {
                 // // You can put some sort of filtering here if you would like!
 
                 // // Add the measurement to our estimator
-                swerveDrive.addVisionMeasurement(robotPose, timestamp, QUESTNAV_STD_DEVS);
+                swerveDrive.addVisionMeasurement(robotPose.toPose2d(), timestamp, QUESTNAV_STD_DEVS);
             };
         }
 }
