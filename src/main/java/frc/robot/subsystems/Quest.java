@@ -5,7 +5,6 @@ import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,7 +24,7 @@ public class Quest extends SubsystemBase {
     
     public void GetPose() {
         // First, Declare our geometrical transform from the robot center to the Quest
-        Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, rotational offsets here!*/ );
+        
 
         // Get the latest pose data frames from the Quest
         PoseFrame[] poseFrames = questNav.getAllUnreadPoseFrames();
@@ -35,19 +34,19 @@ public class Quest extends SubsystemBase {
                 Pose3d questPose = poseFrames[poseFrames.length - 1].questPose3d();
 
                 // Transform by the mount pose to get your robot pose
-                Pose3d robotPose = questPose.transformBy(ROBOT_TO_QUEST.inverse());
+                Pose3d robotPose = questPose.transformBy(QuestK.ROBOT_TO_QUEST.inverse());
         }
     }
     
     public void SetPose() {
         // First, Declare our geometrical transform from the robot center to the quest
-        Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, z, yaw, pitch, and roll offsets here!*/ );
+        // Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, z, yaw, pitch, and roll offsets here!*/ );
 
         // Assume this is the requested reset pose
         Pose3d robotPose = new Pose3d( /* Some pose data */ );
 
         // Transform by the offset to get the Quest pose
-        Pose3d questPose = robotPose.transformBy(ROBOT_TO_QUEST);
+        Pose3d questPose = robotPose.transformBy(QuestK.ROBOT_TO_QUEST);
 
         // Send the reset operation
         questNav.setPose(questPose);
@@ -63,18 +62,19 @@ public class Quest extends SubsystemBase {
 
     @Override
     public void periodic() {
+          
         if (questNav.isTracking()) {
             // Get the latest pose data frames from the Quest
             PoseFrame[] questFrames = questNav.getAllUnreadPoseFrames();
 
-            // Loop over the pose data frames and send them to the pose estimator
+            // Loop over the pose data frames and send them to the pose estimator 
             for (PoseFrame questFrame : questFrames) {
                 // Get the pose of the Quest
                 Pose3d questPose = questFrame.questPose3d();
                 // Get timestamp for when the data was sent
                 double timestamp = questFrame.dataTimestamp();
                 // Transform by the mount pose to get your robot pose
-                Pose3d robotPose = questPose.transformBy(QuestK.questOffset.inverse());
+                Pose3d robotPose = questPose.transformBy(QuestK.ROBOT_TO_QUEST.inverse());
 
                 // Convert FPGA timestamp to CTRE's time domain using Phoenix 6 utility
                 double ctreTimestamp = Utils.fpgaToCurrentTime(timestamp);

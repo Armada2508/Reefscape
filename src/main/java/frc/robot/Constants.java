@@ -311,6 +311,6 @@ public class Constants {
             .withReverseSoftLimitThreshold(minAngle);
     }
     public static class QuestK {
-        public static final Transform3d ROBOT_TO_QUEST = new Transform3d(new Pose3d(), new Pose3d()); //! FIND
+        public static final Transform3d ROBOT_TO_QUEST = new Transform3d(new Pose3d(0,0,0, new Rotation3d()), new Pose3d()); //! FIND
     }
 }

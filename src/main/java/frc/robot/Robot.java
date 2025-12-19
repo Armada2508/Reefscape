@@ -52,20 +52,24 @@ import frc.robot.lib.util.DynamicSlewRateLimiter;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Quest;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Vision;
 
 @Logged
 public class Robot extends TimedRobot {
     
     @Logged(name = "Vision")
-    private final Vision vision = new Vision();
+    private final Quest quest = new Quest();
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
     @Logged(name = "Swerve")
-    private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
+    private final Swerve swerve = new Swerve(quest::getQuestResults, () -> 
         Math.abs(xboxController.getLeftX()) > ControllerK.overrideThreshold
         || Math.abs(xboxController.getLeftY()) > ControllerK.overrideThreshold
         || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
+    // private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
+    //     Math.abs(xboxController.getLeftX()) > ControllerK.overrideThreshold
+    //     || Math.abs(xboxController.getLeftY()) > ControllerK.overrideThreshold
+    //     || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
     @Logged(name = "Elevator")
     private final Elevator elevator = new Elevator();
     @Logged(name = "Intake")
