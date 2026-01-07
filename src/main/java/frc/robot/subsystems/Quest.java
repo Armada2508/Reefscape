@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -53,7 +54,7 @@ public class Quest extends SubsystemBase {
         // Send the reset operation
         questNav.setPose(questPose);
     }
-
+        @NotLogged
         Matrix<N3, N1> QUESTNAV_STD_DEVS =
             VecBuilder.fill(
                 0.02, // Trust down to 2cm in X direction
@@ -101,7 +102,7 @@ public class Quest extends SubsystemBase {
         }
         return new QuestResults(questFrames);
     }
-
+    @Logged(name = "Quest Results")
     public record QuestResults(PoseFrame[] results){}
 };
 
