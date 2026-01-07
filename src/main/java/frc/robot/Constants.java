@@ -33,6 +33,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
@@ -309,5 +310,7 @@ public class Constants {
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(minAngle);
     }
-
+    public static class QuestK {
+        public static final Transform3d ROBOT_TO_QUEST = new Transform3d(new Pose3d(0,0,0, new Rotation3d()), new Pose3d()); //! FIND
+    }
 }
